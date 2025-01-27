@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const Navbar = () => {
   const { openSignIn } = useClerk();
+  const { user } = useUser();
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
 
   const handleSignIn = () => {
@@ -18,7 +19,8 @@ const Navbar = () => {
       <div className="flex items-center gap-8">
         {/* logo */}
         <img src={logo} alt="logo" width={200} height={200} />
-        {/* navlinks */}
+        {/* navLinks */}
+
         <div className="md:flex hidden items-center gap-6">
           <h2 className="hover:scale-105 hover:text-primary">Home</h2>
           <h2 className="hover:scale-105 hover:text-primary">Services</h2>
@@ -26,16 +28,23 @@ const Navbar = () => {
         </div>
       </div>
       {/* Auth links */}
-      <div className="md:flex hidden gap-2">
-        <Button variant="ghost">Recuriter Login</Button>
-        <Button onClick={() => openSignIn()}>Login</Button>
-      </div>
+      {user ? (
+        <div className="hidden md:flex gap-4">
+          <p>Hi, {user.firstName + " " + user.lastName}</p>
+          <UserButton />
+        </div>
+      ) : (
+        <div className="md:flex hidden gap-2">
+          <Button variant="ghost">Recuriter Login</Button>
+          <Button onClick={handleSignIn}>Login</Button>
+        </div>
+      )}
 
       {/* mobile screen */}
       <div className="flex md:hidden">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
-            <MenuIcon />
+            <MenuIcon size={25} className="mr-2" />
           </SheetTrigger>
           <SheetContent>
             <div className="flex flex-col gap-2 mt-10">
@@ -48,13 +57,18 @@ const Navbar = () => {
                   About Us
                 </h2>
               </div>
-              <div className="flex flex-col gap-2">
-                <Button variant="outline">Recuriter Login</Button>
-                <Button onClick={handleSignIn}>Login</Button>
-              </div>
+              {user ? (
+                <div></div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Button variant="outline">Recuriter Login</Button>
+                  <Button onClick={handleSignIn}>Login</Button>
+                </div>
+              )}
             </div>
           </SheetContent>
         </Sheet>
+        <UserButton />
       </div>
     </div>
   );
