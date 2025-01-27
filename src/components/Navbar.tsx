@@ -4,10 +4,10 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { MenuIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { useState } from "react";
-
+import { ClipLoader } from "react-spinners";
 const Navbar = () => {
   const { openSignIn } = useClerk();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
 
   const handleSignIn = () => {
@@ -27,8 +27,11 @@ const Navbar = () => {
           <h2 className="hover:scale-105 hover:text-primary">About Us</h2>
         </div>
       </div>
-      {/* Auth links */}
-      {user ? (
+      {!isLoaded ? (
+        <div className="hidden md:flex">
+          <ClipLoader />
+        </div>
+      ) : user ? (
         <div className="hidden md:flex gap-4">
           <p>Hi, {user.firstName + " " + user.lastName}</p>
           <UserButton />
@@ -68,7 +71,8 @@ const Navbar = () => {
             </div>
           </SheetContent>
         </Sheet>
-        <UserButton />
+
+        {isLoaded && user && <UserButton />}
       </div>
     </div>
   );
