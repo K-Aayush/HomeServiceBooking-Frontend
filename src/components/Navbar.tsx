@@ -1,5 +1,13 @@
 import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 import { MenuIcon } from "lucide-react";
 
 const Navbar = () => {
@@ -23,7 +31,28 @@ const Navbar = () => {
 
       {/* mobile screen */}
       <div className="flex md:hidden">
-        <MenuIcon size={25} />
+        <Sheet>
+          <SheetTrigger>
+            <MenuIcon />
+          </SheetTrigger>
+          <SheetContent>
+            <div className="flex flex-col gap-2 mt-10">
+              <div className="flex flex-col gap-2 text-center">
+                <h2 className="p-2 border border-gray-600 rounded-md">Home</h2>
+                <h2 className="p-2 border border-gray-600 rounded-md">
+                  Service
+                </h2>
+                <h2 className="p-2 border border-gray-600 rounded-md">
+                  About Us
+                </h2>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button variant="outline">Recuriter Login</Button>
+                <Button>Login</Button>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   );
