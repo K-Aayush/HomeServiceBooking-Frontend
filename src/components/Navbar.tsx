@@ -2,8 +2,10 @@ import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { MenuIcon } from "lucide-react";
+import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 
 const Navbar = () => {
+  const { openSignIn } = useClerk();
   return (
     <div className="flex shadow-sm p-5 justify-between">
       <div className="flex items-center gap-8">
@@ -19,7 +21,7 @@ const Navbar = () => {
       {/* Auth links */}
       <div className="md:flex hidden gap-2">
         <Button variant="ghost">Recuriter Login</Button>
-        <Button>Login</Button>
+        <Button onClick={() => openSignIn()}>Login</Button>
       </div>
 
       {/* mobile screen */}
@@ -41,7 +43,7 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <Button variant="outline">Recuriter Login</Button>
-                <Button>Login</Button>
+                <Button onClick={() => openSignIn()}>Login</Button>
               </div>
             </div>
           </SheetContent>
