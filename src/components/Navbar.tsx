@@ -26,7 +26,9 @@ const Navbar = () => {
     <div className="flex shadow-sm p-5 justify-between">
       <div className="flex items-center gap-8">
         {/* logo */}
-        <img src={logo} alt="logo" width={200} height={200} />
+        <Link to={"/"}>
+          <img src={logo} alt="logo" width={200} height={200} />
+        </Link>
         {/* navLinks */}
 
         <div className="md:flex hidden items-center gap-6">
