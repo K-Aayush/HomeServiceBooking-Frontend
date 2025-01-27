@@ -3,9 +3,16 @@ import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { MenuIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { useState } from "react";
 
 const Navbar = () => {
   const { openSignIn } = useClerk();
+  const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
+
+  const handleSignIn = () => {
+    setIsSheetOpen(false);
+    openSignIn();
+  };
   return (
     <div className="flex shadow-sm p-5 justify-between">
       <div className="flex items-center gap-8">
@@ -26,7 +33,7 @@ const Navbar = () => {
 
       {/* mobile screen */}
       <div className="flex md:hidden">
-        <Sheet>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger>
             <MenuIcon />
           </SheetTrigger>
@@ -43,7 +50,7 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <Button variant="outline">Recuriter Login</Button>
-                <Button onClick={() => openSignIn()}>Login</Button>
+                <Button onClick={handleSignIn}>Login</Button>
               </div>
             </div>
           </SheetContent>
