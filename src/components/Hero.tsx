@@ -3,7 +3,6 @@ import { Button } from "./ui/button";
 import { Search } from "lucide-react";
 import { useContext, useRef } from "react";
 import { AppContext } from "../context/AppContext";
-import CategoryList from "./CategoryList";
 
 const Hero = () => {
   const { setIsSearched, setSearchFilter } = useContext(AppContext);
@@ -19,7 +18,7 @@ const Hero = () => {
     setIsSearched(true);
   };
   return (
-    <div className="flex flex-col gap-3 items-center justify-center">
+    <div className="flex flex-col gap-3 items-center justify-center pt-14 pb-7">
       <h2 className="font-bold text-[46px] text-center">
         Find Home <span className="text-primary">Service/Repair</span> <br />
         Near You
@@ -37,7 +36,6 @@ const Hero = () => {
           <Search className="w-4 h-4" />
         </Button>
       </div>
-      <CategoryList />
     </div>
   );
 };
