@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Search } from "lucide-react";
 import { useContext, useRef } from "react";
 import { AppContext } from "../context/AppContext";
+import CategoryList from "./CategoryList";
 
 const Hero = () => {
   const { setIsSearched, setSearchFilter } = useContext(AppContext);
@@ -36,6 +37,7 @@ const Hero = () => {
           <Search className="w-4 h-4" />
         </Button>
       </div>
+      <CategoryList />
     </div>
   );
 };
