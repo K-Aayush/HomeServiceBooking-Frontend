@@ -7,9 +7,26 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const BusinessList = () => {
   const { business } = useContext(AppContext);
   const [currentPage, setCurrentPage] = useState(1);
+
+  //calculate total pages
+  const totalpages = Math.ceil(business.length / 8);
+
+  //function to go back in previous page
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  //function to go into next page
+  const handleNextPage = () => {
+    if (currentPage < totalpages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   return (
     <div className="mt-5">
-      <h2 className="text-2xl font-bold" id="popular_business">
+      <h2 className="text-2xl font-bold scroll-mt-0" id="popular_business">
         Popular Business
       </h2>
 
@@ -55,26 +72,35 @@ const BusinessList = () => {
       {/* pagination */}
       {business.length > 0 && (
         <div className="flex items-center justify-center space-x-2 mt-10">
-          <a href="#popular_business">
-            <ChevronLeft />
+          <a onClick={handlePreviousPage} href="#popular_business">
+            <button
+              disabled={currentPage === 1}
+              className="disabled:opacity-50"
+            >
+              <ChevronLeft />
+            </button>
           </a>
-          {Array.from({ length: Math.ceil(business.length / 8) }).map(
-            (_, index) => (
-              <a href="#popular_business">
-                <button
-                  className={`w-10 h-10 items-center justify-center border border-gray-300 text-xl ${
-                    currentPage === index + 1
-                      ? "bg-purple-200 text-primary font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              </a>
-            )
-          )}
-          <a href="#popular_business">
-            <ChevronRight />
+          {Array.from({ length: totalpages }).map((_, index) => (
+            <a href="#popular_business">
+              <button
+                onClick={() => setCurrentPage(index + 1)}
+                className={`w-10 h-10 items-center justify-center border border-gray-300 text-xl ${
+                  currentPage === index + 1
+                    ? "bg-purple-200 text-primary font-semibold"
+                    : "text-gray-500"
+                }`}
+              >
+                {index + 1}
+              </button>
+            </a>
+          ))}
+          <a onClick={handleNextPage} href="#popular_business">
+            <button
+              disabled={currentPage === totalpages}
+              className="disabled:opacity-50"
+            >
+              <ChevronRight />
+            </button>
           </a>
         </div>
       )}
