@@ -8,6 +8,7 @@ import paint from "../assets/paint.jpg";
 import repairing from "../assets/repair.jpg";
 import women from "../assets/women.jpg";
 import women1 from "../assets/women1.jpg";
+import delivery from "../assets/delivery.jpg";
 
 export const BusinessCategories = [
   {
@@ -51,8 +52,8 @@ export const PopularBusinessList = [
     cateory: {
       name: "Cleaning",
     },
-    contactPerson: "Aayusha Karkee",
-    email: "aayusha@gmail.com",
+    contactPerson: "Aasma Gautam",
+    email: "aasma@gmail.com",
     images: [women, women1],
   },
   {
@@ -78,5 +79,17 @@ export const PopularBusinessList = [
     contactPerson: "Aadarsha Dhungana",
     email: "adarsha@gmail.com",
     images: [paint],
+  },
+  {
+    id: 4,
+    name: "Package Delivery",
+    about: "",
+    address: "Imadol, Lalitpur",
+    cateory: {
+      name: "Shifting",
+    },
+    contactPerson: "Aayush Karki",
+    email: "ayush@gmail.com",
+    images: [delivery],
   },
 ];
