@@ -18,7 +18,7 @@ const Hero = () => {
     setIsSearched(true);
   };
   return (
-    <div className="flex flex-col gap-3 items-center justify-center">
+    <div className="flex flex-col gap-3 items-center justify-center pt-14 pb-7">
       <h2 className="font-bold text-[46px] text-center">
         Find Home <span className="text-primary">Service/Repair</span> <br />
         Near You

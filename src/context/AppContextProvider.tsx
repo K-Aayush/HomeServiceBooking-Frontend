@@ -1,5 +1,7 @@
 import { AppContext } from "./AppContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { PopularBusinessList } from "../lib/data";
+import { PopularBusinessListType } from "../lib/type";
 
 export const AppContextProvider = ({
   children,
@@ -12,7 +14,25 @@ export const AppContextProvider = ({
 
   const [isSearched, setIsSearched] = useState<boolean>(false);
 
-  const value = { searchFilter, setSearchFilter, isSearched, setIsSearched };
+  const [business, setBusiness] = useState<PopularBusinessListType[]>([]);
+
+  //function to fetch businessdata
+  const fetchBusiness = () => {
+    setBusiness(PopularBusinessList);
+  };
+
+  useEffect(() => {
+    fetchBusiness();
+  }, []);
+
+  const value = {
+    searchFilter,
+    setSearchFilter,
+    isSearched,
+    setIsSearched,
+    business,
+    setBusiness,
+  };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

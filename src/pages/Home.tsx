@@ -1,10 +1,13 @@
-import React from "react";
 import Hero from "../components/Hero";
+import CategoryList from "../components/CategoryList";
+import BusinessList from "../components/BusinessList";
 
 const Home = () => {
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="mx-6 md:mx-16">
       <Hero />
+      <CategoryList />
+      <BusinessList />
     </div>
   );
 };
