@@ -9,6 +9,7 @@ import repairing from "../assets/repair.jpg";
 import women from "../assets/women.jpg";
 import women1 from "../assets/women1.jpg";
 import delivery from "../assets/delivery.jpg";
+import { PopularBusinessListType } from "./type";
 
 export const BusinessCategories = [
   {
@@ -43,7 +44,7 @@ export const BusinessCategories = [
   },
 ];
 
-export const PopularBusinessList = [
+export const PopularBusinessList: PopularBusinessListType[] = [
   {
     id: 1,
     name: "House Cleaning",

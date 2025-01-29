@@ -1,5 +1,7 @@
 import { createContext } from "react";
 
+
+
 //Type of AppContext
 interface AppContextType {
   searchFilter: { title: string };
