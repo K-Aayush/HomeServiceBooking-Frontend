@@ -49,7 +49,7 @@ const BusinessList = () => {
                   />
                   <div className="flex flex-col items-baseline p-3 gap-1">
                     <h2 className="py-1 bg-purple-200 text-primary rounded-full px-2 text-sm">
-                      {item.cateory.name}
+                      {item.category.name}
                     </h2>
                     <h2 className="font-bold text-lg">{item.name}</h2>
                     <h2 className="text-primary">{item.contactPerson}</h2>

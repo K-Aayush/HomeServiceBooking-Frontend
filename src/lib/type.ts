@@ -3,7 +3,7 @@ export interface PopularBusinessListType {
   name: string;
   about: string;
   address: string;
-  cateory: {
+  category: {
     name: string;
   };
   contactPerson: string;

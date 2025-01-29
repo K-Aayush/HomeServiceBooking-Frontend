@@ -9,6 +9,8 @@ import repairing from "../assets/repair.jpg";
 import women from "../assets/women.jpg";
 import women1 from "../assets/women1.jpg";
 import delivery from "../assets/delivery.jpg";
+import electric from "../assets/electricy.jpg";
+import plumbing from "../assets/plumbing.jpg";
 import { PopularBusinessListType } from "./type";
 
 export const BusinessCategories = [
@@ -45,196 +47,51 @@ export const BusinessCategories = [
 ];
 
 export const PopularBusinessList: PopularBusinessListType[] = [
-  {
-    id: 1,
-    name: "House Cleaning",
-    about: "",
-    address: "itahari, Sunsari",
-    cateory: {
-      name: "Cleaning",
+  ...Array.from({ length: 50 }, (_, i) => ({
+    id: i + 1,
+    name: [
+      "House Cleaning",
+      "Car Repairing",
+      "Furniture Shifting",
+      "Plumbing Services",
+      "House Painting",
+      "Electrician Service",
+    ][i % 6],
+    about: "Quality service for your needs.",
+    address: [
+      "Itahari, Sunsari",
+      "Dharan, Sunsari",
+      "Biratnagar, Morang",
+      "Imadol, Lalitpur",
+      "Pokhara, Kaski",
+      "Butwal, Rupandehi",
+    ][i % 6],
+    category: {
+      name: [
+        "Cleaning",
+        "Repair",
+        "Shifting",
+        "Plumbing",
+        "Painting",
+        "Electric",
+      ][i % 6],
     },
-    contactPerson: "Aasma Gautam",
-    email: "aasma@gmail.com",
-    images: [women, women1],
-  },
-  {
-    id: 2,
-    name: "House Reparing",
-    about: "",
-    address: "Dharan, Sunsari",
-    cateory: {
-      name: "Repair",
-    },
-    contactPerson: "Pratham Neupane",
-    email: "pratham@gmail.com",
-    images: [repairing],
-  },
-  {
-    id: 3,
-    name: "House Painting",
-    about: "",
-    address: "Biratnagar, Morang",
-    cateory: {
-      name: "painting",
-    },
-    contactPerson: "Aadarsha Dhungana",
-    email: "adarsha@gmail.com",
-    images: [paint],
-  },
-  {
-    id: 4,
-    name: "Package Delivery",
-    about: "",
-    address: "Imadol, Lalitpur",
-    cateory: {
-      name: "Shifting",
-    },
-    contactPerson: "Aayush Karki",
-    email: "ayush@gmail.com",
-    images: [delivery],
-  },
-  {
-    id: 5,
-    name: "House Cleaning",
-    about: "",
-    address: "itahari, Sunsari",
-    cateory: {
-      name: "Cleaning",
-    },
-    contactPerson: "Aasma Gautam",
-    email: "aasma@gmail.com",
-    images: [women, women1],
-  },
-  {
-    id: 6,
-    name: "House Reparing",
-    about: "",
-    address: "Dharan, Sunsari",
-    cateory: {
-      name: "Repair",
-    },
-    contactPerson: "Pratham Neupane",
-    email: "pratham@gmail.com",
-    images: [repairing],
-  },
-  {
-    id: 7,
-    name: "House Painting",
-    about: "",
-    address: "Biratnagar, Morang",
-    cateory: {
-      name: "painting",
-    },
-    contactPerson: "Aadarsha Dhungana",
-    email: "adarsha@gmail.com",
-    images: [paint],
-  },
-  {
-    id: 8,
-    name: "Package Delivery",
-    about: "",
-    address: "Imadol, Lalitpur",
-    cateory: {
-      name: "Shifting",
-    },
-    contactPerson: "Aayush Karki",
-    email: "ayush@gmail.com",
-    images: [delivery],
-  },
-  {
-    id: 9,
-    name: "House Cleaning",
-    about: "",
-    address: "itahari, Sunsari",
-    cateory: {
-      name: "Cleaning",
-    },
-    contactPerson: "Aasma Gautam",
-    email: "aasma@gmail.com",
-    images: [women, women1],
-  },
-  {
-    id: 10,
-    name: "House Reparing",
-    about: "",
-    address: "Dharan, Sunsari",
-    cateory: {
-      name: "Repair",
-    },
-    contactPerson: "Pratham Neupane",
-    email: "pratham@gmail.com",
-    images: [repairing],
-  },
-  {
-    id: 11,
-    name: "House Painting",
-    about: "",
-    address: "Biratnagar, Morang",
-    cateory: {
-      name: "painting",
-    },
-    contactPerson: "Aadarsha Dhungana",
-    email: "adarsha@gmail.com",
-    images: [paint],
-  },
-  {
-    id: 12,
-    name: "Package Delivery",
-    about: "",
-    address: "Imadol, Lalitpur",
-    cateory: {
-      name: "Shifting",
-    },
-    contactPerson: "Aayush Karki",
-    email: "ayush@gmail.com",
-    images: [delivery],
-  },
-  {
-    id: 13,
-    name: "House Cleaning",
-    about: "",
-    address: "itahari, Sunsari",
-    cateory: {
-      name: "Cleaning",
-    },
-    contactPerson: "Aasma Gautam",
-    email: "aasma@gmail.com",
-    images: [women, women1],
-  },
-  {
-    id: 14,
-    name: "House Reparing",
-    about: "",
-    address: "Dharan, Sunsari",
-    cateory: {
-      name: "Repair",
-    },
-    contactPerson: "Pratham Neupane",
-    email: "pratham@gmail.com",
-    images: [repairing],
-  },
-  {
-    id: 15,
-    name: "House Painting",
-    about: "",
-    address: "Biratnagar, Morang",
-    cateory: {
-      name: "painting",
-    },
-    contactPerson: "Aadarsha Dhungana",
-    email: "adarsha@gmail.com",
-    images: [paint],
-  },
-  {
-    id: 16,
-    name: "Package Delivery",
-    about: "",
-    address: "Imadol, Lalitpur",
-    cateory: {
-      name: "Shifting",
-    },
-    contactPerson: "Aayush Karki",
-    email: "ayush@gmail.com",
-    images: [delivery],
-  },
+    contactPerson: [
+      "Aasma Gautam",
+      "Pratham Neupane",
+      "Aadarsha Dhungana",
+      "Aayush Karki",
+      "Sandesh Poudel",
+      "Sujan Acharya",
+    ][i % 6],
+    email: `business${i + 1}@gmail.com`,
+    images: [
+      [women, women1],
+      [repairing],
+      [delivery],
+      [plumbing],
+      [paint],
+      [electric],
+    ][i % 6],
+  })),
 ];
