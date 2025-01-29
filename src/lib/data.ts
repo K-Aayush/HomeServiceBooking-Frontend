@@ -42,7 +42,7 @@ export const BusinessCategories = [
   },
 ];
 
-export const BusinessList = [
+export const PopularBusinessList = [
   {
     id: 1,
     name: "House Cleaning",
@@ -53,9 +53,7 @@ export const BusinessList = [
     },
     contactPerson: "Aayusha Karkee",
     email: "aayusha@gmail.com",
-    images: {
-      url: [women, women1],
-    },
+    images: [women, women1],
   },
   {
     id: 2,
@@ -67,9 +65,7 @@ export const BusinessList = [
     },
     contactPerson: "Pratham Neupane",
     email: "pratham@gmail.com",
-    images: {
-      url: [repairing],
-    },
+    images: [repairing],
   },
   {
     id: 3,
@@ -81,8 +77,6 @@ export const BusinessList = [
     },
     contactPerson: "Aadarsha Dhungana",
     email: "adarsha@gmail.com",
-    images: {
-      url: [paint],
-    },
+    images: [paint],
   },
 ];
