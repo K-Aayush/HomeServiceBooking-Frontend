@@ -17,11 +17,11 @@ const Category = () => {
 
   return (
     <div className="mx-6 md:mx-16 mt-8">
-      <div className="grid grid-cols-4">
-        <div className="">
-          <CategorySidebar />
+      <div className="grid grid-cols-1 md:grid-cols-4">
+        <div className="hidden md:block">
+          <CategorySidebar categoryList={`${id}`} />
         </div>
-        <div className="col-span-3 ">
+        <div className="md:col-span-3 ">
           <BusinessList title={`${id}`} businessList={businessByCategory} />
         </div>
       </div>
