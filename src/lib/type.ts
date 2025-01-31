@@ -10,3 +10,8 @@ export interface PopularBusinessListType {
   email: string;
   images: string[];
 }
+
+export interface BusinessListProps {
+  businessList: PopularBusinessListType[];
+  title: string;
+}

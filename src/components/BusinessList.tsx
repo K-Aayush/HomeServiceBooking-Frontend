@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BusinessListProps } from "../lib/type";
 
-const BusinessList = ({ businessList, title }) => {
+const BusinessList = ({ businessList, title }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   //calculate total pages
