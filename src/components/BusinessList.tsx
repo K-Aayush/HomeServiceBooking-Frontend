@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BusinessListProps } from "../lib/type";
-import noImage from "../assets/noimage.png";
+import noImage from "../assets/no-image.png";
 
 const BusinessList = ({ businessList, title }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,7 +54,7 @@ const BusinessList = ({ businessList, title }: BusinessListProps) => {
                     <img
                       src={noImage}
                       alt="No image available"
-                      className="w-full h-auto object-cover rounded-lg shadow-sm"
+                      className="w-[80%] h-auto object-cover rounded-lg shadow-sm mx-auto"
                     />
                   )}
 
