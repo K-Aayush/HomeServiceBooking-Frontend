@@ -1,15 +1,15 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
-import { AppContext } from "../context/AppContext";
 import { Skeleton } from "./ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BusinessListProps } from "../lib/type";
+import noImage from "../assets/no-image.png";
 
-const BusinessList = () => {
-  const { business } = useContext(AppContext);
+const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   //calculate total pages
-  const totalpages = Math.ceil(business.length / 8);
+  const totalpages = Math.ceil(businessList.length / 8);
 
   //function to go back in previous page
   const handlePreviousPage = () => {
@@ -26,27 +26,38 @@ const BusinessList = () => {
   };
   return (
     <div className="mt-5">
-      <h2 className="text-2xl font-bold scroll-mt-0" id="popular_business">
-        Popular Business
+      <h2 className="text-2xl font-bold scroll-mt-0" id={pagehref}>
+        {title}
       </h2>
 
       {/* business listing */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-5">
-        {business.length > 0
-          ? business
+        {businessList.length > 0
+          ? businessList
               .slice((currentPage - 1) * 8, currentPage * 8)
               .map((item, index) => (
                 <div
                   key={index}
                   className="shadow-md rounded-lg hover:shadow-lg hover:shadow-primary cursor-pointer hover:scale-105 transition-all ease-in-out"
                 >
-                  <img
-                    src={item.images[0]}
-                    alt={item.name}
-                    width={500}
-                    height={200}
-                    className="object-cover h-[150px] md:h-[200px] rounded-lg"
-                  />
+                  {item.images && item.images.length > 0 ? (
+                    <img
+                      src={item.images[0]}
+                      alt={item.name}
+                      width={500}
+                      height={200}
+                      loading="lazy"
+                      decoding="async"
+                      className="object-cover h-[150px] md:h-[200px] rounded-lg shadow-sm transition-opacity duration-300 ease-in-out"
+                    />
+                  ) : (
+                    <img
+                      src={noImage}
+                      alt="No image available"
+                      className="w-[80%] h-auto object-cover rounded-lg shadow-sm mx-auto"
+                    />
+                  )}
+
                   <div className="flex flex-col items-baseline p-3 gap-1">
                     <h2 className="py-1 bg-purple-200 text-primary rounded-full px-2 text-sm">
                       {item.category.name}
@@ -70,9 +81,9 @@ const BusinessList = () => {
       </div>
 
       {/* pagination */}
-      {business.length > 0 && (
+      {businessList.length > 0 && (
         <div className="flex items-center justify-center space-x-2 mt-10">
-          <a onClick={handlePreviousPage} href="#popular_business">
+          <a onClick={handlePreviousPage} href={`#${pagehref}`}>
             <button
               disabled={currentPage === 1}
               className="disabled:opacity-50"
@@ -81,7 +92,7 @@ const BusinessList = () => {
             </button>
           </a>
           {Array.from({ length: totalpages }).map((_, index) => (
-            <a href="#popular_business">
+            <a href={`#${pagehref}`}>
               <button
                 onClick={() => setCurrentPage(index + 1)}
                 className={`w-10 h-10 items-center justify-center border border-gray-300 text-xl ${
@@ -94,7 +105,7 @@ const BusinessList = () => {
               </button>
             </a>
           ))}
-          <a onClick={handleNextPage} href="#popular_business">
+          <a onClick={handleNextPage} href={`#${pagehref}`}>
             <button
               disabled={currentPage === totalpages}
               className="disabled:opacity-50"
