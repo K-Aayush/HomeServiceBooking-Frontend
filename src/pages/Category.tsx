@@ -9,7 +9,7 @@ const Category = () => {
         <div className="">
           <CategorySidebar />
         </div>
-        <div className="col-span-3 ">BusinessCategories</div>
+        <div className="col-span-3 ">BusinessCategories {id}</div>
       </div>
     </div>
   );

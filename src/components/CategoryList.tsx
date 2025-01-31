@@ -7,7 +7,7 @@ const CategoryList = () => {
       {BusinessCategories.length > 0
         ? BusinessCategories.map((item) => (
             <Link
-              to={"/category/" + item.name}
+              to={`/category/${item.name}`}
               key={item.id}
               className="flex flex-col items-center justify-center gap-2 bg-purple-100 p-5 rounded-lg cursor-pointer hover:scale-110 transition-all ease-in-out"
             >

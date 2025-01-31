@@ -1,15 +1,13 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
-import { AppContext } from "../context/AppContext";
 import { Skeleton } from "./ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const BusinessList = () => {
-  const { business } = useContext(AppContext);
+const BusinessList = ({ businessList, title }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   //calculate total pages
-  const totalpages = Math.ceil(business.length / 8);
+  const totalpages = Math.ceil(businessList.length / 8);
 
   //function to go back in previous page
   const handlePreviousPage = () => {
@@ -27,13 +25,13 @@ const BusinessList = () => {
   return (
     <div className="mt-5">
       <h2 className="text-2xl font-bold scroll-mt-0" id="popular_business">
-        Popular Business
+        {title}
       </h2>
 
       {/* business listing */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-5">
-        {business.length > 0
-          ? business
+        {businessList.length > 0
+          ? businessList
               .slice((currentPage - 1) * 8, currentPage * 8)
               .map((item, index) => (
                 <div
@@ -70,7 +68,7 @@ const BusinessList = () => {
       </div>
 
       {/* pagination */}
-      {business.length > 0 && (
+      {businessList.length > 0 && (
         <div className="flex items-center justify-center space-x-2 mt-10">
           <a onClick={handlePreviousPage} href="#popular_business">
             <button
