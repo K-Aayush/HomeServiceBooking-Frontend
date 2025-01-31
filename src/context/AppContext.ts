@@ -9,6 +9,8 @@ interface AppContextType {
   setIsSearched: React.Dispatch<React.SetStateAction<boolean>>;
   business: PopularBusinessListType[];
   setBusiness: React.Dispatch<React.SetStateAction<PopularBusinessListType[]>>;
+  businessByCategory: PopularBusinessListType[];
+  fetchBusinessByCategory: (category: string) => void;
 }
 
 const defaultValue: AppContextType = {
@@ -18,6 +20,8 @@ const defaultValue: AppContextType = {
   setIsSearched: () => {},
   business: [],
   setBusiness: () => {},
+  businessByCategory: [],
+  fetchBusinessByCategory: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(defaultValue);
