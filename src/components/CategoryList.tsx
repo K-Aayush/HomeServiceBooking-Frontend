@@ -11,7 +11,14 @@ const CategoryList = () => {
               key={item.id}
               className="flex flex-col items-center justify-center gap-2 bg-purple-100 p-5 rounded-lg cursor-pointer hover:scale-110 transition-all ease-in-out"
             >
-              <img src={item.icon} alt="icon" width={35} height={35} />
+              <img
+                src={item.icon}
+                alt="icon"
+                width={35}
+                height={35}
+                loading="lazy"
+                decoding="async"
+              />
               <h2 className="text-primary">{item.name}</h2>
             </Link>
           ))

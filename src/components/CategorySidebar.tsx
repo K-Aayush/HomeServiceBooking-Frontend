@@ -12,7 +12,14 @@ const CategorySidebar = () => {
             key={index}
             className="flex items-center gap-2 p-3 border rounded-lg mb-3 md:mr-10 cursor-pointer hover:bg-purple-50 hover:text-primary hover:border-primary hover:shadow-md"
           >
-            <img src={item.icon} alt="icon" width={30} height={30} />
+            <img
+              src={item.icon}
+              alt="icon"
+              width={30}
+              height={30}
+              loading="lazy"
+              decoding="async"
+            />
             <h2>{item.name}</h2>
           </Link>
         ))}
