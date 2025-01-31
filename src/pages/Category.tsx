@@ -4,11 +4,13 @@ import CategorySidebar from "../components/CategorySidebar";
 const Category = () => {
   const { id } = useParams();
   return (
-    <div className="grid grid-cols-4">
-      <div className="bg-blue-100">
-        <CategorySidebar />
+    <div className="mx-6 md:mx-16 mt-8">
+      <div className="grid grid-cols-4">
+        <div className="">
+          <CategorySidebar />
+        </div>
+        <div className="col-span-3 ">BusinessCategories</div>
       </div>
-      <div className="col-span-3 bg-red-100">BusinessCategories</div>
     </div>
   );
 };
