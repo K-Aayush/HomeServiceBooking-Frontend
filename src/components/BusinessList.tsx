@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BusinessListProps } from "../lib/type";
 import noImage from "../assets/no-image.png";
 
-const BusinessList = ({ businessList, title }: BusinessListProps) => {
+const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   //calculate total pages
@@ -26,7 +26,7 @@ const BusinessList = ({ businessList, title }: BusinessListProps) => {
   };
   return (
     <div className="mt-5">
-      <h2 className="text-2xl font-bold scroll-mt-0" id="popular_business">
+      <h2 className="text-2xl font-bold scroll-mt-0" id={pagehref}>
         {title}
       </h2>
 
@@ -83,7 +83,7 @@ const BusinessList = ({ businessList, title }: BusinessListProps) => {
       {/* pagination */}
       {businessList.length > 0 && (
         <div className="flex items-center justify-center space-x-2 mt-10">
-          <a onClick={handlePreviousPage} href="#popular_business">
+          <a onClick={handlePreviousPage} href={`#${pagehref}`}>
             <button
               disabled={currentPage === 1}
               className="disabled:opacity-50"
@@ -92,7 +92,7 @@ const BusinessList = ({ businessList, title }: BusinessListProps) => {
             </button>
           </a>
           {Array.from({ length: totalpages }).map((_, index) => (
-            <a href="#popular_business">
+            <a href={`#${pagehref}`}>
               <button
                 onClick={() => setCurrentPage(index + 1)}
                 className={`w-10 h-10 items-center justify-center border border-gray-300 text-xl ${
@@ -105,7 +105,7 @@ const BusinessList = ({ businessList, title }: BusinessListProps) => {
               </button>
             </a>
           ))}
-          <a onClick={handleNextPage} href="#popular_business">
+          <a onClick={handleNextPage} href={`#${pagehref}`}>
             <button
               disabled={currentPage === totalpages}
               className="disabled:opacity-50"

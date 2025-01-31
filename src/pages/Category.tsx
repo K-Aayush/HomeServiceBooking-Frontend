@@ -22,7 +22,11 @@ const Category = () => {
           <CategorySidebar categoryList={`${id}`} />
         </div>
         <div className="md:col-span-3 ">
-          <BusinessList title={`${id}`} businessList={businessByCategory} />
+          <BusinessList
+            title={`${id}`}
+            businessList={businessByCategory}
+            pagehref="business_category_title"
+          />
         </div>
       </div>
     </div>

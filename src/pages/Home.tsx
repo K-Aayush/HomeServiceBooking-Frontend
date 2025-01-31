@@ -11,7 +11,11 @@ const Home = () => {
     <div className="mx-6 md:mx-16">
       <Hero />
       <CategoryList />
-      <BusinessList businessList={business} title={"Popular Business"} />
+      <BusinessList
+        businessList={business}
+        title={"Popular Business"}
+        pagehref="Popular_Business"
+      />
     </div>
   );
 };

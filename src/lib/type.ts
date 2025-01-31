@@ -14,4 +14,5 @@ export interface PopularBusinessListType {
 export interface BusinessListProps {
   businessList: PopularBusinessListType[];
   title: string;
+  pagehref: string;
 }
