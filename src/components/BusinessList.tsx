@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BusinessListProps } from "../lib/type";
+import noImage from "../assets/noimage.png";
 
 const BusinessList = ({ businessList, title }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,13 +40,24 @@ const BusinessList = ({ businessList, title }: BusinessListProps) => {
                   key={index}
                   className="shadow-md rounded-lg hover:shadow-lg hover:shadow-primary cursor-pointer hover:scale-105 transition-all ease-in-out"
                 >
-                  <img
-                    src={item.images[0]}
-                    alt={item.name}
-                    width={500}
-                    height={200}
-                    className="object-cover h-[150px] md:h-[200px] rounded-lg"
-                  />
+                  {item.images && item.images.length > 0 ? (
+                    <img
+                      src={item.images[0]}
+                      alt={item.name}
+                      width={500}
+                      height={200}
+                      loading="lazy"
+                      decoding="async"
+                      className="object-cover h-[150px] md:h-[200px] rounded-lg shadow-sm transition-opacity duration-300 ease-in-out"
+                    />
+                  ) : (
+                    <img
+                      src={noImage}
+                      alt="No image available"
+                      className="w-full h-auto object-cover rounded-lg shadow-sm"
+                    />
+                  )}
+
                   <div className="flex flex-col items-baseline p-3 gap-1">
                     <h2 className="py-1 bg-purple-200 text-primary rounded-full px-2 text-sm">
                       {item.category.name}
