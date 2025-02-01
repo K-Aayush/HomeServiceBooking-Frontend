@@ -5,6 +5,7 @@ import Services from "./pages/Services";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Category from "./pages/Category";
+import BusinessDetails from "./pages/BusinessDetails";
 
 const App = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/About" element={<About />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
+        <Route path="/businessDetails/:id" element={<BusinessDetails />} />
       </Routes>
       {!location.pathname.startsWith("/category/") && <Footer />}
     </div>
