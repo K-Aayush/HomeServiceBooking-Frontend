@@ -33,7 +33,7 @@ const BusinessDetails = () => {
     }
   }, [businessDetailsid, business]);
   return (
-    <div className="py-8 md:py-20 px-10 md:px-36 mx-6 md:mx-16">
+    <div className="py-8 md:py-20 px-10 md:px-26 lg:px-36 mx-6 md:mx-16">
       <BusinessInfo business={businessData} />
     </div>
   );
