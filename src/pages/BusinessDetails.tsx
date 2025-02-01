@@ -16,6 +16,7 @@ const BusinessDetails = () => {
   const [businessData, setBusinessData] =
     useState<PopularBusinessListType | null>(null);
 
+    // fetching the business data by id
   const fetchBusinessData = async () => {
     const data = business.filter((business) => business.id === numeric);
     if (data.length !== 0) {
@@ -24,6 +25,7 @@ const BusinessDetails = () => {
     }
   };
 
+  //calling the data in overall page
   useEffect(() => {
     if (business.length > 0) {
       fetchBusinessData();
