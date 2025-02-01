@@ -17,7 +17,10 @@ const App = () => {
         <Route path="/About" element={<About />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
-        <Route path="/businessDetails/:id" element={<BusinessDetails />} />
+        <Route
+          path="/businessDetails/:businessDetailsid"
+          element={<BusinessDetails />}
+        />
       </Routes>
       {!location.pathname.startsWith("/category/") && <Footer />}
     </div>

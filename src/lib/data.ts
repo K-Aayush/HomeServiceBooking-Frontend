@@ -47,7 +47,7 @@ export const BusinessCategories = [
 ];
 
 export const PopularBusinessList: PopularBusinessListType[] = [
-  ...Array.from({ length: 50 }, (_, i) => ({
+  ...Array.from({ length: 30 }, (_, i) => ({
     id: i + 1,
     name: [
       "House Cleaning",

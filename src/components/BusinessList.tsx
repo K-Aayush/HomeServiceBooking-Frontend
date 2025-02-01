@@ -94,7 +94,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
             </button>
           </a>
           {Array.from({ length: totalpages }).map((_, index) => (
-            <a href={`#${pagehref}`}>
+            <a key={index} href={`#${pagehref}`}>
               <button
                 onClick={() => setCurrentPage(index + 1)}
                 className={`w-10 h-10 items-center justify-center border border-gray-300 text-xl ${
