@@ -16,3 +16,11 @@ export interface BusinessListProps {
   title: string;
   pagehref: string;
 }
+
+export interface BusinessDetailsProps {
+  business: PopularBusinessListType | null;
+}
+
+export interface SuggestedBusinessDetailsProps {
+  business: PopularBusinessListType[];
+}

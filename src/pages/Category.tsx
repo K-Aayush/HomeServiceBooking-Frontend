@@ -6,6 +6,12 @@ import { AppContext } from "../context/AppContext";
 
 const Category = () => {
   const { id } = useParams();
+
+  //scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   const { businessByCategory, fetchBusinessByCategory } =
     useContext(AppContext);
 

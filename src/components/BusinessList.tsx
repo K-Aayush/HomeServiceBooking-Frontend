@@ -4,6 +4,7 @@ import { Skeleton } from "./ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BusinessListProps } from "../lib/type";
 import noImage from "../assets/no-image.png";
+import { Link } from "react-router-dom";
 
 const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +37,8 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
           ? businessList
               .slice((currentPage - 1) * 8, currentPage * 8)
               .map((item, index) => (
-                <div
+                <Link
+                  to={`/businessDetails/${item.id}`}
                   key={index}
                   className="shadow-md rounded-lg hover:shadow-lg hover:shadow-primary cursor-pointer hover:scale-105 transition-all ease-in-out"
                 >
@@ -67,7 +69,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                     <h2 className="text-gray-500 text-sm">{item.address}</h2>
                     <Button className="mt-3">Book now</Button>
                   </div>
-                </div>
+                </Link>
               ))
           : [1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
               <div key={item} className="flex flex-col space-y-3">
@@ -92,7 +94,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
             </button>
           </a>
           {Array.from({ length: totalpages }).map((_, index) => (
-            <a href={`#${pagehref}`}>
+            <a key={index} href={`#${pagehref}`}>
               <button
                 onClick={() => setCurrentPage(index + 1)}
                 className={`w-10 h-10 items-center justify-center border border-gray-300 text-xl ${
