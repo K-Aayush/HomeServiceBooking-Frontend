@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { PopularBusinessListType } from "../lib/type";
 import BusinessInfo from "../components/BusinessInfo";
+import BusinessDescription from "../components/BusinessDescription";
+import SuggestedBusinessList from "../components/SuggestedBusinessList";
 
 const BusinessDetails = () => {
   const { businessDetailsid } = useParams();
@@ -33,8 +35,17 @@ const BusinessDetails = () => {
     }
   }, [businessDetailsid, business]);
   return (
-    <div className="py-8 md:py-20 px-10 md:px-26 lg:px-36 mx-6 md:mx-16">
+    <div className="py-8 md:py-20 px-10 md:px-26 lg:px-36 mx-6 md:mx-16 min-h-screen">
       <BusinessInfo business={businessData} />
+
+      <div className="grid grid-cols-4 mt-8">
+        <div className="col-span-3">
+          <BusinessDescription business={businessData} />
+        </div>
+        <div className="md:block hidden">
+          <SuggestedBusinessList business={businessData} />
+        </div>
+      </div>
     </div>
   );
 };
