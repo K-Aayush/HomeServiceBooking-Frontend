@@ -16,7 +16,7 @@ const BusinessDetails = () => {
   const [businessData, setBusinessData] =
     useState<PopularBusinessListType | null>(null);
 
-    // fetching the business data by id
+  // fetching the business data by id
   const fetchBusinessData = async () => {
     const data = business.filter((business) => business.id === numeric);
     if (data.length !== 0) {
@@ -31,7 +31,11 @@ const BusinessDetails = () => {
       fetchBusinessData();
     }
   }, [businessDetailsid, business]);
-  return <div>BusinessDetails</div>;
+  return (
+    <div className="py-8 md:py-20 px-10 md:px-36 mx-6 md:mx-16">
+      BusinessDetails
+    </div>
+  );
 };
 
 export default BusinessDetails;
