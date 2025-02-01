@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { PopularBusinessListType } from "../lib/type";
+import BusinessInfo from "../components/BusinessInfo";
 
 const BusinessDetails = () => {
   const { businessDetailsid } = useParams();
@@ -33,7 +34,7 @@ const BusinessDetails = () => {
   }, [businessDetailsid, business]);
   return (
     <div className="py-8 md:py-20 px-10 md:px-36 mx-6 md:mx-16">
-      BusinessDetails
+      <BusinessInfo business={businessData} />
     </div>
   );
 };
