@@ -17,6 +17,6 @@ export interface BusinessListProps {
   pagehref: string;
 }
 
-export interface BusinessInfoProps {
+export interface BusinessDetailsProps {
   business: PopularBusinessListType | null;
 }

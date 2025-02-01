@@ -1,8 +1,8 @@
 import { Clock, Mail, MapPin, Share, User } from "lucide-react";
-import { BusinessInfoProps } from "../lib/type";
+import { BusinessDetailsProps } from "../lib/type";
 import { Button } from "./ui/button";
 
-const BusinessInfo = ({ business }: BusinessInfoProps) => {
+const BusinessInfo = ({ business }: BusinessDetailsProps) => {
   return (
     <div className="md:flex-row gap-4 items-center flex flex-col ">
       <img
