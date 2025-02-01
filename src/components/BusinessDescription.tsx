@@ -1,4 +1,3 @@
-import React from "react";
 import { BusinessDetailsProps } from "../lib/type";
 
 const BusinessDescription = ({ business }: BusinessDetailsProps) => {

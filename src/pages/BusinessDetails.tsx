@@ -9,11 +9,17 @@ import SuggestedBusinessList from "../components/SuggestedBusinessList";
 const BusinessDetails = () => {
   const { businessDetailsid } = useParams();
 
+  //scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [businessDetailsid]);
+
   //converting the default businessDetailsid string to number
   const numeric = Number(businessDetailsid);
 
-  //Extracting the business data from context
-  const { business } = useContext(AppContext);
+  //Extracting the data from context
+  const { business, businessByCategory, fetchBusinessByCategory } =
+    useContext(AppContext);
 
   // storing the businessData in state
   const [businessData, setBusinessData] =
@@ -24,7 +30,6 @@ const BusinessDetails = () => {
     const data = business.filter((business) => business.id === numeric);
     if (data.length !== 0) {
       setBusinessData(data[0]);
-      console.log(data[0]);
     }
   };
 
@@ -34,6 +39,12 @@ const BusinessDetails = () => {
       fetchBusinessData();
     }
   }, [businessDetailsid, business]);
+
+  useEffect(() => {
+    if (businessData?.category.name) {
+      fetchBusinessByCategory(businessData?.category.name);
+    }
+  }, [businessData, fetchBusinessByCategory]);
   return (
     <div className="py-8 md:py-20 px-10 md:px-26 lg:px-36 mx-6 md:mx-16 min-h-screen">
       <BusinessInfo business={businessData} />
@@ -43,7 +54,7 @@ const BusinessDetails = () => {
           <BusinessDescription business={businessData} />
         </div>
         <div className="md:block hidden">
-          <SuggestedBusinessList business={businessData} />
+          <SuggestedBusinessList business={businessByCategory} />
         </div>
       </div>
     </div>

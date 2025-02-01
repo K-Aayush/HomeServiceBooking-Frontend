@@ -20,3 +20,7 @@ export interface BusinessListProps {
 export interface BusinessDetailsProps {
   business: PopularBusinessListType | null;
 }
+
+export interface SuggestedBusinessDetailsProps {
+  business: PopularBusinessListType[];
+}
