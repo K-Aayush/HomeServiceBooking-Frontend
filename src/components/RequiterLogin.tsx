@@ -1,10 +1,11 @@
-import { LockIcon, MailIcon, User } from "lucide-react";
+import { EyeIcon, EyeOff, LockIcon, MailIcon, User } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 const RequiterLogin = () => {
-  const [state, setState] = useState("Login");
+  const [state, setState] = useState<string>("Login");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   return (
     <div className="absolute top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center">
       <form className="relative bg-white p-10 rounded-xl text-slate-500">
@@ -37,10 +38,21 @@ const RequiterLogin = () => {
             <LockIcon className="absolute top-1/4 left-3 w-5 h-5" />
             <Input
               placeholder="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               className="pl-10 rounded-full"
             />
+            {showPassword ? (
+              <EyeIcon
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/4 right-3 w-5 h-5"
+              />
+            ) : (
+              <EyeOff
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/4 right-3 w-5 h-5"
+              />
+            )}
           </div>
         </>
 
