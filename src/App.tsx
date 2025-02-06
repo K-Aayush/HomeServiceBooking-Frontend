@@ -7,13 +7,16 @@ import Footer from "./components/Footer";
 import Category from "./pages/Category";
 import BusinessDetails from "./pages/BusinessDetails";
 import RequiterLogin from "./components/RequiterLogin";
+import { useContext } from "react";
+import { AppContext } from "./context/AppContext";
 
 const App = () => {
   const location = useLocation();
+  const { showRequiterLogin } = useContext(AppContext);
   return (
     <div>
       <Navbar />
-      <RequiterLogin />
+      {showRequiterLogin && <RequiterLogin />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/About" element={<About />} />
