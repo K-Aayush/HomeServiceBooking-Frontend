@@ -55,7 +55,11 @@ const BusinessDetails = () => {
           <BusinessDescription business={businessData} />
         </div>
         <div className="md:block hidden">
-          <SuggestedBusinessList business={businessByCategory} />
+          <SuggestedBusinessList
+            business={businessByCategory.filter(
+              (b) => b.id !== businessData.id
+            )}
+          />
         </div>
       </div>
     </div>
