@@ -11,6 +11,8 @@ interface AppContextType {
   setBusiness: React.Dispatch<React.SetStateAction<PopularBusinessListType[]>>;
   businessByCategory: PopularBusinessListType[];
   fetchBusinessByCategory: (category: string) => void;
+  showRequiterLogin: boolean;
+  setShowRequiterLogin: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const defaultValue: AppContextType = {
@@ -22,6 +24,8 @@ const defaultValue: AppContextType = {
   setBusiness: () => {},
   businessByCategory: [],
   fetchBusinessByCategory: () => {},
+  showRequiterLogin: false,
+  setShowRequiterLogin: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(defaultValue);
