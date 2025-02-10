@@ -1,11 +1,12 @@
-import { EyeIcon, EyeOff, LockIcon, MailIcon, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { EyeIcon, EyeOff, LockIcon, MailIcon, User, X } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import image from "../assets/upload.png";
 import { requiterFormData, requiterFormSchema } from "../lib/validator";
+import { AppContext } from "../context/AppContext";
 
 const RequiterLogin = () => {
   const [state, setState] = useState<string>("Login");
@@ -14,6 +15,8 @@ const RequiterLogin = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isTextDataSubmitted, setIsTextDataSubmitted] =
     useState<boolean>(false);
+
+  const { setShowRequiterLogin } = useContext(AppContext);
 
   const {
     register,
@@ -44,7 +47,6 @@ const RequiterLogin = () => {
       //Generate previewUrl
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl);
-      console.log("file selected:", files[0]);
     }
   };
 
@@ -53,7 +55,6 @@ const RequiterLogin = () => {
     if (state === "Sign up" && !isTextDataSubmitted) {
       setIsTextDataSubmitted(true);
       setFormValues(data);
-      console.log("Proceeding to Step 2 (File Upload)");
       return;
     }
 
@@ -83,6 +84,7 @@ const RequiterLogin = () => {
     }
   };
 
+  //store the data after going nextpage for logo upload
   useEffect(() => {
     if (isTextDataSubmitted && formValues) {
       setValue("companyName", formValues.companyName);
@@ -91,9 +93,14 @@ const RequiterLogin = () => {
     }
   }, [isTextDataSubmitted, formValues, setValue]);
 
+  //stop scrolling when popup model is open
   useEffect(() => {
-    console.log("⚠️ Form Errors:", errors);
-  }, [errors]);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   return (
     <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center backdrop-blur-sm bg-black/30">
@@ -208,15 +215,15 @@ const RequiterLogin = () => {
             </div>
           </>
         )}
-
-        <p className="my-4 text-sm text-blue-600 cursor-pointer">
-          Forgot Password?
-        </p>
-
+        {state === "Login" && (
+          <p className="mt-4 text-sm text-blue-600 cursor-pointer">
+            Forgot Password?
+          </p>
+        )}
         {/* button state ternery operator */}
         <Button
           type="submit"
-          className="w-full rounded-full"
+          className="w-full mt-4 rounded-full"
           onClick={() => console.log("button clicked state: ", state)}
         >
           {state === "Login"
@@ -225,7 +232,6 @@ const RequiterLogin = () => {
             ? "Create Account"
             : "Next"}
         </Button>
-
         {/* changing state by login or sign up  */}
         {state === "Login" ? (
           <p className="mt-5 text-center">
@@ -248,6 +254,11 @@ const RequiterLogin = () => {
             </span>
           </p>
         )}
+        <X
+          onClick={() => setShowRequiterLogin(false)}
+          size={25}
+          className="absolute cursor-pointer top-5 right-5"
+        />
       </form>
     </div>
   );
