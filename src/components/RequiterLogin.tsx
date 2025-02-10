@@ -93,7 +93,7 @@ const RequiterLogin = () => {
     }
   }, [isTextDataSubmitted, formValues, setValue]);
 
-  //stop scrolling when popup model is open
+  //prevent scrolling when popup model is open
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
