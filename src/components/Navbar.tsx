@@ -3,14 +3,16 @@ import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { MenuIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { Link } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const { openSignIn } = useClerk();
   const { user, isLoaded } = useUser();
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
+  const { setShowRequiterLogin } = useContext(AppContext);
 
   //close the sidebar when opening the signin popup
   const handleSignIn = () => {
@@ -55,7 +57,9 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="md:flex hidden gap-2">
-            <Button variant="ghost">Recuriter Login</Button>
+            <Button onClick={() => setShowRequiterLogin(true)} variant="ghost">
+              Recuriter Login
+            </Button>
             <Button onClick={handleSignIn}>Login</Button>
           </div>
         )}
@@ -89,7 +93,12 @@ const Navbar = () => {
                   <div></div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <Button variant="outline">Recuriter Login</Button>
+                    <Button
+                      onClick={() => setShowRequiterLogin(true)}
+                      variant="outline"
+                    >
+                      Recuriter Login
+                    </Button>
                     <Button onClick={handleSignIn}>Login</Button>
                   </div>
                 )}

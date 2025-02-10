@@ -5,6 +5,7 @@ import { PopularBusinessListType } from "../lib/type";
 import BusinessInfo from "../components/BusinessInfo";
 import BusinessDescription from "../components/BusinessDescription";
 import SuggestedBusinessList from "../components/SuggestedBusinessList";
+import Loader from "../components/Loader";
 
 const BusinessDetails = () => {
   const { businessDetailsid } = useParams();
@@ -45,7 +46,7 @@ const BusinessDetails = () => {
       fetchBusinessByCategory(businessData?.category.name);
     }
   }, [businessData, fetchBusinessByCategory]);
-  return (
+  return businessData ? (
     <div className="py-8 md:py-20 px-10 md:px-26 lg:px-36 mx-6 md:mx-16 min-h-screen">
       <BusinessInfo business={businessData} />
 
@@ -54,10 +55,16 @@ const BusinessDetails = () => {
           <BusinessDescription business={businessData} />
         </div>
         <div className="md:block hidden">
-          <SuggestedBusinessList business={businessByCategory} />
+          <SuggestedBusinessList
+            business={businessByCategory.filter(
+              (b) => b.id !== businessData.id
+            )}
+          />
         </div>
       </div>
     </div>
+  ) : (
+    <Loader />
   );
 };
 

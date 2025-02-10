@@ -14,6 +14,9 @@ export const AppContextProvider = ({
 
   const [isSearched, setIsSearched] = useState<boolean>(false);
 
+  //show requiter login context
+  const [showRequiterLogin, setShowRequiterLogin] = useState(false);
+
   //get all business list
   const [business, setBusiness] = useState<PopularBusinessListType[]>([]);
 
@@ -49,6 +52,8 @@ export const AppContextProvider = ({
     setBusiness,
     businessByCategory,
     fetchBusinessByCategory,
+    showRequiterLogin,
+    setShowRequiterLogin,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
