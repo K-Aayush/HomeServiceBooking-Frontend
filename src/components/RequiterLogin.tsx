@@ -11,6 +11,7 @@ const RequiterLogin = () => {
   const [state, setState] = useState<string>("Login");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<requiterFormData | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isTextDataSubmitted, setIsTextDataSubmitted] =
     useState<boolean>(false);
 
@@ -34,8 +35,15 @@ const RequiterLogin = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files && files.length > 0) {      
+    if (files && files.length > 0) {
+      const file = files[0];
+
+      //set file for form validation
       setValue("companyLogo", files, { shouldValidate: true });
+
+      //Generate previewUrl
+      const previewUrl = URL.createObjectURL(file);
+      setPreviewImage(previewUrl);
       console.log("file selected:", files[0]);
     }
   };
@@ -100,19 +108,32 @@ const RequiterLogin = () => {
         {state === "Sign up" && isTextDataSubmitted ? (
           <>
             {/* extra form to uploading company icon while creating account */}
-            <div className="flex items-center gap-4 my-10">
-              <label htmlFor="image">
-                <img src={image} alt="image" className="w-16 rounded-full" />
-                <input
-                  type="file"
-                  id="image"
-                  hidden={true}
-                  onChange={handleFileChange}
-                />
-              </label>
-              <p>
-                Upload Company <br /> logo
-              </p>
+            <div className="flex flex-col my-10">
+              <div className="flex items-center gap-4">
+                <label htmlFor="image">
+                  <img
+                    src={previewImage || image}
+                    alt="image"
+                    className="w-16 rounded-full"
+                  />
+                  <input
+                    type="file"
+                    id="image"
+                    hidden={true}
+                    onChange={handleFileChange}
+                  />
+                </label>
+                <p>
+                  Upload Company <br /> logo
+                </p>
+              </div>
+
+              {errors.companyLogo &&
+                typeof errors.companyLogo.message === "string" && (
+                  <p className="text-xs text-red-500">
+                    {errors.companyLogo.message}
+                  </p>
+                )}
             </div>
           </>
         ) : (
