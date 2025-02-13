@@ -18,7 +18,7 @@ const App = () => {
     <div>
       <Navbar />
       {showRequiterLogin && <RequiterLogin />}
-      <Toaster />
+      <Toaster richColors duration={5000} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/About" element={<About />} />
