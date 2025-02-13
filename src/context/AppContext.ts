@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { PopularBusinessListType } from "../lib/type";
+import { PopularBusinessListType, requiterDataProps } from "../lib/type";
 
 //Type of AppContext
 interface AppContextType {
@@ -15,6 +15,8 @@ interface AppContextType {
   setShowRequiterLogin: React.Dispatch<React.SetStateAction<boolean>>;
   requiterToken: string | null;
   setRequiterToken: React.Dispatch<React.SetStateAction<string | null>>;
+  requiterData: requiterDataProps[];
+  setRequiterData: React.Dispatch<React.SetStateAction<requiterDataProps[]>>;
   backendUrl: string;
 }
 
@@ -31,6 +33,8 @@ const defaultValue: AppContextType = {
   setShowRequiterLogin: () => {},
   requiterToken: null,
   setRequiterToken: () => {},
+  requiterData: [],
+  setRequiterData: () => {},
   backendUrl: "",
 };
 

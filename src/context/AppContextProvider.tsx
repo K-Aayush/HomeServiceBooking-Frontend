@@ -1,7 +1,7 @@
 import { AppContext } from "./AppContext";
 import { useCallback, useEffect, useState } from "react";
 import { PopularBusinessList } from "../lib/data";
-import { PopularBusinessListType } from "../lib/type";
+import { PopularBusinessListType, requiterDataProps } from "../lib/type";
 
 export const AppContextProvider = ({
   children,
@@ -29,7 +29,7 @@ export const AppContextProvider = ({
 
   //get requiter token
   const [requiterToken, setRequiterToken] = useState<string | null>(null);
-  const [requiterData, setRequiterData] = useState(null);
+  const [requiterData, setRequiterData] = useState<requiterDataProps[]>([]);
 
   //function to fetch businessdata
   const fetchBusiness = () => {

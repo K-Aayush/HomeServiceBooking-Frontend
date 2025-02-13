@@ -6,11 +6,13 @@ export const requiterFormSchema = z.object({
   firstName: z
     .string({ required_error: "first name is required" })
     .min(3, "Must be 3 or more characters long")
-    .max(20, "Must be less than 20 characters"),
+    .max(20, "Must be less than 20 characters")
+    .optional(),
   lastName: z
     .string({ required_error: "first name is required" })
     .min(3, "Must be 3 or more characters long")
-    .max(20, "Must be less than 20 characters"),
+    .max(20, "Must be less than 20 characters")
+    .optional(),
   email: z.string({ required_error: "Email is required" }),
   password: z
     .string({ required_error: "Password is required" })

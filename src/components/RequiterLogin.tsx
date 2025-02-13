@@ -7,6 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import image from "../assets/upload.png";
 import { requiterFormData, requiterFormSchema } from "../lib/validator";
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { loginForm, loginResponse } from "../lib/type";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const RequiterLogin = () => {
   const [state, setState] = useState<string>("Login");
@@ -15,8 +19,14 @@ const RequiterLogin = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isTextDataSubmitted, setIsTextDataSubmitted] =
     useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const { setShowRequiterLogin } = useContext(AppContext);
+  const {
+    setShowRequiterLogin,
+    backendUrl,
+    setRequiterData,
+    setRequiterToken,
+  } = useContext(AppContext);
 
   const {
     register,
@@ -52,39 +62,65 @@ const RequiterLogin = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<requiterFormData> = async (data) => {
-    console.log("Form Data Before Processing:", { state, data });
+  const onSubmit: SubmitHandler<requiterFormData> = async (formData) => {
+    console.log("Form Data Before Processing:", { state, formData });
     if (state === "Sign up" && !isTextDataSubmitted) {
       setIsTextDataSubmitted(true);
-      setFormValues(data);
+      setFormValues(formData);
       return;
     }
 
     if (state === "Sign up" && isTextDataSubmitted) {
-      if (!data.profile || data.profile.length === 0) {
+      if (!formData.profile || formData.profile.length === 0) {
         setError("profile", { message: "Profile is required" });
-
         return;
       }
 
-      if (data.profile.size > 5000000) {
+      if (formData.profile.size > 5000000) {
         setError("profile", { message: "File size must be less than 5MB" });
         return;
       }
 
-      console.log("Uploaded File:", data.profile);
+      console.log("Uploaded File:", formData.profile);
 
       if (
-        !["image/jpg", "image/png", "image/jpeg"].includes(data.profile.type)
+        !["image/jpg", "image/png", "image/jpeg"].includes(
+          formData.profile.type
+        )
       ) {
         setError("profile", { message: "Invalid file formate" });
         return;
       }
-
-      console.log("final submission:", data);
     } else if (state === "Login") {
       clearErrors("profile");
-      console.log("Login SUbmission:", data);
+      console.error("hello");
+      try {
+        const loginPayload: loginForm = {
+          email: formData.email,
+          password: formData.password,
+        };
+
+        const { data } = await axios.post<loginResponse>(
+          backendUrl + "/api/requiter/login",
+          loginPayload
+        );
+
+        if (data.success) {
+          console.log(data);
+          setRequiterData(data.requiter);
+          setRequiterToken(data.token);
+          localStorage.setItem("requiterToken", data.token);
+          setShowRequiterLogin(false);
+          navigate("/requiterDashboard");
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        // Handle the error properly
+        console.error("Login failed:", error);
+        toast.error("An error occurred while logging in. Please try again.");
+      }
     }
   };
 
