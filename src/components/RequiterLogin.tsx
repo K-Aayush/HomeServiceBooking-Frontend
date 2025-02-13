@@ -83,17 +83,53 @@ const RequiterLogin = () => {
 
       console.log("Uploaded File:", formData.profile);
 
-      if (
-        !["image/jpg", "image/png", "image/jpeg"].includes(
-          formData.profile.type
-        )
-      ) {
-        setError("profile", { message: "Invalid file formate" });
-        return;
+      // if (
+      //   !["image/jpg", "image/png", "image/jpeg"].includes(
+      //     formData.profile.type
+      //   )
+      // ) {
+      //   setError("profile", { message: "Invalid file formate" });
+      //   return;
+      // }
+
+      //creating new formdata
+      const forms = new FormData();
+      forms.append("firstName", formData.firstName || "");
+      forms.append("lastName", formData.lastName || "");
+      forms.append("email", formData.email || "");
+      forms.append("password", formData.password || "");
+      forms.append("contactNumber", formData.contactNumber || "");
+      forms.append("profile", formData.profile);
+
+      try {
+        const { data } = await axios.post<loginResponse>(
+          backendUrl + "/api/requiter/register",
+          forms,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data", // Ensuring the request is sent as FormData
+            },
+          }
+        );
+
+        if (data.success) {
+          console.log(data);
+          setRequiterData(data.requiter);
+          setRequiterToken(data.token);
+          localStorage.setItem("requiterToken", data.token);
+          setShowRequiterLogin(false);
+          navigate("/requiterDashboard");
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        // error handling
+        console.error("register failed:", error);
+        toast.error("An error occurred while rgistering. Please try again.");
       }
     } else if (state === "Login") {
       clearErrors("profile");
-      console.error("hello");
       try {
         const loginPayload: loginForm = {
           email: formData.email,
@@ -117,7 +153,7 @@ const RequiterLogin = () => {
           toast.error(data.message);
         }
       } catch (error) {
-        // Handle the error properly
+        // error handling
         console.error("Login failed:", error);
         toast.error("An error occurred while logging in. Please try again.");
       }
