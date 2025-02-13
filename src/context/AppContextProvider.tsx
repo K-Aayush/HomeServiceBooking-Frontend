@@ -25,6 +25,10 @@ export const AppContextProvider = ({
     PopularBusinessListType[]
   >([]);
 
+  //get requiter token
+  const [requiterToken, setRequiterToken] = useState<string | null>(null);
+  const [requiterData, setRequiterData] = useState(null);
+
   //function to fetch businessdata
   const fetchBusiness = () => {
     setBusiness(PopularBusinessList);
@@ -54,6 +58,10 @@ export const AppContextProvider = ({
     fetchBusinessByCategory,
     showRequiterLogin,
     setShowRequiterLogin,
+    requiterToken,
+    setRequiterToken,
+    requiterData,
+    setRequiterData,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

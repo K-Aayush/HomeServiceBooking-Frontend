@@ -13,6 +13,8 @@ interface AppContextType {
   fetchBusinessByCategory: (category: string) => void;
   showRequiterLogin: boolean;
   setShowRequiterLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  requiterToken: string | null;
+  setRequiterToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const defaultValue: AppContextType = {
@@ -26,6 +28,8 @@ const defaultValue: AppContextType = {
   fetchBusinessByCategory: () => {},
   showRequiterLogin: false,
   setShowRequiterLogin: () => {},
+  requiterToken: null,
+  setRequiterToken: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(defaultValue);
