@@ -15,6 +15,7 @@ interface AppContextType {
   setShowRequiterLogin: React.Dispatch<React.SetStateAction<boolean>>;
   requiterToken: string | null;
   setRequiterToken: React.Dispatch<React.SetStateAction<string | null>>;
+  backendUrl: string;
 }
 
 const defaultValue: AppContextType = {
@@ -30,6 +31,7 @@ const defaultValue: AppContextType = {
   setShowRequiterLogin: () => {},
   requiterToken: null,
   setRequiterToken: () => {},
+  backendUrl: "",
 };
 
 export const AppContext = createContext<AppContextType>(defaultValue);

@@ -27,10 +27,12 @@ const RequiterLogin = () => {
     clearErrors,
   } = useForm<requiterFormData>({
     defaultValues: {
-      companyName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
-      companyLogo: null,
+      contactNumber: "",
+      profile: "",
     },
     resolver: zodResolver(requiterFormSchema),
     shouldUnregister: true,
@@ -42,7 +44,7 @@ const RequiterLogin = () => {
       const file = files[0];
 
       //set file for form validation
-      setValue("companyLogo", files, { shouldValidate: true });
+      setValue("profile", file, { shouldValidate: true });
 
       //Generate previewUrl
       const previewUrl = URL.createObjectURL(file);
@@ -59,27 +61,29 @@ const RequiterLogin = () => {
     }
 
     if (state === "Sign up" && isTextDataSubmitted) {
-      if (!data.companyLogo || data.companyLogo.length === 0) {
-        setError("companyLogo", { message: "Company Logo is required" });
+      if (!data.profile || data.profile.length === 0) {
+        setError("profile", { message: "Profile is required" });
 
         return;
       }
 
-      const file = data.companyLogo[0];
-      console.log("Uploaded File:", file);
-      if (file.size > 5000000) {
-        setError("companyLogo", { message: "File size must be less than 5MB" });
+      if (data.profile.size > 5000000) {
+        setError("profile", { message: "File size must be less than 5MB" });
         return;
       }
 
-      if (!["image/jpg", "image/png", "image/jpeg"].includes(file.type)) {
-        setError("companyLogo", { message: "Invalid file formate" });
+      console.log("Uploaded File:", data.profile);
+
+      if (
+        !["image/jpg", "image/png", "image/jpeg"].includes(data.profile.type)
+      ) {
+        setError("profile", { message: "Invalid file formate" });
         return;
       }
 
       console.log("final submission:", data);
     } else if (state === "Login") {
-      clearErrors("companyName");
+      clearErrors("profile");
       console.log("Login SUbmission:", data);
     }
   };
@@ -87,7 +91,9 @@ const RequiterLogin = () => {
   //store the data after going nextpage for logo upload
   useEffect(() => {
     if (isTextDataSubmitted && formValues) {
-      setValue("companyName", formValues.companyName);
+      setValue("firstName", formValues.firstName);
+      setValue("lastName", formValues.lastName);
+      setValue("profile", formValues.profile);
       setValue("email", formValues.email);
       setValue("password", formValues.password);
     }
@@ -135,12 +141,9 @@ const RequiterLogin = () => {
                 </p>
               </div>
 
-              {errors.companyLogo &&
-                typeof errors.companyLogo.message === "string" && (
-                  <p className="text-xs text-red-500">
-                    {errors.companyLogo.message}
-                  </p>
-                )}
+              {errors.profile && typeof errors.profile.message === "string" && (
+                <p className="text-xs text-red-500">{errors.profile.message}</p>
+              )}
             </div>
           </>
         ) : (
@@ -148,23 +151,67 @@ const RequiterLogin = () => {
             {/* normal form for both  */}
             {state !== "Login" && (
               <div>
-                <div className="relative mt-5">
-                  <User className="absolute w-5 h-5 top-1/4 left-3" />
-                  <Input
-                    {...(state === "Sign up" ? register("companyName") : {})}
-                    placeholder="Company Name"
-                    type="text"
-                    className={`pl-10 rounded-full ${
-                      errors.companyName &&
-                      "border-red-500 focus-visible:ring-red-500"
-                    }`}
-                  />
+                <div>
+                  <div className="relative mt-5">
+                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Input
+                      {...(state === "Sign up" ? register("firstName") : {})}
+                      placeholder="first name"
+                      type="text"
+                      required
+                      className={`pl-10 rounded-full ${
+                        errors.firstName &&
+                        "border-red-500 focus-visible:ring-red-500"
+                      }`}
+                    />
+                  </div>
+                  {errors.firstName && (
+                    <p className="text-xs text-red-500">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </div>
-                {errors.companyName && (
-                  <p className="text-xs text-red-500">
-                    {errors.companyName.message}
-                  </p>
-                )}
+                <div>
+                  <div className="relative mt-5">
+                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Input
+                      {...(state === "Sign up" ? register("lastName") : {})}
+                      placeholder="last name"
+                      required
+                      type="text"
+                      className={`pl-10 rounded-full ${
+                        errors.lastName &&
+                        "border-red-500 focus-visible:ring-red-500"
+                      }`}
+                    />
+                  </div>
+                  {errors.lastName && (
+                    <p className="text-xs text-red-500">
+                      {errors.lastName.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <div className="relative mt-5">
+                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Input
+                      {...(state === "Sign up"
+                        ? register("contactNumber")
+                        : {})}
+                      placeholder="contact number (optional)"
+                      type="text"
+                      className={`pl-10 rounded-full ${
+                        errors.lastName &&
+                        "border-red-500 focus-visible:ring-red-500"
+                      }`}
+                    />
+                  </div>
+                  {errors.contactNumber && (
+                    <p className="text-xs text-red-500">
+                      {errors.contactNumber.message}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
             <div>

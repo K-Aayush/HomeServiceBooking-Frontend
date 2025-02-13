@@ -8,6 +8,8 @@ export const AppContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [searchFilter, setSearchFilter] = useState({
     title: "",
   });
@@ -62,6 +64,7 @@ export const AppContextProvider = ({
     setRequiterToken,
     requiterData,
     setRequiterData,
+    backendUrl,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
