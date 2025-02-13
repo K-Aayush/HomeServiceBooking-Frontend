@@ -3,8 +3,13 @@ import { z } from "zod";
 export type requiterFormData = z.infer<typeof requiterFormSchema>;
 
 export const requiterFormSchema = z.object({
-  companyName: z
-    .string()
+  firstName: z
+    .string({ required_error: "first name is required" })
+    .min(3, "Must be 3 or more characters long")
+    .max(20, "Must be less than 20 characters")
+    .optional(),
+  lastName: z
+    .string({ required_error: "first name is required" })
     .min(3, "Must be 3 or more characters long")
     .max(20, "Must be less than 20 characters")
     .optional(),
@@ -26,5 +31,6 @@ export const requiterFormSchema = z.object({
       (password) => /[!@#$%^&*]/.test(password),
       "Must contain one special character"
     ),
-  companyLogo: z.any().optional(),
+  profile: z.any().optional(),
+  contactNumber: z.string().optional(),
 });

@@ -1,13 +1,15 @@
 import { AppContext } from "./AppContext";
 import { useCallback, useEffect, useState } from "react";
 import { PopularBusinessList } from "../lib/data";
-import { PopularBusinessListType } from "../lib/type";
+import { PopularBusinessListType, requiterDataProps } from "../lib/type";
 
 export const AppContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
   const [searchFilter, setSearchFilter] = useState({
     title: "",
   });
@@ -24,6 +26,10 @@ export const AppContextProvider = ({
   const [businessByCategory, setBusinessByCategory] = useState<
     PopularBusinessListType[]
   >([]);
+
+  //get requiter token
+  const [requiterToken, setRequiterToken] = useState<string | null>(null);
+  const [requiterData, setRequiterData] = useState<requiterDataProps[]>([]);
 
   //function to fetch businessdata
   const fetchBusiness = () => {
@@ -54,6 +60,11 @@ export const AppContextProvider = ({
     fetchBusinessByCategory,
     showRequiterLogin,
     setShowRequiterLogin,
+    requiterToken,
+    setRequiterToken,
+    requiterData,
+    setRequiterData,
+    backendUrl,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

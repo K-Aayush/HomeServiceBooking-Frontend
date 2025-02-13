@@ -9,6 +9,7 @@ import BusinessDetails from "./pages/BusinessDetails";
 import RequiterLogin from "./components/RequiterLogin";
 import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
+import { Toaster } from "sonner";
 
 const App = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const App = () => {
     <div>
       <Navbar />
       {showRequiterLogin && <RequiterLogin />}
+      <Toaster richColors duration={5000} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/About" element={<About />} />

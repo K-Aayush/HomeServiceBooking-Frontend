@@ -7,6 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import image from "../assets/upload.png";
 import { requiterFormData, requiterFormSchema } from "../lib/validator";
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { loginForm, loginResponse } from "../lib/type";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const RequiterLogin = () => {
   const [state, setState] = useState<string>("Login");
@@ -15,8 +19,14 @@ const RequiterLogin = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isTextDataSubmitted, setIsTextDataSubmitted] =
     useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const { setShowRequiterLogin } = useContext(AppContext);
+  const {
+    setShowRequiterLogin,
+    backendUrl,
+    setRequiterData,
+    setRequiterToken,
+  } = useContext(AppContext);
 
   const {
     register,
@@ -27,10 +37,12 @@ const RequiterLogin = () => {
     clearErrors,
   } = useForm<requiterFormData>({
     defaultValues: {
-      companyName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
-      companyLogo: null,
+      contactNumber: "",
+      profile: "",
     },
     resolver: zodResolver(requiterFormSchema),
     shouldUnregister: true,
@@ -42,7 +54,7 @@ const RequiterLogin = () => {
       const file = files[0];
 
       //set file for form validation
-      setValue("companyLogo", files, { shouldValidate: true });
+      setValue("profile", file, { shouldValidate: true });
 
       //Generate previewUrl
       const previewUrl = URL.createObjectURL(file);
@@ -50,44 +62,110 @@ const RequiterLogin = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<requiterFormData> = async (data) => {
-    console.log("Form Data Before Processing:", { state, data });
+  const onSubmit: SubmitHandler<requiterFormData> = async (formData) => {
+    console.log("Form Data Before Processing:", { state, formData });
     if (state === "Sign up" && !isTextDataSubmitted) {
       setIsTextDataSubmitted(true);
-      setFormValues(data);
+      setFormValues(formData);
       return;
     }
 
     if (state === "Sign up" && isTextDataSubmitted) {
-      if (!data.companyLogo || data.companyLogo.length === 0) {
-        setError("companyLogo", { message: "Company Logo is required" });
-
+      if (!formData.profile || formData.profile.length === 0) {
+        setError("profile", { message: "Profile is required" });
         return;
       }
 
-      const file = data.companyLogo[0];
-      console.log("Uploaded File:", file);
-      if (file.size > 5000000) {
-        setError("companyLogo", { message: "File size must be less than 5MB" });
+      if (formData.profile.size > 5000000) {
+        setError("profile", { message: "File size must be less than 5MB" });
         return;
       }
 
-      if (!["image/jpg", "image/png", "image/jpeg"].includes(file.type)) {
-        setError("companyLogo", { message: "Invalid file formate" });
-        return;
-      }
+      console.log("Uploaded File:", formData.profile);
 
-      console.log("final submission:", data);
+      // if (
+      //   !["image/jpg", "image/png", "image/jpeg"].includes(
+      //     formData.profile.type
+      //   )
+      // ) {
+      //   setError("profile", { message: "Invalid file formate" });
+      //   return;
+      // }
+
+      //creating new formdata
+      const forms = new FormData();
+      forms.append("firstName", formData.firstName || "");
+      forms.append("lastName", formData.lastName || "");
+      forms.append("email", formData.email || "");
+      forms.append("password", formData.password || "");
+      forms.append("contactNumber", formData.contactNumber || "");
+      forms.append("profile", formData.profile);
+
+      try {
+        const { data } = await axios.post<loginResponse>(
+          backendUrl + "/api/requiter/register",
+          forms,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data", // Ensuring the request is sent as FormData
+            },
+          }
+        );
+
+        if (data.success) {
+          console.log(data);
+          setRequiterData(data.requiter);
+          setRequiterToken(data.token);
+          localStorage.setItem("requiterToken", data.token);
+          setShowRequiterLogin(false);
+          navigate("/requiterDashboard");
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        // error handling
+        console.error("register failed:", error);
+        toast.error("An error occurred while rgistering. Please try again.");
+      }
     } else if (state === "Login") {
-      clearErrors("companyName");
-      console.log("Login SUbmission:", data);
+      clearErrors("profile");
+      try {
+        const loginPayload: loginForm = {
+          email: formData.email,
+          password: formData.password,
+        };
+
+        const { data } = await axios.post<loginResponse>(
+          backendUrl + "/api/requiter/login",
+          loginPayload
+        );
+
+        if (data.success) {
+          console.log(data);
+          setRequiterData(data.requiter);
+          setRequiterToken(data.token);
+          localStorage.setItem("requiterToken", data.token);
+          setShowRequiterLogin(false);
+          navigate("/requiterDashboard");
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        // error handling
+        console.error("Login failed:", error);
+        toast.error("An error occurred while logging in. Please try again.");
+      }
     }
   };
 
   //store the data after going nextpage for logo upload
   useEffect(() => {
     if (isTextDataSubmitted && formValues) {
-      setValue("companyName", formValues.companyName);
+      setValue("firstName", formValues.firstName);
+      setValue("lastName", formValues.lastName);
+      setValue("profile", formValues.profile);
       setValue("email", formValues.email);
       setValue("password", formValues.password);
     }
@@ -135,12 +213,9 @@ const RequiterLogin = () => {
                 </p>
               </div>
 
-              {errors.companyLogo &&
-                typeof errors.companyLogo.message === "string" && (
-                  <p className="text-xs text-red-500">
-                    {errors.companyLogo.message}
-                  </p>
-                )}
+              {errors.profile && typeof errors.profile.message === "string" && (
+                <p className="text-xs text-red-500">{errors.profile.message}</p>
+              )}
             </div>
           </>
         ) : (
@@ -148,23 +223,67 @@ const RequiterLogin = () => {
             {/* normal form for both  */}
             {state !== "Login" && (
               <div>
-                <div className="relative mt-5">
-                  <User className="absolute w-5 h-5 top-1/4 left-3" />
-                  <Input
-                    {...(state === "Sign up" ? register("companyName") : {})}
-                    placeholder="Company Name"
-                    type="text"
-                    className={`pl-10 rounded-full ${
-                      errors.companyName &&
-                      "border-red-500 focus-visible:ring-red-500"
-                    }`}
-                  />
+                <div>
+                  <div className="relative mt-5">
+                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Input
+                      {...(state === "Sign up" ? register("firstName") : {})}
+                      placeholder="first name"
+                      type="text"
+                      required
+                      className={`pl-10 rounded-full ${
+                        errors.firstName &&
+                        "border-red-500 focus-visible:ring-red-500"
+                      }`}
+                    />
+                  </div>
+                  {errors.firstName && (
+                    <p className="text-xs text-red-500">
+                      {errors.firstName.message}
+                    </p>
+                  )}
                 </div>
-                {errors.companyName && (
-                  <p className="text-xs text-red-500">
-                    {errors.companyName.message}
-                  </p>
-                )}
+                <div>
+                  <div className="relative mt-5">
+                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Input
+                      {...(state === "Sign up" ? register("lastName") : {})}
+                      placeholder="last name"
+                      required
+                      type="text"
+                      className={`pl-10 rounded-full ${
+                        errors.lastName &&
+                        "border-red-500 focus-visible:ring-red-500"
+                      }`}
+                    />
+                  </div>
+                  {errors.lastName && (
+                    <p className="text-xs text-red-500">
+                      {errors.lastName.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <div className="relative mt-5">
+                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Input
+                      {...(state === "Sign up"
+                        ? register("contactNumber")
+                        : {})}
+                      placeholder="contact number (optional)"
+                      type="text"
+                      className={`pl-10 rounded-full ${
+                        errors.lastName &&
+                        "border-red-500 focus-visible:ring-red-500"
+                      }`}
+                    />
+                  </div>
+                  {errors.contactNumber && (
+                    <p className="text-xs text-red-500">
+                      {errors.contactNumber.message}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
             <div>
