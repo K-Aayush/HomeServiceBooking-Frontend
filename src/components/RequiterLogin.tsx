@@ -1,4 +1,12 @@
-import { EyeIcon, EyeOff, LockIcon, MailIcon, User, X } from "lucide-react";
+import {
+  Contact,
+  EyeIcon,
+  EyeOff,
+  LockIcon,
+  MailIcon,
+  UserPen,
+  X,
+} from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -7,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import image from "../assets/upload.png";
 import { requiterFormData, requiterFormSchema } from "../lib/validator";
 import { AppContext } from "../context/AppContext";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { loginForm, loginResponse } from "../lib/type";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -34,7 +42,6 @@ const RequiterLogin = () => {
     handleSubmit,
     setValue,
     setError,
-    clearErrors,
   } = useForm<requiterFormData>({
     defaultValues: {
       firstName: "",
@@ -83,15 +90,6 @@ const RequiterLogin = () => {
 
       console.log("Uploaded File:", formData.profile);
 
-      // if (
-      //   !["image/jpg", "image/png", "image/jpeg"].includes(
-      //     formData.profile.type
-      //   )
-      // ) {
-      //   setError("profile", { message: "Invalid file formate" });
-      //   return;
-      // }
-
       //creating new formdata
       const forms = new FormData();
       forms.append("firstName", formData.firstName || "");
@@ -125,11 +123,17 @@ const RequiterLogin = () => {
         }
       } catch (error) {
         // error handling
-        console.error("register failed:", error);
-        toast.error("An error occurred while rgistering. Please try again.");
+        if (error instanceof AxiosError && error.response) {
+          //400, 401 and 500 error
+          toast.error(error.response.data.message);
+        } else if (error instanceof Error) {
+          //unexpected errors
+          toast.error(error.message || "An error occured while registering");
+        } else {
+          toast.error("Something went wrong");
+        }
       }
     } else if (state === "Login") {
-      clearErrors("profile");
       try {
         const loginPayload: loginForm = {
           email: formData.email,
@@ -154,8 +158,15 @@ const RequiterLogin = () => {
         }
       } catch (error) {
         // error handling
-        console.error("Login failed:", error);
-        toast.error("An error occurred while logging in. Please try again.");
+        if (error instanceof AxiosError && error.response) {
+          //400, 401 and 500 error
+          toast.error(error.response.data.message);
+        } else if (error instanceof Error) {
+          //unexpected errors
+          toast.error(error.message || "An error occured while loging in");
+        } else {
+          toast.error("Something went wrong");
+        }
       }
     }
   };
@@ -189,7 +200,9 @@ const RequiterLogin = () => {
         <h1 className="text-2xl font-medium text-center text-neutral-700">
           Requiter {state}
         </h1>
-        <p className="text-sm">Welcome back! Please sign in to continue</p>
+        <p className="text-sm text-center">
+          Welcome back! Please sign in to continue
+        </p>
         {state === "Sign up" && isTextDataSubmitted ? (
           <>
             {/* extra form to uploading company icon while creating account */}
@@ -223,49 +236,51 @@ const RequiterLogin = () => {
             {/* normal form for both  */}
             {state !== "Login" && (
               <div>
-                <div>
-                  <div className="relative mt-5">
-                    <User className="absolute w-5 h-5 top-1/4 left-3" />
-                    <Input
-                      {...(state === "Sign up" ? register("firstName") : {})}
-                      placeholder="first name"
-                      type="text"
-                      required
-                      className={`pl-10 rounded-full ${
-                        errors.firstName &&
-                        "border-red-500 focus-visible:ring-red-500"
-                      }`}
-                    />
+                <div className="flex gap-2">
+                  <div>
+                    <div className="relative mt-5">
+                      <UserPen className="absolute w-5 h-5 top-1/4 left-3" />
+                      <Input
+                        {...(state === "Sign up" ? register("firstName") : {})}
+                        placeholder="first name"
+                        type="text"
+                        required
+                        className={`pl-10 rounded-full ${
+                          errors.firstName &&
+                          "border-red-500 focus-visible:ring-red-500"
+                        }`}
+                      />
+                    </div>
+                    {errors.firstName && (
+                      <p className="text-xs text-red-500">
+                        {errors.firstName.message}
+                      </p>
+                    )}
                   </div>
-                  {errors.firstName && (
-                    <p className="text-xs text-red-500">
-                      {errors.firstName.message}
-                    </p>
-                  )}
+                  <div>
+                    <div className="relative mt-5">
+                      <UserPen className="absolute w-5 h-5 top-1/4 left-3" />
+                      <Input
+                        {...(state === "Sign up" ? register("lastName") : {})}
+                        placeholder="last name"
+                        required
+                        type="text"
+                        className={`pl-10 rounded-full ${
+                          errors.lastName &&
+                          "border-red-500 focus-visible:ring-red-500"
+                        }`}
+                      />
+                    </div>
+                    {errors.lastName && (
+                      <p className="text-xs text-red-500">
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <div className="relative mt-5">
-                    <User className="absolute w-5 h-5 top-1/4 left-3" />
-                    <Input
-                      {...(state === "Sign up" ? register("lastName") : {})}
-                      placeholder="last name"
-                      required
-                      type="text"
-                      className={`pl-10 rounded-full ${
-                        errors.lastName &&
-                        "border-red-500 focus-visible:ring-red-500"
-                      }`}
-                    />
-                  </div>
-                  {errors.lastName && (
-                    <p className="text-xs text-red-500">
-                      {errors.lastName.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <div className="relative mt-5">
-                    <User className="absolute w-5 h-5 top-1/4 left-3" />
+                    <Contact className="absolute w-5 h-5 top-1/4 left-3" />
                     <Input
                       {...(state === "Sign up"
                         ? register("contactNumber")
