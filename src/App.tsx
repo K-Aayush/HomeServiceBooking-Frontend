@@ -11,6 +11,9 @@ import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import { Toaster } from "sonner";
 import RequiterDashboard from "./pages/RequiterDashboard";
+import AddService from "./pages/AddService";
+import ManageService from "./pages/ManageService";
+import ViewRequiterDashboard from "./pages/ViewRequiterDashboard";
 
 const App = () => {
   const location = useLocation();
@@ -29,7 +32,11 @@ const App = () => {
           path="/businessDetails/:businessDetailsid"
           element={<BusinessDetails />}
         />
-        <Route path="/requiterDashboard" element={<RequiterDashboard />} />
+        <Route path="/requiterDashboard" element={<RequiterDashboard />}>
+          <Route path="dashboard" element={<ViewRequiterDashboard />} />
+          <Route path="add-service" element={<AddService />} />
+          <Route path="manage-service" element={<ManageService />} />
+        </Route>
       </Routes>
       {!location.pathname.startsWith("/category/") ||
         (!location.pathname.startsWith("/requiterDashboard") && <Footer />)}
