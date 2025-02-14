@@ -10,13 +10,14 @@ import RequiterLogin from "./components/RequiterLogin";
 import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import { Toaster } from "sonner";
+import RequiterDashboard from "./pages/RequiterDashboard";
 
 const App = () => {
   const location = useLocation();
   const { showRequiterLogin } = useContext(AppContext);
   return (
     <div>
-      <Navbar />
+      {!location.pathname.startsWith("/requiterDashboard") && <Navbar />}
       {showRequiterLogin && <RequiterLogin />}
       <Toaster richColors duration={5000} />
       <Routes>
@@ -28,8 +29,10 @@ const App = () => {
           path="/businessDetails/:businessDetailsid"
           element={<BusinessDetails />}
         />
+        <Route path="/requiterDashboard" element={<RequiterDashboard />} />
       </Routes>
-      {!location.pathname.startsWith("/category/") && <Footer />}
+      {!location.pathname.startsWith("/category/") ||
+        (!location.pathname.startsWith("/requiterDashboard") && <Footer />)}
     </div>
   );
 };
