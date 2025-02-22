@@ -5,9 +5,19 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "../../components/ui/avatar";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
 
 const RequiterDashboard = () => {
+  const { logout, requiterData } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    logout();
+
+    navigate("/");
+  };
   return (
     <div className="min-h-screen">
       {/*Navbar for requiter pannel*/}
@@ -21,17 +31,26 @@ const RequiterDashboard = () => {
             height={200}
           />
           <div className="flex items-center gap-3">
-            <p className="max-sm:hidden">Welcome, Rquiter</p>
+            <p className="max-sm:hidden">Welcome, {requiterData?.name}</p>
             <div className="relative group">
               <Avatar>
-                <AvatarImage />
+                <AvatarImage
+                  className="object-cover object-top rounded-full size-full"
+                  src={requiterData?.requiterProfileImage}
+                  alt={"username"}
+                />
                 <AvatarFallback>
                   <User />
                 </AvatarFallback>
               </Avatar>
               <div className="absolute top-0 right-0 z-10 hidden pt-12 text-black rounded group-hover:block">
-                <ul className="p-2 m-0 text-sm list-none border rounded-md bg-gray-50">
-                  <li className="px-2 py-1 pr-10 cursor-pointer">Logout</li>
+                <ul className="p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
+                  <li
+                    onClick={handleLogout}
+                    className="px-2 py-1 pr-10 cursor-pointer"
+                  >
+                    Logout
+                  </li>
                 </ul>
               </div>
             </div>

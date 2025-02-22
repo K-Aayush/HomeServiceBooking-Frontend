@@ -43,7 +43,13 @@ export interface loginForm {
 
 export interface loginResponse {
   success: boolean;
-  requiter: requiterDataProps[];
+  requiter: requiterDataProps;
   token: string;
+  message: string;
+}
+
+export interface tokenCheck {
+  success: boolean;
+  requiter: requiterDataProps;
   message: string;
 }

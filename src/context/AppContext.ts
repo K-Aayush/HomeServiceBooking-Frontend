@@ -15,9 +15,14 @@ interface AppContextType {
   setShowRequiterLogin: React.Dispatch<React.SetStateAction<boolean>>;
   requiterToken: string | null;
   setRequiterToken: React.Dispatch<React.SetStateAction<string | null>>;
-  requiterData: requiterDataProps[];
-  setRequiterData: React.Dispatch<React.SetStateAction<requiterDataProps[]>>;
+  requiterData: requiterDataProps | null;
+  setRequiterData: React.Dispatch<
+    React.SetStateAction<requiterDataProps | null>
+  >;
   backendUrl: string;
+  logout: () => void;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const defaultValue: AppContextType = {
@@ -33,9 +38,12 @@ const defaultValue: AppContextType = {
   setShowRequiterLogin: () => {},
   requiterToken: null,
   setRequiterToken: () => {},
-  requiterData: [],
+  requiterData: null,
   setRequiterData: () => {},
   backendUrl: "",
+  logout: () => {},
+  isLoading: false,
+  setIsLoading: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(defaultValue);

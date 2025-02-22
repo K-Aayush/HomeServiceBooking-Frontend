@@ -1,9 +1,14 @@
 import { AppContext } from "./AppContext";
 import { useCallback, useEffect, useState } from "react";
 import { PopularBusinessList } from "../lib/data";
-import { PopularBusinessListType, requiterDataProps } from "../lib/type";
+import {
+  PopularBusinessListType,
+  requiterDataProps,
+  tokenCheck,
+} from "../lib/type";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const AppContextProvider = ({
   children,
@@ -18,6 +23,7 @@ export const AppContextProvider = ({
   });
 
   const [isSearched, setIsSearched] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //show requiter login context
   const [showRequiterLogin, setShowRequiterLogin] = useState(false);
@@ -31,8 +37,12 @@ export const AppContextProvider = ({
   >([]);
 
   //get requiter token
-  const [requiterToken, setRequiterToken] = useState<string | null>(null);
-  const [requiterData, setRequiterData] = useState<requiterDataProps[]>([]);
+  const [requiterToken, setRequiterToken] = useState<string | null>(
+    localStorage.getItem("requiterToken")
+  );
+  const [requiterData, setRequiterData] = useState<requiterDataProps | null>(
+    null
+  );
 
   //function to fetch businessdata
   const fetchBusiness = () => {
@@ -51,6 +61,34 @@ export const AppContextProvider = ({
   useEffect(() => {
     fetchBusiness();
   }, []);
+
+  //fetch requiterdata
+  useEffect(() => {
+    const fetchData = async () => {
+      if (requiterToken) {
+        try {
+          const { data } = await axios.get<tokenCheck>(
+            `${backendUrl}/api/requiter/me`,
+            { headers: { Authorization: requiterToken } }
+          );
+
+          if (data.success) {
+            setRequiterData(data.requiter);
+          } else {
+            toast.error(data.message);
+            logout();
+          }
+        } catch (error) {
+          console.error("User data fetch error:", error);
+          logout();
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [requiterToken, backendUrl]);
 
   //Logout function
   const logout = () => {
@@ -77,6 +115,8 @@ export const AppContextProvider = ({
     setRequiterData,
     backendUrl,
     logout,
+    isLoading,
+    setIsLoading,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
