@@ -68,13 +68,17 @@ export const AppContextProvider = ({
   };
 
   //function to fetch business by category
-  const fetchBusinessByCategory = useCallback((categoryName: string) => {
-    const filteredBusinessList = PopularBusinessList.filter(
-      (business) =>
-        business.category.toLowerCase() === categoryName.toLowerCase()
-    );
-    setBusinessByCategory(filteredBusinessList);
-  }, []);
+  const fetchBusinessByCategory = useCallback(
+    (categoryName: string) => {
+      if (business.length === 0) return;
+      const filteredBusinessList = business.filter(
+        (business) =>
+          business.category.toLowerCase() === categoryName.toLowerCase()
+      );
+      setBusinessByCategory(filteredBusinessList);
+    },
+    [business]
+  );
 
   useEffect(() => {
     fetchBusiness();
