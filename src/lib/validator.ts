@@ -34,3 +34,11 @@ export const requiterFormSchema = z.object({
   profile: z.any().optional(),
   contactNumber: z.string().optional(),
 });
+
+export const addBusinessSchema = z.object({
+  name: z.string().min(1, "Product Name is required"),
+  category: z.string().min(1, "Product category is required"),
+  about: z.string().min(1, "Description is required"),
+  address: z.string().min(1, "address is required"),
+  imageUrl: z.any(),
+});
