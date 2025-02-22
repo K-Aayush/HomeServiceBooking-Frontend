@@ -22,9 +22,9 @@ const Category = () => {
   }, [id, fetchBusinessByCategory]);
 
   return (
-    <div className="mx-6 md:mx-16 mt-8">
+    <div className="mx-6 mt-8 md:mx-16">
       <div className="grid grid-cols-1 md:grid-cols-4">
-        <div className="hidden md:block">
+        <div className="hidden min-h-screen md:block">
           <CategorySidebar categoryList={`${id}`} />
         </div>
         <div className="md:col-span-3 ">

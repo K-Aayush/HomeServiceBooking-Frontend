@@ -6,23 +6,23 @@ import { Link } from "react-router-dom";
 const SuggestedBusinessList = ({ business }: SuggestedBusinessDetailsProps) => {
   return (
     <div className="pl-10">
-      <Button className="flex gap-2 w-full">
+      <Button className="flex w-full gap-2">
         <NotebookPen /> Book Appointment
       </Button>
-      <h2 className="font-bold text-lg mb-3 mt-3">Similar Business</h2>
+      <h2 className="mt-3 mb-3 text-lg font-bold">Similar Business</h2>
       <div className="">
         {business.map((item, index) => (
           <Link
             to={`/businessDetails/${item.id}`}
             key={index}
-            className="flex gap-2 mb-4 rounded-lg p-2 hover:border hover:border-primary hover:shadow-md cursor-pointer"
+            className="flex gap-2 p-2 mb-4 rounded-lg cursor-pointer hover:border hover:border-primary hover:shadow-md"
           >
             <img
-              src={item.images[0]}
+              src={item.images[0].url}
               alt={item.name}
               width={80}
               height={80}
-              className="rounded-lg object-cover"
+              className="object-cover rounded-lg"
               loading="lazy"
               decoding="async"
             />

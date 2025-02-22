@@ -3,12 +3,14 @@ export interface PopularBusinessListType {
   name: string;
   about: string;
   address: string;
-  category: {
-    name: string;
-  };
+  category: string;
   contactPerson: string;
   email: string;
-  images: string[];
+  images: imageUrl[];
+}
+
+export interface imageUrl {
+  url: string;
 }
 
 export interface BusinessListProps {
@@ -43,7 +45,28 @@ export interface loginForm {
 
 export interface loginResponse {
   success: boolean;
-  requiter: requiterDataProps[];
+  requiter: requiterDataProps;
   token: string;
   message: string;
+}
+
+export interface tokenCheck {
+  success: boolean;
+  requiter: requiterDataProps;
+  message: string;
+}
+
+export interface businessDataProps {
+  name: string;
+  category: string;
+  address: number;
+  about: number;
+}
+
+export interface businessDataResponse {
+  success: boolean;
+  message: string;
+  product: businessDataProps;
+  token: string;
+  images: string[];
 }

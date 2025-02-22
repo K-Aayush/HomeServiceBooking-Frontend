@@ -42,19 +42,19 @@ const BusinessDetails = () => {
   }, [businessDetailsid, business]);
 
   useEffect(() => {
-    if (businessData?.category.name) {
-      fetchBusinessByCategory(businessData?.category.name);
+    if (businessData?.category) {
+      fetchBusinessByCategory(businessData?.category);
     }
   }, [businessData, fetchBusinessByCategory]);
   return businessData ? (
-    <div className="py-8 md:py-20 px-10 md:px-26 lg:px-36 mx-6 md:mx-16 min-h-screen">
+    <div className="min-h-screen px-10 py-8 mx-6 md:py-20 md:px-26 lg:px-36 md:mx-16">
       <BusinessInfo business={businessData} />
 
       <div className="grid grid-cols-4 mt-16">
         <div className="col-span-4 md:col-span-3">
           <BusinessDescription business={businessData} />
         </div>
-        <div className="md:block hidden">
+        <div className="hidden md:block">
           <SuggestedBusinessList
             business={businessByCategory.filter(
               (b) => b.id !== businessData.id

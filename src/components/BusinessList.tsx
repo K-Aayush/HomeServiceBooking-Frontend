@@ -32,7 +32,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
       </h2>
 
       {/* business listing */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-5">
+      <div className="grid grid-cols-2 gap-6 mt-5 md:grid-cols-3 lg:grid-cols-4">
         {businessList.length > 0
           ? businessList
               .slice((currentPage - 1) * 8, currentPage * 8)
@@ -40,11 +40,11 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                 <Link
                   to={`/businessDetails/${item.id}`}
                   key={index}
-                  className="shadow-md rounded-lg hover:shadow-lg hover:shadow-primary cursor-pointer hover:scale-105 transition-all ease-in-out"
+                  className="transition-all ease-in-out rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:shadow-primary hover:scale-105"
                 >
                   {item.images && item.images.length > 0 ? (
                     <img
-                      src={item.images[0]}
+                      src={item.images[0].url}
                       alt={item.name}
                       width={500}
                       height={200}
@@ -60,13 +60,13 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                     />
                   )}
 
-                  <div className="flex flex-col items-baseline p-3 gap-1">
-                    <h2 className="py-1 bg-purple-200 text-primary rounded-full px-2 text-sm">
-                      {item.category.name}
+                  <div className="flex flex-col items-baseline gap-1 p-3">
+                    <h2 className="px-2 py-1 text-sm bg-purple-200 rounded-full text-primary">
+                      {item.category}
                     </h2>
-                    <h2 className="font-bold text-lg">{item.name}</h2>
+                    <h2 className="text-lg font-bold">{item.name}</h2>
                     <h2 className="text-primary">{item.contactPerson}</h2>
-                    <h2 className="text-gray-500 text-sm">{item.address}</h2>
+                    <h2 className="text-sm text-gray-500">{item.address}</h2>
                     <Button className="mt-3">Book now</Button>
                   </div>
                 </Link>
@@ -84,7 +84,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
 
       {/* pagination */}
       {businessList.length > 0 && (
-        <div className="flex items-center justify-center space-x-2 mt-10">
+        <div className="flex items-center justify-center mt-10 space-x-2">
           <a onClick={handlePreviousPage} href={`#${pagehref}`}>
             <button
               disabled={currentPage === 1}

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export type requiterFormData = z.infer<typeof requiterFormSchema>;
+export type addBusinessFormData = z.infer<typeof addBusinessSchema>;
 
 export const requiterFormSchema = z.object({
   firstName: z
@@ -33,4 +34,12 @@ export const requiterFormSchema = z.object({
     ),
   profile: z.any().optional(),
   contactNumber: z.string().optional(),
+});
+
+export const addBusinessSchema = z.object({
+  name: z.string().min(1, "Product Name is required"),
+  category: z.string().min(1, "Please select a category"),
+  about: z.string().min(1, "Description is required"),
+  address: z.string().min(1, "address is required"),
+  images: z.any(),
 });

@@ -4,9 +4,9 @@ import { Button } from "./ui/button";
 
 const BusinessInfo = ({ business }: BusinessDetailsProps) => {
   return (
-    <div className="md:flex-row gap-4 items-center flex flex-col ">
+    <div className="flex flex-col items-center gap-4 md:flex-row ">
       <img
-        src={business?.images[0]}
+        src={business?.images[0].url}
         alt={business?.name}
         width={150}
         height={200}
@@ -15,25 +15,25 @@ const BusinessInfo = ({ business }: BusinessDetailsProps) => {
         decoding="async"
       />
 
-      <div className="md:flex justify-between items-center w-full">
+      <div className="items-center justify-between w-full md:flex">
         {/* left sife */}
-        <div className="flex flex-col mt-4 md:mt-0 items-baseline gap-3">
-          <h2 className="text-primary bg-purple-100 rounded-full px-3 py-1 text-lg">
-            {business?.category.name}
+        <div className="flex flex-col items-baseline gap-3 mt-4 md:mt-0">
+          <h2 className="px-3 py-1 text-lg bg-purple-100 rounded-full text-primary">
+            {business?.category}
           </h2>
           <h2 className="text-4xl font-bold">{business?.name}</h2>
           <h2 className="flex items-center gap-2 text-lg text-gray-500">
             <MapPin />
             {business?.address}
           </h2>
-          <h2 className="flex gap-2 items-center text-lg text-gray-500">
+          <h2 className="flex items-center gap-2 text-lg text-gray-500">
             <Mail />
             {business?.email}
           </h2>
         </div>
 
         {/* right side */}
-        <div className="flex items-baseline mt-4 md:mt-0 flex-col md:items-end gap-5">
+        <div className="flex flex-col items-baseline gap-5 mt-4 md:mt-0 md:items-end">
           <Button>
             <Share />
           </Button>
