@@ -105,7 +105,7 @@ const RequiterLogin = () => {
           forms,
           {
             headers: {
-              "Content-Type": "multipart/form-data", 
+              "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -332,7 +332,10 @@ const RequiterLogin = () => {
                   {...register("password")}
                   placeholder="Password"
                   type={showPassword ? "text" : "password"}
-                  className="pl-10 rounded-full"
+                  className={`pl-10 rounded-full ${
+                    errors.password &&
+                    "border-red-500 focus-visible:ring-red-500"
+                  }`}
                   required
                 />
                 {/* state to show and hide password */}

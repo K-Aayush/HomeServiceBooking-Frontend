@@ -2,6 +2,8 @@ import { AppContext } from "./AppContext";
 import { useCallback, useEffect, useState } from "react";
 import { PopularBusinessList } from "../lib/data";
 import { PopularBusinessListType, requiterDataProps } from "../lib/type";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export const AppContextProvider = ({
   children,
@@ -9,6 +11,7 @@ export const AppContextProvider = ({
   children: React.ReactNode;
 }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const navigate = useNavigate();
 
   const [searchFilter, setSearchFilter] = useState({
     title: "",
@@ -49,6 +52,14 @@ export const AppContextProvider = ({
     fetchBusiness();
   }, []);
 
+  //Logout function
+  const logout = () => {
+    setRequiterToken(null);
+    localStorage.removeItem("requiterToken");
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
+
   const value = {
     searchFilter,
     setSearchFilter,
@@ -65,6 +76,7 @@ export const AppContextProvider = ({
     requiterData,
     setRequiterData,
     backendUrl,
+    logout,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

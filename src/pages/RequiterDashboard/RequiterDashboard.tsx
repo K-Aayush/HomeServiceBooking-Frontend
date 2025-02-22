@@ -1,5 +1,5 @@
 import { Home, LayoutDashboard, SquarePlus, User } from "lucide-react";
-import logo from "../assets/Logo.svg";
+import logo from "../../assets/Logo.svg";
 import {
   Avatar,
   AvatarImage,
