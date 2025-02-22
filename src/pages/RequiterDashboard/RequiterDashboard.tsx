@@ -98,7 +98,7 @@ const RequiterDashboard = () => {
           </ul>
         </div>
 
-        <div>
+        <div className="flex-1 pt-5 ml-5">
           <Outlet />
         </div>
       </div>

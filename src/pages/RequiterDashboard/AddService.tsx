@@ -1,5 +1,11 @@
+import AddRequiterService from "../../components/requiterDashboard/AddService";
+
 const AddService = () => {
-  return <div>AddService</div>;
+  return (
+    <div className="w-full">
+      <AddRequiterService />
+    </div>
+  );
 };
 
 export default AddService;
