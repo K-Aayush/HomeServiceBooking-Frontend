@@ -53,3 +53,18 @@ export interface tokenCheck {
   requiter: requiterDataProps;
   message: string;
 }
+
+export interface businessDataProps {
+  name: string;
+  category: string;
+  address: number;
+  about: number;
+}
+
+export interface businessDataResponse {
+  success: boolean;
+  message: string;
+  business: businessDataProps;
+  token: string;
+  images: string[];
+}
