@@ -105,7 +105,7 @@ const RequiterLogin = () => {
           forms,
           {
             headers: {
-              "Content-Type": "multipart/form-data", // Ensuring the request is sent as FormData
+              "Content-Type": "multipart/form-data", 
             },
           }
         );
@@ -200,9 +200,16 @@ const RequiterLogin = () => {
         <h1 className="text-2xl font-medium text-center text-neutral-700">
           Requiter {state}
         </h1>
-        <p className="text-sm text-center">
-          Welcome back! Please sign in to continue
-        </p>
+        {state === "Sign up" ? (
+          <p className="text-sm text-center">
+            Welcome! Please sign up to create your account.
+          </p>
+        ) : (
+          <p className="text-sm text-center">
+            Welcome back! Please sign in to continue.
+          </p>
+        )}
+
         {state === "Sign up" && isTextDataSubmitted ? (
           <>
             {/* extra form to uploading company icon while creating account */}

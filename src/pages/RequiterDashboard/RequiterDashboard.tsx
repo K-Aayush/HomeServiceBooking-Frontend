@@ -1,6 +1,10 @@
 import { Home, LayoutDashboard, SquarePlus, User } from "lucide-react";
 import logo from "../assets/Logo.svg";
-import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "../../components/ui/avatar";
 import { NavLink, Outlet } from "react-router-dom";
 
 const RequiterDashboard = () => {

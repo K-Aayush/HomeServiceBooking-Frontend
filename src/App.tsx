@@ -10,10 +10,10 @@ import RequiterLogin from "./components/RequiterLogin";
 import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import { Toaster } from "sonner";
-import RequiterDashboard from "./pages/RequiterDashboard";
-import AddService from "./pages/AddService";
-import ManageService from "./pages/ManageService";
-import ViewRequiterDashboard from "./pages/ViewRequiterDashboard";
+import RequiterDashboard from "./pages/RequiterDashboard/RequiterDashboard";
+import AddService from "./pages/RequiterDashboard/AddService";
+import ManageService from "./pages/RequiterDashboard/ManageService";
+import ViewRequiterDashboard from "./pages/RequiterDashboard/ViewRequiterDashboard";
 
 const App = () => {
   const location = useLocation();
