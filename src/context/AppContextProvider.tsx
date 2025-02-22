@@ -45,15 +45,33 @@ export const AppContextProvider = ({
   );
 
   //function to fetch businessdata
-  const fetchBusiness = () => {
-    setBusiness(PopularBusinessList);
+  const fetchBusiness = async () => {
+    // setBusiness(PopularBusinessList);
+    try {
+      setIsLoading(true);
+      const { data } = await axios.get(
+        `${backendUrl}/api/requiter/getBusinessData`
+      );
+
+      if (data.success) {
+        setBusiness(data.businessData);
+      } else {
+        toast.error(data.message);
+        logout();
+      }
+    } catch (error) {
+      console.error("User data fetch error:", error);
+      logout();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   //function to fetch business by category
   const fetchBusinessByCategory = useCallback((categoryName: string) => {
     const filteredBusinessList = PopularBusinessList.filter(
       (business) =>
-        business.category.name.toLowerCase() === categoryName.toLowerCase()
+        business.category.toLowerCase() === categoryName.toLowerCase()
     );
     setBusinessByCategory(filteredBusinessList);
   }, []);

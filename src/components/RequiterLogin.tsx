@@ -116,7 +116,7 @@ const RequiterLogin = () => {
           setRequiterToken(data.token);
           localStorage.setItem("requiterToken", data.token);
           setShowRequiterLogin(false);
-          navigate("/requiterDashboard");
+          navigate("/requiterDashboard/dashboard");
           toast.success(data.message);
         } else {
           toast.error(data.message);
@@ -151,7 +151,7 @@ const RequiterLogin = () => {
           setRequiterToken(data.token);
           localStorage.setItem("requiterToken", data.token);
           setShowRequiterLogin(false);
-          navigate("/requiterDashboard");
+          navigate("/requiterDashboard/dashboard");
           toast.success(data.message);
         } else {
           toast.error(data.message);

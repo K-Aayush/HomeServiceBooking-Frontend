@@ -24,7 +24,7 @@ const categories = [
 const AddRequiterService = () => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { backendUrl, requiterToken } = useContext(AppContext);
+  const { backendUrl, requiterToken, setIsLoading } = useContext(AppContext);
   const form = useForm<addBusinessFormData>({
     resolver: zodResolver(addBusinessSchema),
     mode: "onChange",
@@ -33,7 +33,7 @@ const AddRequiterService = () => {
       category: "",
       address: "",
       about: "",
-      url: [],
+      images: [],
     },
   });
 
@@ -61,9 +61,9 @@ const AddRequiterService = () => {
       });
 
       // Set file for form validation (imageUrl expects an array of strings
-      const currentFiles = form.getValues("url");
+      const currentFiles = form.getValues("images");
       currentFiles[index] = file;
-      form.setValue("url", currentFiles, { shouldValidate: true });
+      form.setValue("images", currentFiles, { shouldValidate: true });
     }
   };
 
@@ -73,6 +73,7 @@ const AddRequiterService = () => {
   ) => {
     console.log("Form Submitted: ", businessData);
     try {
+      setIsLoading(true);
       //creating new formdata
       const formData = new FormData();
 
@@ -81,7 +82,14 @@ const AddRequiterService = () => {
       formData.append("category", businessData.category);
       formData.append("about", businessData.about);
       formData.append("address", businessData.address);
-      formData.append("url", businessData.url);
+
+      if (Array.isArray(businessData.images)) {
+        businessData.images.forEach((image) => {
+          if (image instanceof File) {
+            formData.append("images", image);
+          }
+        });
+      }
 
       const { data } = await axios.post<businessDataResponse>(
         backendUrl + "/api/requiter/addBusiness",
@@ -102,7 +110,7 @@ const AddRequiterService = () => {
           category: "",
           address: "",
           about: "",
-          url: [],
+          images: [],
         });
         setPreviewImages([]);
       } else toast.error(data.message);
@@ -117,6 +125,8 @@ const AddRequiterService = () => {
       } else {
         toast.error("Internal Server Error");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,7 +203,7 @@ const AddRequiterService = () => {
                     className="object-cover w-32 h-32 rounded-sm cursor-pointer"
                   />
                   <input
-                    {...form.register(`url.${index}`)}
+                    {...form.register(`images.${index}`)}
                     type="file"
                     id={`Image-${index}`}
                     hidden={true}

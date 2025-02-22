@@ -41,5 +41,5 @@ export const addBusinessSchema = z.object({
   category: z.string().min(1, "Please select a category"),
   about: z.string().min(1, "Description is required"),
   address: z.string().min(1, "address is required"),
-  url: z.any(),
+  images: z.any(),
 });
