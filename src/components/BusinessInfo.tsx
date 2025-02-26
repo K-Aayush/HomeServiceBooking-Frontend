@@ -28,7 +28,7 @@ const BusinessInfo = ({ business }: BusinessDetailsProps) => {
           </h2>
           <h2 className="flex items-center gap-2 text-lg text-gray-500">
             <Mail />
-            {business?.email}
+            {business?.requiter.email}
           </h2>
         </div>
 

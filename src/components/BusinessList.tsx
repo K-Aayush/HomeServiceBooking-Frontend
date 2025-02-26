@@ -65,7 +65,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                       {item.category}
                     </h2>
                     <h2 className="text-lg font-bold">{item.name}</h2>
-                    <h2 className="text-primary">{item.contactPerson}</h2>
+                    <h2 className="text-primary">{item.requiter.name}</h2>
                     <h2 className="text-sm text-gray-500">{item.address}</h2>
                     <Button className="mt-3">Book now</Button>
                   </div>

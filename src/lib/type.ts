@@ -4,7 +4,10 @@ export interface PopularBusinessListType {
   about: string;
   address: string;
   category: string;
-  contactPerson: string;
+  requiter: {
+    name: string;
+    email: string;
+  };
   email: string;
   images: imageUrl[];
 }
