@@ -1,12 +1,13 @@
 import { Clock, Mail, MapPin, Share, User } from "lucide-react";
 import { BusinessDetailsProps } from "../lib/type";
 import { Button } from "./ui/button";
+import noImage from "../assets/no-image.png";
 
 const BusinessInfo = ({ business }: BusinessDetailsProps) => {
   return (
     <div className="flex flex-col items-center gap-4 md:flex-row ">
       <img
-        src={business?.images[0].url}
+        src={business?.images?.[0]?.url || noImage}
         alt={business?.name}
         width={150}
         height={200}
@@ -38,7 +39,7 @@ const BusinessInfo = ({ business }: BusinessDetailsProps) => {
             <Share />
           </Button>
           <h2 className="flex gap-2 text-xl text-primary">
-            <User /> {business?.contactPerson}
+            <User /> {business?.requiter.name}
           </h2>
           <h2 className="flex gap-2 text-xl text-gray-500">
             <Clock /> Available 8:00 AM to 10:00 PM
