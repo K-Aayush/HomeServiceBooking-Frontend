@@ -1,6 +1,5 @@
 import { AppContext } from "./AppContext";
 import { useCallback, useEffect, useState } from "react";
-import { PopularBusinessList } from "../lib/data";
 import {
   PopularBusinessListType,
   requiterDataProps,
@@ -57,11 +56,9 @@ export const AppContextProvider = ({
         setBusiness(data.businessData);
       } else {
         toast.error(data.message);
-        logout();
       }
     } catch (error) {
       console.error("User data fetch error:", error);
-      logout();
     } finally {
       setIsLoading(false);
     }

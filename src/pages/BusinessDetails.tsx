@@ -6,6 +6,7 @@ import BusinessInfo from "../components/BusinessInfo";
 import BusinessDescription from "../components/BusinessDescription";
 import SuggestedBusinessList from "../components/SuggestedBusinessList";
 import Loader from "../components/Loader";
+import axios from "axios";
 
 const BusinessDetails = () => {
   const { businessDetailsid } = useParams();
@@ -16,11 +17,15 @@ const BusinessDetails = () => {
   }, [businessDetailsid]);
 
   //converting the default businessDetailsid string to number
-  const numeric = Number(businessDetailsid);
 
   //Extracting the data from context
-  const { business, businessByCategory, fetchBusinessByCategory } =
-    useContext(AppContext);
+  const {
+    business,
+    businessByCategory,
+    fetchBusinessByCategory,
+    setIsLoading,
+    backendUrl,
+  } = useContext(AppContext);
 
   // storing the businessData in state
   const [businessData, setBusinessData] =
@@ -28,10 +33,20 @@ const BusinessDetails = () => {
 
   // fetching the business data by id
   const fetchBusinessData = async () => {
-    const data = business.filter((business) => business.id === numeric);
-    if (data.length !== 0) {
-      setBusinessData(data[0]);
-    }
+    // const data = business.filter((business) => business.id === numeric);
+    // if (data.length !== 0) {
+    //   setBusinessData(data[0]);
+    // }
+    try {
+      setIsLoading(true);
+      const { data } = await axios.get(
+        backendUrl + `/api/requiter/getBusinessDataById/:${businessDetailsid}`
+      );
+
+      if(data.success) {
+        
+      }
+    } catch (error) {}
   };
 
   //calling the data in overall page
