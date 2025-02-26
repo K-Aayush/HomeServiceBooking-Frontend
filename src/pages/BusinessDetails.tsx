@@ -9,6 +9,8 @@ import Loader from "../components/Loader";
 import axios from "axios";
 import { toast } from "sonner";
 
+
+
 const BusinessDetails = () => {
   const { id } = useParams();
 
@@ -17,13 +19,8 @@ const BusinessDetails = () => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  console.log(id);
-
-  //converting the default businessDetailsid string to number
-
   //Extracting the data from context
   const {
-    business,
     businessByCategory,
     fetchBusinessByCategory,
     setIsLoading,
