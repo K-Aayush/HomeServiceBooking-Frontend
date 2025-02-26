@@ -35,8 +35,8 @@ const App = () => {
           <Route path="manage-service" element={<ManageService />} />
         </Route>
       </Routes>
-      {!location.pathname.startsWith("/category/") ||
-        (!location.pathname.startsWith("/requiterDashboard") && <Footer />)}
+      {!location.pathname.startsWith("/category/") &&
+        !location.pathname.startsWith("/requiterDashboard") && <Footer />}
     </div>
   );
 };
