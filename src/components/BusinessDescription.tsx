@@ -10,7 +10,7 @@ const BusinessDescription = ({ business }: BusinessDetailsProps) => {
       <div className="grid grid-cols-2 gap-5 mt-5 md:grid-cols-3 lg:grid-cols-4">
         {business?.images.map((item, index) => (
           <img
-            src={item.url[0]}
+            src={item.url}
             key={index}
             alt="image"
             width={700}
