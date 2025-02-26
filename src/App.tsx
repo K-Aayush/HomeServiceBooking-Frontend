@@ -28,10 +28,7 @@ const App = () => {
         <Route path="/About" element={<About />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
-        <Route
-          path="/businessDetails/:businessDetailsid"
-          element={<BusinessDetails />}
-        />
+        <Route path="/businessDetails/:id" element={<BusinessDetails />} />
         <Route path="/requiterDashboard" element={<RequiterDashboard />}>
           <Route path="dashboard" element={<ViewRequiterDashboard />} />
           <Route path="add-service" element={<AddService />} />

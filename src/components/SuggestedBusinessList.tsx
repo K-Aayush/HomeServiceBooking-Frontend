@@ -18,7 +18,7 @@ const SuggestedBusinessList = ({ business }: SuggestedBusinessDetailsProps) => {
             className="flex gap-2 p-2 mb-4 rounded-lg cursor-pointer hover:border hover:border-primary hover:shadow-md"
           >
             <img
-              src={item.images[0].url}
+              src={item.images}
               alt={item.name}
               width={80}
               height={80}
