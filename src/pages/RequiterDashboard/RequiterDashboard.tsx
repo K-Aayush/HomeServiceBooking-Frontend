@@ -33,9 +33,9 @@ const RequiterDashboard = () => {
           <div className="flex items-center gap-3">
             <p className="max-sm:hidden">Welcome, {requiterData?.name}</p>
             <div className="relative group">
-              <Avatar>
+              <Avatar className="w-12 h-12">
                 <AvatarImage
-                  className="object-cover object-top rounded-full size-full"
+                  className="object-cover object-top w-full h-full rounded-full"
                   src={requiterData?.requiterProfileImage}
                   alt={"username"}
                 />

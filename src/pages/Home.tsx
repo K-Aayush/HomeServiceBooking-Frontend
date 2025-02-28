@@ -8,7 +8,7 @@ const Home = () => {
   const { business } = useContext(AppContext);
 
   return (
-    <div className="mx-6 md:mx-16">
+    <div className="min-h-screen mx-6 md:mx-16">
       <Hero />
       <CategoryList />
       <BusinessList
