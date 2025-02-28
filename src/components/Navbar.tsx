@@ -26,7 +26,7 @@ const Navbar = () => {
   };
   return (
     <div className="mx-6 md:mx-16">
-      <div className="flex shadow-sm p-5 justify-between">
+      <div className="flex justify-between p-5 shadow-sm">
         <div className="flex items-center gap-8">
           {/* logo */}
           <Link to={"/"}>
@@ -34,7 +34,7 @@ const Navbar = () => {
           </Link>
           {/* navLinks */}
 
-          <div className="md:flex hidden items-center gap-6">
+          <div className="items-center hidden gap-6 md:flex">
             <Link to={"/"}>
               <h2 className="hover:scale-105 hover:text-primary">Home</h2>
             </Link>
@@ -51,12 +51,12 @@ const Navbar = () => {
             <ClipLoader />
           </div>
         ) : user ? (
-          <div className="hidden md:flex gap-4">
+          <div className="hidden gap-4 md:flex">
             <p>Hi, {user.firstName + " " + user.lastName}</p>
             <UserButton />
           </div>
         ) : (
-          <div className="md:flex hidden gap-2">
+          <div className="hidden gap-2 md:flex">
             <Button onClick={() => setShowRequiterLogin(true)} variant="ghost">
               Recuriter Login
             </Button>
@@ -67,26 +67,20 @@ const Navbar = () => {
         {/* mobile screen */}
         <div className="flex md:hidden">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger>
+            <SheetTrigger asChild>
               <MenuIcon size={25} className="mr-2" />
             </SheetTrigger>
             <SheetContent>
-              <div className="flex flex-col gap-2 mt-10">
-                <div className="flex flex-col gap-2 text-center">
+              <div className="flex flex-col mt-10 space-y-4">
+                <div className="flex flex-col space-y-4 text-center">
                   <Link to={"/"} onClick={handleCloseSheet}>
-                    <h2 className="p-2 border border-gray-600 rounded-md">
-                      Home
-                    </h2>
+                    <h2>Home</h2>
                   </Link>
                   <Link to={"/Services"} onClick={handleCloseSheet}>
-                    <h2 className="p-2 border border-gray-600 rounded-md">
-                      Service
-                    </h2>
+                    <h2>Service</h2>
                   </Link>
                   <Link to={"/About"} onClick={handleCloseSheet}>
-                    <h2 className="p-2 border border-gray-600 rounded-md">
-                      About Us
-                    </h2>
+                    <h2>About Us</h2>
                   </Link>
                 </div>
                 {user ? (
