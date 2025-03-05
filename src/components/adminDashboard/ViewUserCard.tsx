@@ -1,4 +1,4 @@
-const ViewUserCard = () => {
+const ViewUserCard = (users) => {
   return <div>ViewUserCard</div>;
 };
 
