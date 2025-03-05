@@ -50,6 +50,7 @@ const RequiterLogin = () => {
       password: "",
       contactNumber: "",
       profile: "",
+      role: "REQUITER",
     },
     resolver: zodResolver(requiterFormSchema),
     shouldUnregister: true,
@@ -98,6 +99,7 @@ const RequiterLogin = () => {
       forms.append("password", formData.password || "");
       forms.append("contactNumber", formData.contactNumber || "");
       forms.append("profile", formData.profile);
+      forms.append("role", formData.role);
 
       try {
         const { data } = await axios.post<loginResponse>(
@@ -116,7 +118,14 @@ const RequiterLogin = () => {
           setRequiterToken(data.token);
           localStorage.setItem("requiterToken", data.token);
           setShowRequiterLogin(false);
-          navigate("/requiterDashboard/dashboard");
+          if (data.requiter.role === "REQUITER") {
+            navigate("/requiterDashboard/dashboard");
+          } else if (data.requiter.role === "ADMIN") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
+
           toast.success(data.message);
         } else {
           toast.error(data.message);
@@ -151,7 +160,13 @@ const RequiterLogin = () => {
           setRequiterToken(data.token);
           localStorage.setItem("requiterToken", data.token);
           setShowRequiterLogin(false);
-          navigate("/requiterDashboard/dashboard");
+          if (data.requiter.role === "REQUITER") {
+            navigate("/requiterDashboard/dashboard");
+          } else if (data.requiter.role === "ADMIN") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/");
+          }
           toast.success(data.message);
         } else {
           toast.error(data.message);

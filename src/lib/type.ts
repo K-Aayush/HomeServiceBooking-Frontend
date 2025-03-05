@@ -31,6 +31,7 @@ export interface SuggestedBusinessDetailsProps {
 }
 
 export interface requiterDataProps {
+  role: string;
   id: string;
   email: string;
   password: string;
