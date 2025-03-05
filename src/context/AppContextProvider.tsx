@@ -7,7 +7,7 @@ import {
 } from "../lib/type";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export const AppContextProvider = ({
   children,
@@ -23,6 +23,7 @@ export const AppContextProvider = ({
 
   const [isSearched, setIsSearched] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>("");
 
   //show requiter login context
   const [showRequiterLogin, setShowRequiterLogin] = useState(false);
@@ -43,6 +44,37 @@ export const AppContextProvider = ({
     null
   );
 
+  //get all users states
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [users, setUsers] = useState([]);
+
+  const fetchAllUsers = async (role: string) => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.get(`${backendUrl}/api/admin/getAllUsers`, {
+        params: { role },
+        headers: {
+          Authorization: requiterToken,
+        },
+      });
+      if (data.success) {
+        setUsers(data.users);
+        setTotalUsers(data.totalUsers);
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      //Axios error
+      if (error instanceof AxiosError && error.response) {
+        setError(error.response.data.message);
+      } else if (error instanceof Error) {
+        setError(error.message || "An error occoured while fetching data");
+      } else {
+        setError("Internal Server Error");
+      }
+    }
+  };
+
   //function to fetch businessdata
   const fetchBusiness = async () => {
     // setBusiness(PopularBusinessList);
@@ -55,7 +87,7 @@ export const AppContextProvider = ({
       if (data.success) {
         setBusiness(data.businessData);
       } else {
-        toast.error(data.message);
+        setError(data.message);
       }
     } catch (error) {
       console.error("User data fetch error:", error);
@@ -94,7 +126,7 @@ export const AppContextProvider = ({
           if (data.success) {
             setRequiterData(data.requiter);
           } else {
-            toast.error(data.message);
+            setError(data.message);
             logout();
           }
         } catch (error) {
@@ -136,6 +168,13 @@ export const AppContextProvider = ({
     logout,
     isLoading,
     setIsLoading,
+    users,
+    setUsers,
+    totalUsers,
+    setTotalUsers,
+    error,
+    setError,
+    fetchAllUsers,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
