@@ -1,12 +1,11 @@
 import { Card, CardHeader, CardTitle } from "../ui/card";
 
-const ViewUserCard = ({ totalUsers }) => {
+const ViewUserCard = ({ totalUsers, title }) => {
   return (
-    <Card className="flex flex-col items-center justify-between transition-transform duration-300 ease-in-out cursor-pointer hover:scale-105">
-      <CardHeader>
-        <CardTitle className="text-xl">
-          Total no of users: {totalUsers}
-        </CardTitle>
+    <Card className="flex flex-col items-center justify-between p-4 transition-transform duration-300 ease-in-out cursor-pointer hover:bg-gray-100">
+      <CardHeader className="flex items-center">
+        <CardTitle className="text-xl font-semibold">{title}</CardTitle>
+        <p className="text-lg font-medium">{totalUsers ?? 0}</p>
       </CardHeader>
     </Card>
   );
