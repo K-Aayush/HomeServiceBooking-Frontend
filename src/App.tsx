@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -16,6 +16,7 @@ import ManageService from "./pages/RequiterDashboard/ManageService";
 import ViewRequiterDashboard from "./pages/RequiterDashboard/ViewRequiterDashboard";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
+import ProtectedRoutes from "./middleware/ProtectedRoutes";
 
 const App = () => {
   const location = useLocation();
@@ -32,14 +33,29 @@ const App = () => {
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
         <Route path="/businessDetails/:id" element={<BusinessDetails />} />
-        <Route path="/requiterDashboard" element={<RequiterDashboard />}>
+        <Route
+          path="/requiterDashboard"
+          element={
+            <ProtectedRoutes requiredRole="REQUITER">
+              <RequiterDashboard />
+            </ProtectedRoutes>
+          }
+        >
           <Route path="dashboard" element={<ViewRequiterDashboard />} />
           <Route path="add-service" element={<AddService />} />
           <Route path="manage-service" element={<ManageService />} />
         </Route>
-        <Route path="/adminDashboard" element={<AdminDashboard />}>
+        <Route
+          path="/adminDashboard"
+          element={
+            <ProtectedRoutes requiredRole="ADMIN">
+              <AdminDashboard />
+            </ProtectedRoutes>
+          }
+        >
           <Route path="dashboard" element={<ViewAdminDashboard />} />
         </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {!location.pathname.startsWith("/category/") &&

@@ -3,6 +3,7 @@ import { AppContext } from "../context/AppContext";
 import { jwtDecode } from "jwt-decode";
 import { Navigate } from "react-router-dom";
 
+
 interface DecodedToken {
   id: string | null;
   role: string | null;
