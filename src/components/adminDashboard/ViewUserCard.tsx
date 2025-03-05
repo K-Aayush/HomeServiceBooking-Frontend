@@ -1,6 +1,15 @@
 import { Card, CardHeader, CardTitle } from "../ui/card";
 
-const ViewUserCard = ({ totalUsers, title }) => {
+interface viewUserCardProps {
+  totalUsers: {
+    user: number;
+    requiter: number;
+    total: number;
+  };
+  title: string;
+}
+
+const ViewUserCard = ({ totalUsers, title }: viewUserCardProps) => {
   return (
     <Card className="flex flex-col items-center justify-between p-4 transition-transform duration-300 ease-in-out cursor-pointer hover:bg-gray-100">
       <CardHeader className="flex items-center">

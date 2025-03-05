@@ -1,5 +1,10 @@
 import { createContext } from "react";
-import { PopularBusinessListType, requiterDataProps } from "../lib/type";
+import {
+  PopularBusinessListType,
+  requiterDataProps,
+  TotalUsersState,
+  usersState,
+} from "../lib/type";
 
 //Type of AppContext
 interface AppContextType {
@@ -25,10 +30,10 @@ interface AppContextType {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
-  users: object;
-  setUsers: React.Dispatch<React.SetStateAction<object>>;
-  totalUsers: object;
-  setTotalUsers: React.Dispatch<React.SetStateAction<object>>;
+  users: usersState;
+  setUsers: React.Dispatch<React.SetStateAction<usersState>>;
+  totalUsers: TotalUsersState;
+  setTotalUsers: React.Dispatch<React.SetStateAction<TotalUsersState>>;
   fetchAllUsers: () => void;
 }
 
@@ -53,9 +58,9 @@ const defaultValue: AppContextType = {
   setIsLoading: () => {},
   error: "",
   setError: () => {},
-  users: {},
+  users: { total: [], user: [], requiter: [] },
   setUsers: () => {},
-  totalUsers: {},
+  totalUsers: { total: 0, user: 0, requiter: 0 },
   setTotalUsers: () => {},
   fetchAllUsers: () => {},
 };

@@ -74,3 +74,35 @@ export interface businessDataResponse {
   token: string;
   images: string[];
 }
+
+export interface TotalUsersState {
+  total: number;
+  user: number;
+  requiter: number;
+}
+
+interface user {
+  id: string;
+  name: string;
+  email: string;
+  userProfileImage: string;
+  role: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  requiterProfileImage: string;
+}
+
+interface total {
+  id: string;
+  name: string;
+  email: string;
+  userProfileImage: string;
+}
+
+export interface usersState {
+  total: total[];
+  user: user[];
+  requiter: requiterDataProps[];
+}

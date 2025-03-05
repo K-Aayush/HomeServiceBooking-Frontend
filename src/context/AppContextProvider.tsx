@@ -4,6 +4,8 @@ import {
   PopularBusinessListType,
   requiterDataProps,
   tokenCheck,
+  TotalUsersState,
+  usersState,
 } from "../lib/type";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -45,12 +47,12 @@ export const AppContextProvider = ({
   );
 
   //get all users states
-  const [totalUsers, setTotalUsers] = useState<object>({
+  const [totalUsers, setTotalUsers] = useState<TotalUsersState>({
     total: 0,
     user: 0,
     requiter: 0,
   });
-  const [users, setUsers] = useState<object>({
+  const [users, setUsers] = useState<usersState>({
     total: [],
     user: [],
     requiter: [],
