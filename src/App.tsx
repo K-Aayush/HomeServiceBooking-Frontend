@@ -14,13 +14,16 @@ import RequiterDashboard from "./pages/RequiterDashboard/RequiterDashboard";
 import AddService from "./pages/RequiterDashboard/AddService";
 import ManageService from "./pages/RequiterDashboard/ManageService";
 import ViewRequiterDashboard from "./pages/RequiterDashboard/ViewRequiterDashboard";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
 
 const App = () => {
   const location = useLocation();
   const { showRequiterLogin } = useContext(AppContext);
   return (
     <div>
-      {!location.pathname.startsWith("/requiterDashboard") && <Navbar />}
+      {!location.pathname.startsWith("/requiterDashboard") &&
+        !location.pathname.startsWith("/adminDashboard") && <Navbar />}
       {showRequiterLogin && <RequiterLogin />}
       <Toaster richColors duration={5000} />
       <Routes>
@@ -34,7 +37,11 @@ const App = () => {
           <Route path="add-service" element={<AddService />} />
           <Route path="manage-service" element={<ManageService />} />
         </Route>
+        <Route path="/adminDashboard" element={<AdminDashboard />}>
+          <Route path="dashboard" element={<ViewAdminDashboard />} />
+        </Route>
       </Routes>
+
       {!location.pathname.startsWith("/category/") &&
         !location.pathname.startsWith("/requiterDashboard") && <Footer />}
     </div>

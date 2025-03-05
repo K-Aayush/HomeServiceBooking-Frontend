@@ -121,7 +121,7 @@ const RequiterLogin = () => {
           if (data.requiter.role === "REQUITER") {
             navigate("/requiterDashboard/dashboard");
           } else if (data.requiter.role === "ADMIN") {
-            navigate("/admin/dashboard");
+            navigate("/adminDashboard/dashboard");
           } else {
             navigate("/");
           }
@@ -163,7 +163,7 @@ const RequiterLogin = () => {
           if (data.requiter.role === "REQUITER") {
             navigate("/requiterDashboard/dashboard");
           } else if (data.requiter.role === "ADMIN") {
-            navigate("/admin/dashboard");
+            navigate("/adminDashboard/dashboard");
           } else {
             navigate("/");
           }
