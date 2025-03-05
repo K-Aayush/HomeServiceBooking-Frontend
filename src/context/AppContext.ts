@@ -23,6 +23,13 @@ interface AppContextType {
   logout: () => void;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  users: string[];
+  setUsers: React.Dispatch<React.SetStateAction<string[]>>;
+  totalUsers: number;
+  setTotalUsers: React.Dispatch<React.SetStateAction<number>>;
+  fetchAllUsers: () => void;
 }
 
 const defaultValue: AppContextType = {
@@ -44,6 +51,13 @@ const defaultValue: AppContextType = {
   logout: () => {},
   isLoading: false,
   setIsLoading: () => {},
+  error: "",
+  setError: () => {},
+  users: [],
+  setUsers: () => {},
+  totalUsers: 0,
+  setTotalUsers: () => {},
+  fetchAllUsers: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(defaultValue);

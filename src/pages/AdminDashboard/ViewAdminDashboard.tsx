@@ -1,10 +1,9 @@
-
-
 const ViewAdminDashboard = () => {
-  
-
- 
-  return <div>ViewAdminDashboard</div>;
+  return (
+    <div>
+      <ViewUserCard />
+    </div>
+  );
 };
 
 export default ViewAdminDashboard;

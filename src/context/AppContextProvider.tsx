@@ -46,9 +46,9 @@ export const AppContextProvider = ({
 
   //get all users states
   const [totalUsers, setTotalUsers] = useState<number>(0);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<string[]>([]);
 
-  const fetchAllUsers = async (role: string) => {
+  const fetchAllUsers = async (role = "") => {
     try {
       setIsLoading(true);
       const { data } = await axios.get(`${backendUrl}/api/admin/getAllUsers`, {
@@ -72,6 +72,8 @@ export const AppContextProvider = ({
       } else {
         setError("Internal Server Error");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
