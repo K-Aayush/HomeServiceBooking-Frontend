@@ -25,10 +25,10 @@ interface AppContextType {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
-  users: string[];
-  setUsers: React.Dispatch<React.SetStateAction<string[]>>;
-  totalUsers: number;
-  setTotalUsers: React.Dispatch<React.SetStateAction<number>>;
+  users: object;
+  setUsers: React.Dispatch<React.SetStateAction<object>>;
+  totalUsers: object;
+  setTotalUsers: React.Dispatch<React.SetStateAction<object>>;
   fetchAllUsers: () => void;
 }
 
@@ -53,9 +53,9 @@ const defaultValue: AppContextType = {
   setIsLoading: () => {},
   error: "",
   setError: () => {},
-  users: [],
+  users: {},
   setUsers: () => {},
-  totalUsers: 0,
+  totalUsers: {},
   setTotalUsers: () => {},
   fetchAllUsers: () => {},
 };

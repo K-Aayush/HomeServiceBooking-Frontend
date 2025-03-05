@@ -45,12 +45,21 @@ export const AppContextProvider = ({
   );
 
   //get all users states
-  const [totalUsers, setTotalUsers] = useState<number>(0);
-  const [users, setUsers] = useState<string[]>([]);
+  const [totalUsers, setTotalUsers] = useState<object>({
+    total: 0,
+    user: 0,
+    requiter: 0,
+  });
+  const [users, setUsers] = useState<object>({
+    total: [],
+    user: [],
+    requiter: [],
+  });
 
   const fetchAllUsers = async (role = "") => {
+    setIsLoading(true);
+    setError("");
     try {
-      setIsLoading(true);
       const { data } = await axios.get(`${backendUrl}/api/admin/getAllUsers`, {
         params: { role },
         headers: {
@@ -58,8 +67,15 @@ export const AppContextProvider = ({
         },
       });
       if (data.success) {
-        setUsers(data.users);
-        setTotalUsers(data.totalUsers);
+        setUsers((prev) => ({
+          ...prev,
+          [role || "total"]: data.users,
+        }));
+        setTotalUsers((prev) => ({
+          ...prev,
+          [role || "total"]: data.totalUsers,
+        }));
+        console.log(data.totalUsers);
       } else {
         setError(data.message);
       }
@@ -76,6 +92,12 @@ export const AppContextProvider = ({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchAllUsers("");
+    fetchAllUsers("user");
+    fetchAllUsers("requiter");
+  }, []);
 
   //function to fetch businessdata
   const fetchBusiness = async () => {

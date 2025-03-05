@@ -1,44 +1,15 @@
-const ViewUserCard = (totalUsers: number) => {
-  return <Card className="flex flex-col justify-between cursor-pointer">
-  <CardHeader>
-    <CardTitle className="text-2xl">{event.title}</CardTitle>
-    <CardDescription className="flex justify-between">
-      <span>
-        {event.duration} mins | {event.isPrivate ? "Private" : "Public"}
-      </span>
+import { Card, CardHeader, CardTitle } from "../ui/card";
 
-      <span>{event._count.booking} Bookings</span>
-    </CardDescription>
-  </CardHeader>
-  <CardContent>
-    <p>
-      {event.description
-        ? event.description.substring(
-            0,
-            event.description.indexOf(".") !== -1
-              ? event.description.indexOf(".")
-              : event.description.length
-          )
-        : "No description avialable"}
-    </p>
-  </CardContent>
-  {!isPublic && (
-    <CardFooter className="flex gap-2">
-      <Button onClick={handleCopy} variant={"outline"}>
-        <Link className="w-4 h-4 mr-2" />{" "}
-        {isCopied ? "Copied!" : "Copy Link"}
-      </Button>
-      <Button
-        variant={"destructive"}
-        onClick={handleDelete}
-        disabled={loading}
-      >
-        <Trash className="w-4 h-4 mr-2" />
-        {loading ? "Deleting..." : "Delete"}
-      </Button>
-    </CardFooter>
-  )}
-</Card>;
+const ViewUserCard = ({ totalUsers }) => {
+  return (
+    <Card className="flex flex-col items-center justify-between transition-transform duration-300 ease-in-out cursor-pointer hover:scale-105">
+      <CardHeader>
+        <CardTitle className="text-xl">
+          Total no of users: {totalUsers}
+        </CardTitle>
+      </CardHeader>
+    </Card>
+  );
 };
 
 export default ViewUserCard;
