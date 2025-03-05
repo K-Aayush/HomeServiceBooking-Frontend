@@ -78,7 +78,7 @@ const AdminDashboard = () => {
                   isActive && "bg-indigo-100 border-r-4 border-primary"
                 }`
               }
-              to={"/adminDashboard/add-service"}
+              to={"/adminDashboard/viewUsers"}
             >
               <SquarePlus />
               <p>Add Service</p>

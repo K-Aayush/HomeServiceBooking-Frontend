@@ -17,6 +17,7 @@ import ViewRequiterDashboard from "./pages/RequiterDashboard/ViewRequiterDashboa
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
 import ProtectedRoutes from "./middleware/ProtectedRoutes";
+import ViewUsers from "./pages/AdminDashboard/ViewUsers";
 
 const App = () => {
   const location = useLocation();
@@ -54,6 +55,7 @@ const App = () => {
           }
         >
           <Route path="dashboard" element={<ViewAdminDashboard />} />
+          <Route path="viewUsers" element={<ViewUsers />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
