@@ -1,11 +1,7 @@
 import { Card, CardHeader, CardTitle } from "../ui/card";
 
 interface viewUserCardProps {
-  totalUsers: {
-    user: number;
-    requiter: number;
-    total: number;
-  };
+  totalUsers: number;
   title: string;
 }
 
