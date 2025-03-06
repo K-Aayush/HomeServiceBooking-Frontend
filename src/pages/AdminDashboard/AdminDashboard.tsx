@@ -1,4 +1,4 @@
-import { Home, LayoutDashboard, SquarePlus, User } from "lucide-react";
+import { Home, LayoutDashboard, Search, User } from "lucide-react";
 import logo from "../../assets/Logo.svg";
 import {
   Avatar,
@@ -80,8 +80,8 @@ const AdminDashboard = () => {
               }
               to={"/adminDashboard/viewUsers"}
             >
-              <SquarePlus />
-              <p>Add Service</p>
+              <Search />
+              <p>View All Users</p>
             </NavLink>
             <NavLink
               className={({ isActive }) =>
