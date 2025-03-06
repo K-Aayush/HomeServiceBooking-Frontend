@@ -4,7 +4,10 @@ export interface PopularBusinessListType {
   about: string;
   address: string;
   category: string;
-  contactPerson: string;
+  requiter: {
+    name: string;
+    email: string;
+  };
   email: string;
   images: imageUrl[];
 }
@@ -28,6 +31,7 @@ export interface SuggestedBusinessDetailsProps {
 }
 
 export interface requiterDataProps {
+  role: string;
   id: string;
   email: string;
   password: string;
@@ -69,4 +73,36 @@ export interface businessDataResponse {
   product: businessDataProps;
   token: string;
   images: string[];
+}
+
+export interface TotalUsersState {
+  total: number;
+  user: number;
+  requiter: number;
+}
+
+interface user {
+  id: string;
+  name: string;
+  email: string;
+  userProfileImage: string;
+  role: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  requiterProfileImage: string;
+}
+
+interface total {
+  id: string;
+  name: string;
+  email: string;
+  userProfileImage: string;
+}
+
+export interface usersState {
+  total: total[];
+  user: user[];
+  requiter: requiterDataProps[];
 }

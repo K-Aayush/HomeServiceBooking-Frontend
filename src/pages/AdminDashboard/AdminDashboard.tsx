@@ -1,4 +1,4 @@
-import { Home, LayoutDashboard, SquarePlus, User } from "lucide-react";
+import { Home, LayoutDashboard, Search, User } from "lucide-react";
 import logo from "../../assets/Logo.svg";
 import {
   Avatar,
@@ -9,13 +9,12 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 
-const RequiterDashboard = () => {
+const AdminDashboard = () => {
   const { logout, requiterData } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     logout();
-
     navigate("/");
   };
   return (
@@ -68,7 +67,7 @@ const RequiterDashboard = () => {
                   isActive && "bg-indigo-100 border-r-4 border-primary"
                 }`
               }
-              to={"/requiterDashboard/dashboard"}
+              to={"/adminDashboard/dashboard"}
             >
               <LayoutDashboard />
               <p>Dashboard</p>
@@ -79,10 +78,10 @@ const RequiterDashboard = () => {
                   isActive && "bg-indigo-100 border-r-4 border-primary"
                 }`
               }
-              to={"/requiterDashboard/add-service"}
+              to={"/adminDashboard/viewUsers"}
             >
-              <SquarePlus />
-              <p>Add Service</p>
+              <Search />
+              <p>View All Users</p>
             </NavLink>
             <NavLink
               className={({ isActive }) =>
@@ -90,7 +89,7 @@ const RequiterDashboard = () => {
                   isActive && "bg-indigo-100 border-r-4 border-primary"
                 }`
               }
-              to={"/requiterDashboard/manage-service"}
+              to={"/adminDashboard/manage-service"}
             >
               <Home />
               <p>Manage Services</p>
@@ -106,4 +105,4 @@ const RequiterDashboard = () => {
   );
 };
 
-export default RequiterDashboard;
+export default AdminDashboard;

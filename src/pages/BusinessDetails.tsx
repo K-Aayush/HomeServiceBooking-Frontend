@@ -6,21 +6,26 @@ import BusinessInfo from "../components/BusinessInfo";
 import BusinessDescription from "../components/BusinessDescription";
 import SuggestedBusinessList from "../components/SuggestedBusinessList";
 import Loader from "../components/Loader";
+import axios from "axios";
+import { toast } from "sonner";
+
+
 
 const BusinessDetails = () => {
-  const { businessDetailsid } = useParams();
+  const { id } = useParams();
 
   //scroll to top when route changes
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [businessDetailsid]);
-
-  //converting the default businessDetailsid string to number
-  const numeric = Number(businessDetailsid);
+  }, [id]);
 
   //Extracting the data from context
-  const { business, businessByCategory, fetchBusinessByCategory } =
-    useContext(AppContext);
+  const {
+    businessByCategory,
+    fetchBusinessByCategory,
+    setIsLoading,
+    backendUrl,
+  } = useContext(AppContext);
 
   // storing the businessData in state
   const [businessData, setBusinessData] =
@@ -28,18 +33,29 @@ const BusinessDetails = () => {
 
   // fetching the business data by id
   const fetchBusinessData = async () => {
-    const data = business.filter((business) => business.id === numeric);
-    if (data.length !== 0) {
-      setBusinessData(data[0]);
+    try {
+      setIsLoading(true);
+      const { data } = await axios.get(
+        `${backendUrl}/api/requiter/getBusinessDataById/${id}`
+      );
+
+      if (data.success) {
+        console.log(data.businessData);
+        setBusinessData(data.businessData);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      console.log("BusinessDatabyId fetching error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   //calling the data in overall page
   useEffect(() => {
-    if (business.length > 0) {
-      fetchBusinessData();
-    }
-  }, [businessDetailsid, business]);
+    fetchBusinessData();
+  }, [id]);
 
   useEffect(() => {
     if (businessData?.category) {

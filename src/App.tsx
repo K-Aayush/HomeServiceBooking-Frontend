@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -14,13 +14,18 @@ import RequiterDashboard from "./pages/RequiterDashboard/RequiterDashboard";
 import AddService from "./pages/RequiterDashboard/AddService";
 import ManageService from "./pages/RequiterDashboard/ManageService";
 import ViewRequiterDashboard from "./pages/RequiterDashboard/ViewRequiterDashboard";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
+import ProtectedRoutes from "./middleware/ProtectedRoutes";
+import ViewUsers from "./pages/AdminDashboard/ViewUsers";
 
 const App = () => {
   const location = useLocation();
   const { showRequiterLogin } = useContext(AppContext);
   return (
     <div>
-      {!location.pathname.startsWith("/requiterDashboard") && <Navbar />}
+      {!location.pathname.startsWith("/requiterDashboard") &&
+        !location.pathname.startsWith("/adminDashboard") && <Navbar />}
       {showRequiterLogin && <RequiterLogin />}
       <Toaster richColors duration={5000} />
       <Routes>
@@ -28,18 +33,35 @@ const App = () => {
         <Route path="/About" element={<About />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
+        <Route path="/businessDetails/:id" element={<BusinessDetails />} />
         <Route
-          path="/businessDetails/:businessDetailsid"
-          element={<BusinessDetails />}
-        />
-        <Route path="/requiterDashboard" element={<RequiterDashboard />}>
+          path="/requiterDashboard"
+          element={
+            <ProtectedRoutes requiredRole="REQUITER">
+              <RequiterDashboard />
+            </ProtectedRoutes>
+          }
+        >
           <Route path="dashboard" element={<ViewRequiterDashboard />} />
           <Route path="add-service" element={<AddService />} />
           <Route path="manage-service" element={<ManageService />} />
         </Route>
+        <Route
+          path="/adminDashboard"
+          element={
+            <ProtectedRoutes requiredRole="ADMIN">
+              <AdminDashboard />
+            </ProtectedRoutes>
+          }
+        >
+          <Route path="dashboard" element={<ViewAdminDashboard />} />
+          <Route path="viewUsers" element={<ViewUsers />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {!location.pathname.startsWith("/category/") ||
-        (!location.pathname.startsWith("/requiterDashboard") && <Footer />)}
+
+      {!location.pathname.startsWith("/category/") &&
+        !location.pathname.startsWith("/requiterDashboard") && <Footer />}
     </div>
   );
 };

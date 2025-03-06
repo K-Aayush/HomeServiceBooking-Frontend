@@ -34,6 +34,7 @@ export const requiterFormSchema = z.object({
     ),
   profile: z.any().optional(),
   contactNumber: z.string().optional(),
+  role: z.enum(["REQUITER", "ADMIN"]).default("REQUITER"),
 });
 
 export const addBusinessSchema = z.object({
