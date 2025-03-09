@@ -1,11 +1,4 @@
-import {
-  requiterDataProps,
-  total,
-  TotalUsersState,
-  user,
-  userData,
-  viewUserDataProps,
-} from "../../lib/type";
+import { requiterDataProps, total, user } from "../../lib/type";
 import {
   Table,
   TableBody,
@@ -35,7 +28,7 @@ const ViewUserTable = ({ users }: viewUserDataProps) => {
         </TableHeader>
         <TableBody>
           {users.length > 0 ? (
-            users.map((user: user | requiterDataProps | total) => (
+            users.map((user: user | requiterDataProps |total) => (
               <TableRow key={user.id} className="border-t border-gray-800">
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.name}</TableCell>
