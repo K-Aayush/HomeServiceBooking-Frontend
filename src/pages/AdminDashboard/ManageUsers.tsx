@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import ViewUserTable from "../../components/admin/ViewUserTable";
+import ViewUserTable from "../../components/adminDashboard/ViewUserTable";
 
 import {
   Select,
@@ -32,7 +32,7 @@ const ManageUsers = () => {
         <SelectContent>
           <SelectGroup>
             <SelectItem value="total">All Users</SelectItem>
-            <SelectItem value="users">Customers</SelectItem>
+            <SelectItem value="user">Customers</SelectItem>
             <SelectItem value="requiter">Requiters</SelectItem>
           </SelectGroup>
         </SelectContent>

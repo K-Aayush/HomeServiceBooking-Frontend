@@ -194,6 +194,7 @@ const RequiterLogin = () => {
       setValue("profile", formValues.profile);
       setValue("email", formValues.email);
       setValue("password", formValues.password);
+      setValue("contactNumber", formValues.contactNumber);
     }
   }, [isTextDataSubmitted, formValues, setValue]);
 
@@ -307,7 +308,7 @@ const RequiterLogin = () => {
                       {...(state === "Sign up"
                         ? register("contactNumber")
                         : {})}
-                      placeholder="contact number (optional)"
+                      placeholder="contact number"
                       type="text"
                       className={`pl-10 rounded-full ${
                         errors.lastName &&
