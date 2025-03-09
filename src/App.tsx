@@ -17,7 +17,7 @@ import ViewRequiterDashboard from "./pages/RequiterDashboard/ViewRequiterDashboa
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
 import ProtectedRoutes from "./middleware/ProtectedRoutes";
-import ViewUsers from "./pages/AdminDashboard/ViewUsers";
+import ViewUsers from "./pages/AdminDashboard/ManageUsers";
 
 const App = () => {
   const location = useLocation();

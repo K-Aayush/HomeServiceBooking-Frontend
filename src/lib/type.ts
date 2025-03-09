@@ -81,7 +81,7 @@ export interface TotalUsersState {
   requiter: number;
 }
 
-interface user {
+export interface user {
   id: string;
   name: string;
   email: string;
@@ -94,7 +94,7 @@ interface user {
   requiterProfileImage: string;
 }
 
-interface total {
+export interface total {
   id: string;
   name: string;
   email: string;
@@ -105,4 +105,16 @@ export interface usersState {
   total: total[];
   user: user[];
   requiter: requiterDataProps[];
+}
+
+export interface userData {
+  role: string;
+  id: string;
+  email: string;
+  name: string;
+  contactNumber: string;
+}
+
+export interface viewUserDataProps {
+  user: userData[];
 }
