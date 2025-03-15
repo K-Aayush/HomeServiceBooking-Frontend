@@ -103,7 +103,7 @@ const RequiterLogin = () => {
 
       try {
         const { data } = await axios.post<loginResponse>(
-          backendUrl + "/api/requiter/register",
+          backendUrl + "/api/requiter/register-requiter",
           forms,
           {
             headers: {
@@ -150,7 +150,7 @@ const RequiterLogin = () => {
         };
 
         const { data } = await axios.post<loginResponse>(
-          backendUrl + "/api/requiter/login",
+          backendUrl + "/api/requiter/login-requiter",
           loginPayload
         );
 

@@ -46,6 +46,8 @@ export const AppContextProvider = ({
     null
   );
 
+  const [userData, setUserData] = useState(null)
+
   //get all users states
   const [totalUsers, setTotalUsers] = useState<TotalUsersState>({
     total: 0,
@@ -145,7 +147,7 @@ export const AppContextProvider = ({
       if (requiterToken) {
         try {
           const { data } = await axios.get<tokenCheck>(
-            `${backendUrl}/api/requiter/me`,
+            `${backendUrl}/api/requiter/getrequiterData`,
             { headers: { Authorization: requiterToken } }
           );
 
