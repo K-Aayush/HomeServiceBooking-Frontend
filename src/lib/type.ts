@@ -64,9 +64,15 @@ export interface loginResponse {
   message: string;
 }
 
-export interface tokenCheck {
+export interface requiterTokenCheck {
   success: boolean;
   requiter: requiterDataProps;
+  message: string;
+}
+
+export interface userTokenCheck {
+  success: boolean;
+  user: userDataProps;
   message: string;
 }
 

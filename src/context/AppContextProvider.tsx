@@ -3,10 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import {
   PopularBusinessListType,
   requiterDataProps,
-  tokenCheck,
+  requiterTokenCheck,
   TotalUsersState,
   userDataProps,
   usersState,
+  userTokenCheck,
 } from "../lib/type";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -148,10 +149,10 @@ export const AppContextProvider = ({
 
   //fetch requiterdata
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRequiterData = async () => {
       if (requiterToken) {
         try {
-          const { data } = await axios.get<tokenCheck>(
+          const { data } = await axios.get<requiterTokenCheck>(
             `${backendUrl}/api/requiter/getrequiterData`,
             { headers: { Authorization: requiterToken } }
           );
@@ -171,13 +172,45 @@ export const AppContextProvider = ({
       }
     };
 
-    fetchData();
+    fetchRequiterData();
   }, [requiterToken, backendUrl]);
+
+  //fetch userData
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (userToken) {
+        try {
+          const { data } = await axios.get<userTokenCheck>(
+            `${backendUrl}/api/user/getUserData`,
+            { headers: { Authorization: userToken } }
+          );
+
+          if (data.success) {
+            setUserData(data.user);
+          } else {
+            setError(data.message);
+            logout();
+          }
+        } catch (error) {
+          console.error("User data fetch error:", error);
+          logout();
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [userToken, backendUrl]);
+
+
 
   //Logout function
   const logout = () => {
     setRequiterToken(null);
     localStorage.removeItem("requiterToken");
+    setUserToken(null);
+    localStorage.removeItem("userToken");
     toast.success("Logged out successfully");
     navigate("/");
   };
