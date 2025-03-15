@@ -19,6 +19,7 @@ import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
 import ProtectedRoutes from "./middleware/ProtectedRoutes";
 import ViewUsers from "./pages/AdminDashboard/ManageUsers";
 import UserLogin from "./components/UserLogin";
+import UserProfile from "./pages/userProfile";
 
 const App = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
         <Route path="/businessDetails/:id" element={<BusinessDetails />} />
+        <Route path="//user-profile" element={<UserProfile />} />
         <Route
           path="/requiterDashboard"
           element={

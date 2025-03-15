@@ -75,7 +75,11 @@ const Navbar = () => {
                 </Avatar>
                 <div className="absolute top-0 right-0 z-10 hidden text-black rounded pt-14 group-hover:block">
                   <ul className="p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
-                    <li className="px-2 py-1 pr-10 cursor-pointer">Profile</li>
+                    <Link to={"/user-profile"}>
+                      <li className="px-2 py-1 pr-10 cursor-pointer">
+                        Profile
+                      </li>
+                    </Link>
                     <li
                       onClick={handleLogout}
                       className="px-2 py-1 pr-10 cursor-pointer"
