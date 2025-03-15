@@ -1,40 +1,28 @@
-import {
-  Contact,
-  EyeIcon,
-  EyeOff,
-  LockIcon,
-  MailIcon,
-  UserPen,
-  X,
-} from "lucide-react";
+import { EyeIcon, EyeOff, LockIcon, MailIcon, UserPen, X } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import image from "../assets/upload.png";
-import { requiterFormData, requiterFormSchema } from "../lib/validator";
+import { userFormData, userFormSchema } from "../lib/validator";
 import { AppContext } from "../context/AppContext";
 import axios, { AxiosError } from "axios";
-import { loginForm, requiterLoginResponse } from "../lib/type";
+import { loginForm, userLoginResponse } from "../lib/type";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const RequiterLogin = () => {
+const UserLogin = () => {
   const [state, setState] = useState<string>("Login");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState<requiterFormData | null>(null);
+  const [formValues, setFormValues] = useState<userFormData | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isTextDataSubmitted, setIsTextDataSubmitted] =
     useState<boolean>(false);
   const navigate = useNavigate();
 
-  const {
-    setShowRequiterLogin,
-    backendUrl,
-    setRequiterData,
-    setRequiterToken,
-  } = useContext(AppContext);
+  const { setShowUserLogin, backendUrl, setUserData, setUserToken } =
+    useContext(AppContext);
 
   const {
     register,
@@ -42,17 +30,15 @@ const RequiterLogin = () => {
     handleSubmit,
     setValue,
     setError,
-  } = useForm<requiterFormData>({
+  } = useForm<userFormData>({
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-      contactNumber: "",
       profile: "",
-      role: "REQUITER",
     },
-    resolver: zodResolver(requiterFormSchema),
+    resolver: zodResolver(userFormSchema),
     shouldUnregister: true,
   });
 
@@ -70,7 +56,7 @@ const RequiterLogin = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<requiterFormData> = async (formData) => {
+  const onSubmit: SubmitHandler<userFormData> = async (formData) => {
     console.log("Form Data Before Processing:", { state, formData });
     if (state === "Sign up" && !isTextDataSubmitted) {
       setIsTextDataSubmitted(true);
@@ -97,13 +83,11 @@ const RequiterLogin = () => {
       forms.append("lastName", formData.lastName || "");
       forms.append("email", formData.email || "");
       forms.append("password", formData.password || "");
-      forms.append("contactNumber", formData.contactNumber || "");
       forms.append("profile", formData.profile);
-      forms.append("role", formData.role);
 
       try {
-        const { data } = await axios.post<requiterLoginResponse>(
-          backendUrl + "/api/requiter/register-requiter",
+        const { data } = await axios.post<userLoginResponse>(
+          backendUrl + "/api/user/register-user",
           forms,
           {
             headers: {
@@ -114,18 +98,11 @@ const RequiterLogin = () => {
 
         if (data.success) {
           console.log(data);
-          setRequiterData(data.requiter);
-          setRequiterToken(data.token);
-          localStorage.setItem("requiterToken", data.token);
-          setShowRequiterLogin(false);
-          if (data.requiter.role === "REQUITER") {
-            navigate("/requiterDashboard/dashboard");
-          } else if (data.requiter.role === "ADMIN") {
-            navigate("/adminDashboard/dashboard");
-          } else {
-            navigate("/");
-          }
-
+          setUserData(data.user);
+          setUserToken(data.token);
+          localStorage.setItem("userToken", data.token);
+          setShowUserLogin(false);
+          navigate("/");
           toast.success(data.message);
         } else {
           toast.error(data.message);
@@ -149,24 +126,18 @@ const RequiterLogin = () => {
           password: formData.password,
         };
 
-        const { data } = await axios.post<requiterLoginResponse>(
-          backendUrl + "/api/requiter/login-requiter",
+        const { data } = await axios.post<userLoginResponse>(
+          backendUrl + "/api/user/login-user",
           loginPayload
         );
 
         if (data.success) {
           console.log(data);
-          setRequiterData(data.requiter);
-          setRequiterToken(data.token);
-          localStorage.setItem("requiterToken", data.token);
-          setShowRequiterLogin(false);
-          if (data.requiter.role === "REQUITER") {
-            navigate("/requiterDashboard/dashboard");
-          } else if (data.requiter.role === "ADMIN") {
-            navigate("/adminDashboard/dashboard");
-          } else {
-            navigate("/");
-          }
+          setUserData(data.user);
+          setUserToken(data.token);
+          localStorage.setItem("userToken", data.token);
+          setShowUserLogin(false);
+          navigate("/");
           toast.success(data.message);
         } else {
           toast.error(data.message);
@@ -194,7 +165,6 @@ const RequiterLogin = () => {
       setValue("profile", formValues.profile);
       setValue("email", formValues.email);
       setValue("password", formValues.password);
-      setValue("contactNumber", formValues.contactNumber);
     }
   }, [isTextDataSubmitted, formValues, setValue]);
 
@@ -301,27 +271,6 @@ const RequiterLogin = () => {
                     )}
                   </div>
                 </div>
-                <div>
-                  <div className="relative mt-5">
-                    <Contact className="absolute w-5 h-5 top-1/4 left-3" />
-                    <Input
-                      {...(state === "Sign up"
-                        ? register("contactNumber")
-                        : {})}
-                      placeholder="contact number"
-                      type="text"
-                      className={`pl-10 rounded-full ${
-                        errors.lastName &&
-                        "border-red-500 focus-visible:ring-red-500"
-                      }`}
-                    />
-                  </div>
-                  {errors.contactNumber && (
-                    <p className="text-xs text-red-500">
-                      {errors.contactNumber.message}
-                    </p>
-                  )}
-                </div>
               </div>
             )}
             <div>
@@ -415,7 +364,7 @@ const RequiterLogin = () => {
           </p>
         )}
         <X
-          onClick={() => setShowRequiterLogin(false)}
+          onClick={() => setShowUserLogin(false)}
           size={25}
           className="absolute cursor-pointer top-5 right-5"
         />
@@ -424,4 +373,4 @@ const RequiterLogin = () => {
   );
 };
 
-export default RequiterLogin;
+export default UserLogin;

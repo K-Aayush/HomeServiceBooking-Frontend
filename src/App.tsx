@@ -18,15 +18,17 @@ import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import ViewAdminDashboard from "./pages/AdminDashboard/ViewAdminDashboard";
 import ProtectedRoutes from "./middleware/ProtectedRoutes";
 import ViewUsers from "./pages/AdminDashboard/ManageUsers";
+import UserLogin from "./components/UserLogin";
 
 const App = () => {
   const location = useLocation();
-  const { showRequiterLogin } = useContext(AppContext);
+  const { showRequiterLogin, showUserLogin } = useContext(AppContext);
   return (
     <div>
       {!location.pathname.startsWith("/requiterDashboard") &&
         !location.pathname.startsWith("/adminDashboard") && <Navbar />}
       {showRequiterLogin && <RequiterLogin />}
+      {showUserLogin && <UserLogin />}
       <Toaster richColors duration={5000} />
       <Routes>
         <Route path="/" element={<Home />} />

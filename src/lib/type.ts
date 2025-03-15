@@ -57,9 +57,16 @@ export interface loginForm {
   password: string;
 }
 
-export interface loginResponse {
+export interface requiterLoginResponse {
   success: boolean;
   requiter: requiterDataProps;
+  token: string;
+  message: string;
+}
+
+export interface userLoginResponse {
+  success: boolean;
+  user: userDataProps;
   token: string;
   message: string;
 }
