@@ -184,7 +184,7 @@ const UserLogin = () => {
         className="relative p-10 bg-white rounded-xl text-slate-500"
       >
         <h1 className="text-2xl font-medium text-center text-neutral-700">
-          Requiter {state}
+          User {state}
         </h1>
         {state === "Sign up" ? (
           <p className="text-sm text-center">
@@ -205,7 +205,7 @@ const UserLogin = () => {
                   <img
                     src={previewImage || image}
                     alt="image"
-                    className="w-16 rounded-full"
+                    className="w-16 h-16 rounded-full"
                   />
                   <input
                     type="file"
@@ -215,7 +215,7 @@ const UserLogin = () => {
                   />
                 </label>
                 <p>
-                  Upload Company <br /> logo
+                  Upload Profile <br /> Picture
                 </p>
               </div>
 

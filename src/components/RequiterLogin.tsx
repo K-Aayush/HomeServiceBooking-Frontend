@@ -235,7 +235,7 @@ const RequiterLogin = () => {
                   <img
                     src={previewImage || image}
                     alt="image"
-                    className="w-16 rounded-full"
+                    className="w-16 h-16 rounded-full"
                   />
                   <input
                     type="file"
