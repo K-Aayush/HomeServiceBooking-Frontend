@@ -3,6 +3,7 @@ import {
   PopularBusinessListType,
   requiterDataProps,
   TotalUsersState,
+  userDataProps,
   usersState,
 } from "../lib/type";
 
@@ -18,12 +19,18 @@ interface AppContextType {
   fetchBusinessByCategory: (category: string) => void;
   showRequiterLogin: boolean;
   setShowRequiterLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  showUserLogin: boolean;
+  setShowUserLogin: React.Dispatch<React.SetStateAction<boolean>>;
   requiterToken: string | null;
   setRequiterToken: React.Dispatch<React.SetStateAction<string | null>>;
   requiterData: requiterDataProps | null;
   setRequiterData: React.Dispatch<
     React.SetStateAction<requiterDataProps | null>
   >;
+  userToken: string | null;
+  setUserToken: React.Dispatch<React.SetStateAction<string | null>>;
+  userData: userDataProps | null;
+  setUserData: React.Dispatch<React.SetStateAction<userDataProps | null>>;
   backendUrl: string;
   logout: () => void;
   isLoading: boolean;
@@ -48,10 +55,16 @@ const defaultValue: AppContextType = {
   fetchBusinessByCategory: () => {},
   showRequiterLogin: false,
   setShowRequiterLogin: () => {},
+  showUserLogin: false,
+  setShowUserLogin: () => {},
   requiterToken: null,
   setRequiterToken: () => {},
   requiterData: null,
   setRequiterData: () => {},
+  userToken: null,
+  setUserToken: () => {},
+  userData: null,
+  setUserData: () => {},
   backendUrl: "",
   logout: () => {},
   isLoading: false,

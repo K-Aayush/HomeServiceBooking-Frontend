@@ -3,9 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import {
   PopularBusinessListType,
   requiterDataProps,
-  tokenCheck,
+  requiterTokenCheck,
   TotalUsersState,
+  userDataProps,
   usersState,
+  userTokenCheck,
 } from "../lib/type";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +32,9 @@ export const AppContextProvider = ({
   //show requiter login context
   const [showRequiterLogin, setShowRequiterLogin] = useState(false);
 
+  //show user login context
+  const [showUserLogin, setShowUserLogin] = useState(false);
+
   //get all business list
   const [business, setBusiness] = useState<PopularBusinessListType[]>([]);
 
@@ -44,6 +49,12 @@ export const AppContextProvider = ({
   );
   const [requiterData, setRequiterData] = useState<requiterDataProps | null>(
     null
+  );
+
+  //get user token
+  const [userData, setUserData] = useState<userDataProps | null>(null);
+  const [userToken, setUserToken] = useState<string | null>(
+    localStorage.getItem("userToken")
   );
 
   //get all users states
@@ -141,11 +152,11 @@ export const AppContextProvider = ({
 
   //fetch requiterdata
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRequiterData = async () => {
       if (requiterToken) {
         try {
-          const { data } = await axios.get<tokenCheck>(
-            `${backendUrl}/api/requiter/me`,
+          const { data } = await axios.get<requiterTokenCheck>(
+            `${backendUrl}/api/requiter/getrequiterData`,
             { headers: { Authorization: requiterToken } }
           );
 
@@ -164,13 +175,43 @@ export const AppContextProvider = ({
       }
     };
 
-    fetchData();
+    fetchRequiterData();
   }, [requiterToken, backendUrl]);
+
+  //fetch userData
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (userToken) {
+        try {
+          const { data } = await axios.get<userTokenCheck>(
+            `${backendUrl}/api/user/getUserData`,
+            { headers: { Authorization: userToken } }
+          );
+
+          if (data.success) {
+            setUserData(data.user);
+          } else {
+            setError(data.message);
+            logout();
+          }
+        } catch (error) {
+          console.error("User data fetch error:", error);
+          logout();
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [userToken, backendUrl]);
 
   //Logout function
   const logout = () => {
     setRequiterToken(null);
     localStorage.removeItem("requiterToken");
+    setUserToken(null);
+    localStorage.removeItem("userToken");
     toast.success("Logged out successfully");
     navigate("/");
   };
@@ -201,6 +242,12 @@ export const AppContextProvider = ({
     error,
     setError,
     fetchAllUsers,
+    userData,
+    setUserData,
+    userToken,
+    setUserToken,
+    showUserLogin,
+    setShowUserLogin,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

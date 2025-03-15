@@ -42,21 +42,44 @@ export interface requiterDataProps {
   requiterProfileImage: string;
 }
 
+export interface userDataProps {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  userProfileImage: string;
+}
+
 export interface loginForm {
   email: string;
   password: string;
 }
 
-export interface loginResponse {
+export interface requiterLoginResponse {
   success: boolean;
   requiter: requiterDataProps;
   token: string;
   message: string;
 }
 
-export interface tokenCheck {
+export interface userLoginResponse {
+  success: boolean;
+  user: userDataProps;
+  token: string;
+  message: string;
+}
+
+export interface requiterTokenCheck {
   success: boolean;
   requiter: requiterDataProps;
+  message: string;
+}
+
+export interface userTokenCheck {
+  success: boolean;
+  user: userDataProps;
   message: string;
 }
 
