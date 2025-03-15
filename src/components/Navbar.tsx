@@ -108,25 +108,35 @@ const Navbar = () => {
                     <h2>About Us</h2>
                   </Link>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    onClick={() => {
-                      setShowRequiterLogin(true);
-                      setIsSheetOpen(false);
-                    }}
-                    variant="outline"
-                  >
-                    Recuriter Login
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setShowUserLogin(true);
-                      setIsSheetOpen(false);
-                    }}
-                  >
-                    Login
-                  </Button>
-                </div>
+
+                {!userData ? (
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => {
+                        setShowRequiterLogin(true);
+                        setIsSheetOpen(false);
+                      }}
+                      variant="outline"
+                    >
+                      Recuriter Login
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowUserLogin(true);
+                        setIsSheetOpen(false);
+                      }}
+                    >
+                      Login
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Button variant="outline">Profile</Button>
+                    <Button variant={"destructive"} onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>
