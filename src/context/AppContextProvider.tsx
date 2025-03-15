@@ -32,6 +32,9 @@ export const AppContextProvider = ({
   //show requiter login context
   const [showRequiterLogin, setShowRequiterLogin] = useState(false);
 
+  //show user login context
+  const [showUserLogin, setShowUserLogin] = useState(false);
+
   //get all business list
   const [business, setBusiness] = useState<PopularBusinessListType[]>([]);
 
@@ -203,8 +206,6 @@ export const AppContextProvider = ({
     fetchUserData();
   }, [userToken, backendUrl]);
 
-
-
   //Logout function
   const logout = () => {
     setRequiterToken(null);
@@ -245,6 +246,8 @@ export const AppContextProvider = ({
     setUserData,
     userToken,
     setUserToken,
+    showUserLogin,
+    setShowUserLogin,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
