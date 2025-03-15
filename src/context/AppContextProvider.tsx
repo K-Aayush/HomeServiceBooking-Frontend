@@ -5,6 +5,7 @@ import {
   requiterDataProps,
   tokenCheck,
   TotalUsersState,
+  userDataProps,
   usersState,
 } from "../lib/type";
 import { toast } from "sonner";
@@ -46,7 +47,11 @@ export const AppContextProvider = ({
     null
   );
 
-  const [userData, setUserData] = useState(null)
+  //get user token
+  const [userData, setUserData] = useState<userDataProps | null>(null);
+  const [userToken, setUserToken] = useState<string | null>(
+    localStorage.getItem("userToken")
+  );
 
   //get all users states
   const [totalUsers, setTotalUsers] = useState<TotalUsersState>({
@@ -203,6 +208,10 @@ export const AppContextProvider = ({
     error,
     setError,
     fetchAllUsers,
+    userData,
+    setUserData,
+    userToken,
+    setUserToken,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

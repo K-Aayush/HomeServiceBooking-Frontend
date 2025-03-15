@@ -42,6 +42,16 @@ export interface requiterDataProps {
   requiterProfileImage: string;
 }
 
+export interface userDataProps {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  userProfileImage: string;
+}
+
 export interface loginForm {
   email: string;
   password: string;
