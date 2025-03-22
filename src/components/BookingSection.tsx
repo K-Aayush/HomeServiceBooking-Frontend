@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -10,6 +10,7 @@ import {
 import { Calendar } from "./ui/calendar";
 
 const BookingSection = ({ children }: { children: React.ReactNode }) => {
+  const [date, setDate] = useState<Date | undefined>(new Date());
   return (
     <div>
       <Sheet>
@@ -19,6 +20,11 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
             <SheetTitle>Book an Service</SheetTitle>
             <SheetDescription>
               Select Date and Time Slot to book an service
+              {/* Date Picker */}
+              <div>
+                <h2>Select Date</h2>
+              </div>
+              <div>{/* Time Slot Picker */}</div>
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
