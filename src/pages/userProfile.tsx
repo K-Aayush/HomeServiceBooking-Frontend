@@ -5,7 +5,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import { useForm } from "react-hook-form";
-import { profileSchema, profileSchemaData } from "../lib/validator";
+import { userProfileSchema, userProfileSchemaData } from "../lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -26,8 +26,8 @@ const UserProfile = () => {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<profileSchemaData>({
-    resolver: zodResolver(profileSchema),
+  } = useForm<userProfileSchemaData>({
+    resolver: zodResolver(userProfileSchema),
     defaultValues: {
       firstName: userData?.firstName || "",
       lastName: userData?.lastName || "",
@@ -47,7 +47,7 @@ const UserProfile = () => {
   }, [userData, setValue]);
 
   // Handle Save action
-  const onSubmit = async (user: profileSchemaData) => {
+  const onSubmit = async (user: userProfileSchemaData) => {
     console.log(user);
     try {
       const formData = new FormData();
