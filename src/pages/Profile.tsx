@@ -5,14 +5,22 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Button } from "../components/ui/button";
 import { useForm } from "react-hook-form";
-import { userProfileSchema, userProfileSchemaData } from "../lib/validator";
+import {
+  requiterProfileSchema,
+  requiterProfileSchemaData,
+} from "../lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 
-const UserProfile = () => {
-  const { userData, isLoading, backendUrl, userToken, setUserData } =
-    useContext(AppContext);
+const Profile = () => {
+  const {
+    setRequiterData,
+    isLoading,
+    backendUrl,
+    requiterData,
+    requiterToken,
+  } = useContext(AppContext);
 
   // State variables to manage input and editing mode
   const [isEditing, setIsEditing] = useState({
@@ -26,57 +34,57 @@ const UserProfile = () => {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<userProfileSchemaData>({
-    resolver: zodResolver(userProfileSchema),
+  } = useForm<requiterProfileSchemaData>({
+    resolver: zodResolver(requiterProfileSchema),
     defaultValues: {
-      firstName: userData?.firstName || "",
-      lastName: userData?.lastName || "",
+      firstName: requiterData?.firstName || "",
+      lastName: requiterData?.lastName || "",
       oldPassword: "",
       newPassword: "",
-      userProfileImage: "",
+      requiterProfileImage: "",
     },
     mode: "onChange",
   });
 
-  // Update form values when userData changes
+  // Update form values when requiterData changes
   useEffect(() => {
-    if (userData) {
-      setValue("firstName", userData.firstName || "");
-      setValue("lastName", userData.lastName || "");
+    if (requiterData) {
+      setValue("firstName", requiterData.firstName || "");
+      setValue("lastName", requiterData.lastName || "");
     }
-  }, [userData, setValue]);
+  }, [requiterData, setValue]);
 
   // Handle Save action
-  const onSubmit = async (user: userProfileSchemaData) => {
-    console.log(user);
+  const onSubmit = async (requiter: requiterProfileSchemaData) => {
+    console.log(requiter);
     try {
       const formData = new FormData();
       // Append profile image if exists
       if (
-        user.userProfileImage &&
-        user.userProfileImage instanceof FileList &&
-        user.userProfileImage.length > 0
+        requiter.requiterProfileImage &&
+        requiter.requiterProfileImage instanceof FileList &&
+        requiter.requiterProfileImage.length > 0
       ) {
-        formData.append("userProfileImage", user.userProfileImage[0]);
+        formData.append("userProfileImage", requiter.requiterProfileImage[0]);
       }
 
       // Only append if the value exists
 
-      formData.append("firstName", user.firstName || "");
-      formData.append("lastName", user.lastName || "");
+      formData.append("firstName", requiter.firstName || "");
+      formData.append("lastName", requiter.lastName || "");
 
       // Only append passwords if editing password
       if (isEditing.password) {
-        formData.append("oldPassword", user.oldPassword || "");
-        formData.append("newPassword", user.newPassword || "");
+        formData.append("oldPassword", requiter.oldPassword || "");
+        formData.append("newPassword", requiter.newPassword || "");
       }
 
       const { data } = await axios.put(
-        `${backendUrl}/api/user/updateUserProfile`,
+        `${backendUrl}/api/requiter/updateRequiterProfile`,
         formData,
         {
           headers: {
-            Authorization: userToken,
+            Authorization: requiterToken,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -84,14 +92,14 @@ const UserProfile = () => {
 
       if (data.success) {
         toast.success(data.message);
-        setUserData(data.user);
+        setRequiterData(data.requiter);
 
         reset({
-          firstName: data.user.firstName || "",
-          lastName: data.user.lastName || "",
+          firstName: data.requiter.firstName || "",
+          lastName: data.requiter.lastName || "",
           oldPassword: "",
           newPassword: "",
-          userProfileImage: "",
+          requiterProfileImage: "",
         });
         setIsEditing({ name: false, password: false });
       } else {
@@ -112,10 +120,10 @@ const UserProfile = () => {
     try {
       if (window.confirm("Are you sure you want to delete this Account?")) {
         const { data } = await axios.delete(
-          `${backendUrl}/api/user/deleteUserData`,
+          `${backendUrl}/api/user/deleteRequiterData`,
           {
             headers: {
-              Authorization: userToken,
+              Authorization: requiterToken,
             },
           }
         );
@@ -145,7 +153,7 @@ const UserProfile = () => {
         <div className="flex flex-col justify-center px-6 py-16 space-y-6 md:mx-16">
           <div className="relative w-32 h-32">
             <img
-              src={userData?.userProfileImage}
+              src={requiterData?.requiterProfileImage}
               alt="profile"
               className="object-cover w-full h-full border rounded-full"
             />
@@ -153,7 +161,7 @@ const UserProfile = () => {
               type="file"
               accept="image/*"
               className="absolute inset-0 opacity-0 cursor-pointer"
-              {...register("userProfileImage")}
+              {...register("requiterProfileImage")}
             />
           </div>
 
@@ -168,7 +176,7 @@ const UserProfile = () => {
               <div className="flex items-center w-full max-w-md gap-6 mt-2">
                 <Input
                   className="w-full"
-                  placeholder={userData?.email}
+                  placeholder={requiterData?.email}
                   disabled
                 />
                 <div className="w-[110px]"></div>
@@ -227,7 +235,7 @@ const UserProfile = () => {
                   <>
                     <Input
                       className="w-full"
-                      placeholder={`${userData?.firstName} ${userData?.lastName}`}
+                      placeholder={`${requiterData?.firstName} ${requiterData?.lastName}`}
                       disabled
                     />
                     <Button
@@ -337,4 +345,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default Profile;

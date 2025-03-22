@@ -122,6 +122,7 @@ const RequiterLogin = () => {
             navigate("/requiterDashboard/dashboard");
           } else if (data.requiter.role === "ADMIN") {
             navigate("/adminDashboard/dashboard");
+            window.location.reload();
           } else {
             navigate("/");
           }
@@ -161,9 +162,9 @@ const RequiterLogin = () => {
           localStorage.setItem("requiterToken", data.token);
           setShowRequiterLogin(false);
           if (data.requiter.role === "REQUITER") {
-            navigate("/requiterDashboard/dashboard");
+            await navigate("/requiterDashboard/dashboard");
           } else if (data.requiter.role === "ADMIN") {
-            navigate("/adminDashboard/dashboard");
+            await navigate("/adminDashboard/dashboard");
           } else {
             navigate("/");
           }
