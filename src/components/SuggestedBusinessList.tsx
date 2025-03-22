@@ -3,6 +3,16 @@ import { SuggestedBusinessDetailsProps } from "../lib/type";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import noImage from "../assets/no-image.png";
+import {
+  Sheet,
+  SheetContent,
+  SheetClose,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
 
 const SuggestedBusinessList = ({ business }: SuggestedBusinessDetailsProps) => {
   console.log(business);
