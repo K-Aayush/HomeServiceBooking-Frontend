@@ -33,7 +33,7 @@ const UserProfile = () => {
       lastName: userData?.lastName || "",
       oldPassword: "",
       newPassword: "",
-      profileImage: "",
+      userProfileImage: "",
     },
     mode: "onChange",
   });
@@ -48,26 +48,22 @@ const UserProfile = () => {
 
   // Handle Save action
   const onSubmit = async (user: profileSchemaData) => {
+    console.log(user);
     try {
-      const cleanData = {
-        ...user,
-        firstName: user.firstName?.trim() || undefined,
-        lastName: user.lastName?.trim() || undefined,
-      };
-
       const formData = new FormData();
       // Append profile image if exists
       if (
-        user.profileImage instanceof FileList &&
-        user.profileImage.length > 0
+        user.userProfileImage &&
+        user.userProfileImage instanceof FileList &&
+        user.userProfileImage.length > 0
       ) {
-        formData.append("profileImage", user.profileImage[0]);
+        formData.append("userProfileImage", user.userProfileImage[0]);
       }
 
       // Only append if the value exists
-      if (cleanData.firstName)
-        formData.append("firstName", cleanData.firstName);
-      if (cleanData.lastName) formData.append("lastName", cleanData.lastName);
+
+      formData.append("firstName", user.firstName || "");
+      formData.append("lastName", user.lastName || "");
 
       // Only append passwords if editing password
       if (isEditing.password) {
@@ -95,7 +91,7 @@ const UserProfile = () => {
           lastName: data.user.lastName || "",
           oldPassword: "",
           newPassword: "",
-          profileImage: "",
+          userProfileImage: "",
         });
         setIsEditing({ name: false, password: false });
       } else {
@@ -157,7 +153,7 @@ const UserProfile = () => {
               type="file"
               accept="image/*"
               className="absolute inset-0 opacity-0 cursor-pointer"
-              {...register("profileImage")}
+              {...register("userProfileImage")}
             />
           </div>
 
@@ -231,7 +227,7 @@ const UserProfile = () => {
                   <>
                     <Input
                       className="w-full"
-                      placeholder={userData?.name}
+                      placeholder={`${userData?.firstName} ${userData?.lastName}`}
                       disabled
                     />
                     <Button

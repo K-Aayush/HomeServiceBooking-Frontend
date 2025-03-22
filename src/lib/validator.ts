@@ -82,23 +82,13 @@ export const addBusinessSchema = z.object({
 // Define validation schema using Zod
 export const profileSchema = z
   .object({
-    firstName: z
-      .string({ required_error: "first name is required" })
-      .min(3, "Must be 3 or more characters long")
-      .max(20, "Must be less than 20 characters")
-      .optional()
-      .or(z.literal("")),
+    firstName: z.string().min(1, "first Name is required").optional(),
 
-    lastName: z
-      .string({ required_error: "first name is required" })
-      .min(3, "Must be 3 or more characters long")
-      .max(20, "Must be less than 20 characters")
-      .optional()
-      .or(z.literal("")),
+    lastName: z.string().min(1, "last Name is required").optional(),
 
     oldPassword: z.string().optional(),
     newPassword: z.string().optional(),
-    profileImage: z.any().optional().nullable(),
+    userProfileImage: z.any().optional(),
   })
   .refine(
     (data) => {
@@ -139,17 +129,5 @@ export const profileSchema = z
     {
       message: "New Password and old password cannot be same",
       path: ["newPassword"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (data.firstName === "" && data.lastName === "") {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "At least one name field must be provided",
-      path: ["firstName"],
     }
   );

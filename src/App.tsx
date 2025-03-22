@@ -37,7 +37,7 @@ const App = () => {
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
         <Route path="/businessDetails/:id" element={<BusinessDetails />} />
-        <Route path="//user-profile" element={<UserProfile />} />
+        <Route path="/user-profile" element={<UserProfile />} />
         <Route
           path="/requiterDashboard"
           element={
