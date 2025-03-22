@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     navigate("/");
   };
 
-  const isProfilePage = location.pathname.includes("/admin/profile");
+  const isProfilePage = location.pathname.includes("/adminDashboard/profile");
   return (
     <div className="min-h-screen">
       {/*Navbar for requiter pannel*/}
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
               </Avatar>
               <div className="absolute top-0 right-0 z-10 hidden pt-12 text-black rounded group-hover:block">
                 <ul className="p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
-                  <Link to={"/admin/profile"}>
+                  <Link to={"/adminDashboard/profile"}>
                     <li className="px-2 py-1 pr-10 cursor-pointer">Profile</li>
                   </Link>
                   <li
