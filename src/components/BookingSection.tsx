@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -45,7 +47,7 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
     <div>
       <Sheet>
         <SheetTrigger>{children}</SheetTrigger>
-        <SheetContent>
+        <SheetContent className="overflow-auto">
           <SheetHeader>
             <SheetTitle>Book an Service</SheetTitle>
             <SheetDescription>
@@ -80,6 +82,14 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
           </div>
+          <SheetFooter className="mt-5">
+            <SheetClose asChild>
+              <div className="flex gap-5">
+                <Button variant="destructive">Cancel</Button>
+                <Button type="submit">Book</Button>
+              </div>
+            </SheetClose>
+          </SheetFooter>
         </SheetContent>
       </Sheet>
     </div>
