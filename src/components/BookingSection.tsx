@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -8,10 +8,18 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Calendar } from "./ui/calendar";
+import { Button } from "./ui/button";
 
 const BookingSection = ({ children }: { children: React.ReactNode }) => {
+  //usestate for selecting date and timeslots
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [timeSlot, setTimeSLot] = useState<{ time: string }[]>([]);
 
+  useEffect(() => {
+    getTime();
+  }, []);
+
+  //Creating custom timelist
   const getTime = () => {
     const timeList = [];
     for (let i = 10; i <= 12; i++) {
@@ -30,8 +38,9 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
         time: i + ":30 PM",
       });
     }
+    setTimeSLot(timeList);
   };
-  
+
   return (
     <div>
       <Sheet>
@@ -43,16 +52,34 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
               Select Date and Time Slot to book an service
             </SheetDescription>
           </SheetHeader>
-          {/* Date Picker */}
-          <div className="flex justify-center my-5 item-center">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="border rounded-md"
-            />
+          <div>
+            {/* Date Picker */}
+            <div className="flex flex-col items-baseline gap-5">
+              <h2 className="mt-5 font-bold text-gray-600">Select Date</h2>
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="border rounded-md"
+              />
+            </div>
+
+            <div className="">
+              {/* Time Slot Picker */}
+              <h2 className="my-5 font-bold text-gray-600">Select Time Slot</h2>
+              <div className="grid grid-cols-3 gap-3">
+                {timeSlot.map((item, index) => (
+                  <Button
+                    className="p-2 px-3 border rounded-full"
+                    key={index}
+                    variant={"outline"}
+                  >
+                    {item.time}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
-          <div>{/* Time Slot Picker */}</div>
         </SheetContent>
       </Sheet>
     </div>
