@@ -16,6 +16,7 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
   //usestate for selecting date and timeslots
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [timeSlot, setTimeSLot] = useState<{ time: string }[]>([]);
+  const [selectedTime, setSelectedTime] = useState<string>();
 
   useEffect(() => {
     getTime();
@@ -72,9 +73,12 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
               <div className="grid grid-cols-3 gap-3">
                 {timeSlot.map((item, index) => (
                   <Button
-                    className="p-2 px-3 border rounded-full"
+                    className={`p-2 px-3 border rounded-full hover:bg-primary hover:text-white ${
+                      selectedTime == item.time && "bg-primary text-white"
+                    }`}
                     key={index}
                     variant={"outline"}
+                    onClick={() => setSelectedTime(item.time)}
                   >
                     {item.time}
                   </Button>
@@ -86,7 +90,9 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
             <SheetClose asChild>
               <div className="flex gap-5">
                 <Button variant="destructive">Cancel</Button>
-                <Button type="submit">Book</Button>
+                <Button disabled={!(selectedTime && date)} type="submit">
+                  Book
+                </Button>
               </div>
             </SheetClose>
           </SheetFooter>
