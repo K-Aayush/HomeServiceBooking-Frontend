@@ -44,6 +44,8 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
     setTimeSLot(timeList);
   };
 
+  const onBooking = () => {};
+
   return (
     <div>
       <Sheet>
@@ -90,7 +92,7 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
             <SheetClose asChild>
               <div className="flex gap-5">
                 <Button variant="destructive">Cancel</Button>
-                <Button disabled={!(selectedTime && date)} type="submit">
+                <Button disabled={!(selectedTime && date)} onClick={onBooking}>
                   Book
                 </Button>
               </div>
