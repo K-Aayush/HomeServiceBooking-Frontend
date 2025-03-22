@@ -13,14 +13,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import BookingSection from "./BookingSection";
 
 const SuggestedBusinessList = ({ business }: SuggestedBusinessDetailsProps) => {
   console.log(business);
   return (
     <div className="pl-10">
-      <Button className="flex w-full gap-2">
-        <NotebookPen /> Book Appointment
-      </Button>
+      <BookingSection>
+        <Button className="flex w-full gap-2">
+          <NotebookPen /> Book Appointment
+        </Button>
+      </BookingSection>
       <h2 className="mt-3 mb-3 text-lg font-bold">Similar Business</h2>
       <div className="">
         {business.map((item, index) => (
