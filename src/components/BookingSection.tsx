@@ -7,6 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import { Calendar } from "./ui/calendar";
 
 const BookingSection = ({ children }: { children: React.ReactNode }) => {
   return (
