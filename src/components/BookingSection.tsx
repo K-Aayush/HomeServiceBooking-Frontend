@@ -11,6 +11,27 @@ import { Calendar } from "./ui/calendar";
 
 const BookingSection = ({ children }: { children: React.ReactNode }) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const getTime = () => {
+    const timeList = [];
+    for (let i = 10; i <= 12; i++) {
+      timeList.push({
+        time: i + ":00 AM",
+      });
+      timeList.push({
+        time: i + ":30 AM",
+      });
+    }
+    for (let i = 1; i <= 6; i++) {
+      timeList.push({
+        time: i + ":00 PM",
+      });
+      timeList.push({
+        time: i + ":30 PM",
+      });
+    }
+  };
+  
   return (
     <div>
       <Sheet>
@@ -20,13 +41,18 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
             <SheetTitle>Book an Service</SheetTitle>
             <SheetDescription>
               Select Date and Time Slot to book an service
-              {/* Date Picker */}
-              <div>
-                <h2>Select Date</h2>
-              </div>
-              <div>{/* Time Slot Picker */}</div>
             </SheetDescription>
           </SheetHeader>
+          {/* Date Picker */}
+          <div className="flex justify-center my-5 item-center">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="border rounded-md"
+            />
+          </div>
+          <div>{/* Time Slot Picker */}</div>
         </SheetContent>
       </Sheet>
     </div>
