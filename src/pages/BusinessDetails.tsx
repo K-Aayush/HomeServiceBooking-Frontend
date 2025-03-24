@@ -9,8 +9,6 @@ import Loader from "../components/Loader";
 import axios from "axios";
 import { toast } from "sonner";
 
-
-
 const BusinessDetails = () => {
   const { id } = useParams();
 
@@ -75,6 +73,7 @@ const BusinessDetails = () => {
             business={businessByCategory.filter(
               (b) => b.id !== businessData.id
             )}
+            selectedBusinessId={businessData.id}
           />
         </div>
       </div>

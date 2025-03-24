@@ -5,15 +5,25 @@ import { Link } from "react-router-dom";
 import noImage from "../assets/no-image.png";
 import BookingSection from "./BookingSection";
 
-const SuggestedBusinessList = ({ business }: SuggestedBusinessDetailsProps) => {
+interface SuggestedBusinessListProps extends SuggestedBusinessDetailsProps {
+  selectedBusinessId?: string; // Add this prop
+}
+
+const SuggestedBusinessList = ({
+  business,
+  selectedBusinessId,
+}: SuggestedBusinessListProps) => {
   console.log(business);
   return (
     <div className="pl-10">
-      <BookingSection>
-        <Button className="flex w-full gap-2">
-          <NotebookPen /> Book Appointment
-        </Button>
-      </BookingSection>
+      {selectedBusinessId && (
+        <BookingSection businessId={selectedBusinessId}>
+          <Button className="flex w-full gap-2">
+            <NotebookPen /> Book Appointment
+          </Button>
+        </BookingSection>
+      )}
+
       <h2 className="mt-3 mb-3 text-lg font-bold">Similar Business</h2>
       <div className="">
         {business.map((item, index) => (

@@ -12,7 +12,12 @@ import {
 import { Calendar } from "./ui/calendar";
 import { Button } from "./ui/button";
 
-const BookingSection = ({ children }: { children: React.ReactNode }) => {
+interface BookingSectionProps {
+  children: React.ReactNode;
+  businessId: string;
+}
+
+const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   //usestate for selecting date and timeslots
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [timeSlot, setTimeSLot] = useState<{ time: string }[]>([]);
