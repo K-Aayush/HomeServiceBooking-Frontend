@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -11,12 +11,24 @@ import {
 } from "./ui/sheet";
 import { Calendar } from "./ui/calendar";
 import { Button } from "./ui/button";
+import { AppContext } from "../context/AppContext";
+import { toast } from "sonner";
+import axios, { AxiosError } from "axios";
 
-const BookingSection = ({ children }: { children: React.ReactNode }) => {
+interface BookingSectionProps {
+  children: React.ReactNode;
+  businessId: string;
+}
+
+const BookingSection = ({ children, businessId }: BookingSectionProps) => {
+  const { backendUrl, userToken, isLoading, setIsLoading } =
+    useContext(AppContext);
+
   //usestate for selecting date and timeslots
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [timeSlot, setTimeSLot] = useState<{ time: string }[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     getTime();
@@ -44,12 +56,55 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
     setTimeSLot(timeList);
   };
 
-  const onBooking = () => {};
+  const onBooking = async () => {
+    if (!date || !selectedTime || !businessId) {
+      toast.error("Please select date, time and business");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/booking/create`,
+        {
+          businessId,
+          date: date.toISOString().split("T")[0],
+          time: selectedTime,
+        },
+        {
+          headers: {
+            Authorization: userToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setIsOpen(false);
+        // Reset form
+        setDate(new Date());
+        setSelectedTime(undefined);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      if (error instanceof AxiosError && error.response) {
+        toast.error(error.response.data.message || "Failed to create booking");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
-      <Sheet>
-        <SheetTrigger>{children}</SheetTrigger>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger onClick={() => setIsOpen(true)}>{children}</SheetTrigger>
         <SheetContent className="overflow-auto">
           <SheetHeader>
             <SheetTitle>Book an Service</SheetTitle>
@@ -66,6 +121,9 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
                 selected={date}
                 onSelect={setDate}
                 className="border rounded-md"
+                disabled={(date) =>
+                  date < new Date(new Date().setHours(0, 0, 0, 0))
+                }
               />
             </div>
 
@@ -91,9 +149,15 @@ const BookingSection = ({ children }: { children: React.ReactNode }) => {
           <SheetFooter className="mt-5">
             <SheetClose asChild>
               <div className="flex gap-5">
-                <Button variant="destructive">Cancel</Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => setIsOpen(false)}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
                 <Button disabled={!(selectedTime && date)} onClick={onBooking}>
-                  Book
+                  {isLoading ? "Booking..." : "Book"}
                 </Button>
               </div>
             </SheetClose>

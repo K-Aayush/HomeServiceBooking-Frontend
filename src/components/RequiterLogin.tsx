@@ -30,6 +30,8 @@ const RequiterLogin = () => {
   const navigate = useNavigate();
 
   const {
+    isLoading,
+    setIsLoading,
     setShowRequiterLogin,
     backendUrl,
     setRequiterData,
@@ -102,6 +104,7 @@ const RequiterLogin = () => {
       forms.append("role", formData.role);
 
       try {
+        setIsLoading(true);
         const { data } = await axios.post<requiterLoginResponse>(
           backendUrl + "/api/requiter/register-requiter",
           forms,
@@ -130,6 +133,7 @@ const RequiterLogin = () => {
           toast.success(data.message);
         } else {
           toast.error(data.message);
+          setIsLoading(false);
         }
       } catch (error) {
         // error handling
@@ -169,6 +173,7 @@ const RequiterLogin = () => {
             navigate("/");
           }
           toast.success(data.message);
+          setIsLoading(false);
         } else {
           toast.error(data.message);
         }
@@ -386,11 +391,14 @@ const RequiterLogin = () => {
           type="submit"
           className="w-full mt-4 rounded-full"
           onClick={() => console.log("button clicked state: ", state)}
+          disabled={isLoading}
         >
           {state === "Login"
             ? "Login"
             : isTextDataSubmitted
-            ? "Create Account"
+            ? isLoading
+              ? "Loading..."
+              : "Create Account"
             : "Next"}
         </Button>
         {/* changing state by login or sign up  */}

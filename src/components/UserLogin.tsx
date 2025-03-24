@@ -21,8 +21,14 @@ const UserLogin = () => {
     useState<boolean>(false);
   const navigate = useNavigate();
 
-  const { setShowUserLogin, backendUrl, setUserData, setUserToken } =
-    useContext(AppContext);
+  const {
+    setShowUserLogin,
+    backendUrl,
+    setUserData,
+    setUserToken,
+    isLoading,
+    setIsLoading,
+  } = useContext(AppContext);
 
   const {
     register,
@@ -86,6 +92,7 @@ const UserLogin = () => {
       forms.append("profile", formData.profile);
 
       try {
+        setIsLoading(true);
         const { data } = await axios.post<userLoginResponse>(
           backendUrl + "/api/user/register-user",
           forms,
@@ -104,6 +111,7 @@ const UserLogin = () => {
           setShowUserLogin(false);
           navigate("/");
           toast.success(data.message);
+          setIsLoading(false);
         } else {
           toast.error(data.message);
         }
@@ -139,6 +147,7 @@ const UserLogin = () => {
           setShowUserLogin(false);
           navigate("/");
           toast.success(data.message);
+          setIsLoading(false);
         } else {
           toast.error(data.message);
         }
@@ -334,11 +343,14 @@ const UserLogin = () => {
           type="submit"
           className="w-full mt-4 rounded-full"
           onClick={() => console.log("button clicked state: ", state)}
+          disabled={isLoading}
         >
           {state === "Login"
             ? "Login"
             : isTextDataSubmitted
-            ? "Create Account"
+            ? isLoading
+              ? "Loading..."
+              : "Create Account"
             : "Next"}
         </Button>
         {/* changing state by login or sign up  */}

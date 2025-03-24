@@ -1,5 +1,5 @@
 export interface PopularBusinessListType {
-  id: number;
+  id: string;
   name: string;
   about: string;
   address: string;
