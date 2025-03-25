@@ -56,13 +56,6 @@ const ProtectedRoutes = ({ children, requiredRole }: ProtectedRouteProps) => {
   try {
     const decoded = jwtDecode<DecodedToken>(token);
 
-    // Log for debugging
-    console.log("Protected route check:", {
-      requiredRole,
-      userRole: decoded.role,
-      tokenExists: !!token,
-    });
-
     if (!decoded || decoded.role !== requiredRole) {
       return <Navigate to={"/"} replace state={{ from: location }} />;
     }
