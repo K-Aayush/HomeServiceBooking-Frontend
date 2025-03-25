@@ -188,6 +188,7 @@ const UserProfile = () => {
 
         if (data.success) {
           toast.success(data.message);
+          window.location.reload();
         } else {
           toast.error(data.message);
         }
@@ -203,20 +204,23 @@ const UserProfile = () => {
     <div className="w-full min-h-screen">
       <div className="flex flex-col justify-center px-6 py-16 space-y-6 md:mx-16">
         <div className="relative w-32 h-32">
-          <img
-            src={
-              userData?.userProfileImage ||
-              "/placeholder.svg?height=128&width=128"
-            }
-            alt="profile"
-            className="object-cover w-full h-full border rounded-full"
-          />
-          <Input
-            type="file"
-            accept="image/*"
-            className="absolute inset-0 opacity-0 cursor-pointer"
-            onChange={handleFileChange}
-          />
+          <label htmlFor="image">
+            <img
+              src={
+                userData?.userProfileImage ||
+                "/placeholder.svg?height=128&width=128"
+              }
+              alt="profile"
+              className="object-cover w-full h-full border rounded-full cursor-pointer"
+            />
+            <Input
+              id="image"
+              type="file"
+              accept="image/*"
+              className="absolute inset-0 opacity-0"
+              onChange={handleFileChange}
+            />
+          </label>
         </div>
 
         <div className="max-w-screen-lg space-y-8">
