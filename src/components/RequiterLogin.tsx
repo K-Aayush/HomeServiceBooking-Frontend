@@ -125,7 +125,6 @@ const RequiterLogin = () => {
             navigate("/requiterDashboard/dashboard");
           } else if (data.requiter.role === "ADMIN") {
             navigate("/adminDashboard/dashboard");
-            window.location.reload();
           } else {
             navigate("/");
           }

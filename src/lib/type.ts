@@ -141,3 +141,28 @@ export interface userData {
 export interface viewUserDataProps {
   user: userData[];
 }
+
+export interface businessList {
+  address: string;
+  name: string;
+  category: string;
+  images: BusinessImage[];
+  requiter: requiterDataProps;
+}
+
+export interface BusinessImage {
+  url: string;
+}
+
+export interface Booking {
+  moment(): import("react").ReactNode;
+  id: string;
+  userId: string;
+  businessId: string;
+  date: string; 
+  time: string;
+  bookingStatus: "BOOKED" | "CANCELLED" | "PENDING"; 
+  createdAt: string; 
+  updateaAt: string;
+  business: businessList;
+};

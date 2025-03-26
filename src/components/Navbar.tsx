@@ -1,7 +1,7 @@
 import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { MenuIcon, User } from "lucide-react";
+import { Book, LogOut, MenuIcon, Settings, User } from "lucide-react";
 import { useContext, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -73,17 +73,25 @@ const Navbar = () => {
                     <User />
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute top-0 right-0 z-10 hidden text-black rounded pt-14 group-hover:block">
-                  <ul className="p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
+                <div className="absolute top-0 right-0 z-10 hidden text-black rounded w-52 pt-14 group-hover:block">
+                  <ul className="flex flex-col gap-2 p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
                     <Link to={"/user-profile"}>
-                      <li className="px-2 py-1 pr-10 cursor-pointer">
-                        Profile
+                      <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Account Settings
+                      </li>
+                    </Link>
+                    <Link to={"/my-booking"}>
+                      <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
+                        <Book className="w-4 h-4 mr-2" />
+                        My Bookings
                       </li>
                     </Link>
                     <li
                       onClick={handleLogout}
-                      className="px-2 py-1 pr-10 cursor-pointer"
+                      className="flex items-center px-2 py-1 pr-10 cursor-pointer"
                     >
+                      <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </li>
                   </ul>

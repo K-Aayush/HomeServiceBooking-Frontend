@@ -107,10 +107,12 @@ export const AppContextProvider = ({
   };
 
   useEffect(() => {
-    fetchAllUsers("");
-    fetchAllUsers("user");
-    fetchAllUsers("requiter");
-  }, []);
+    if (requiterToken) {
+      fetchAllUsers("");
+      fetchAllUsers("user");
+      fetchAllUsers("requiter");
+    }
+  }, [requiterToken]);
 
   //function to fetch businessdata
   const fetchBusiness = async () => {
