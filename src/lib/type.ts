@@ -155,6 +155,7 @@ export interface BusinessImage {
 }
 
 export interface Booking {
+  moment(): import("react").ReactNode;
   id: string;
   userId: string;
   businessId: string;
