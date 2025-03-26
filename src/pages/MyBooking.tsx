@@ -1,3 +1,4 @@
+import BookingHistoryList from "../components/BookingHistoryList";
 import {
   Tabs,
   TabsContent,
@@ -8,15 +9,16 @@ import {
 const MyBooking = () => {
   return (
     <div className="min-h-screen mx-5 my-10 md:mx-36">
-      <Tabs defaultValue="account" className="w-[400px]">
-        <TabsList>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
+      <h2 className="my-2 text-3xl font-bold text-gray-700">My Bookings</h2>
+      <Tabs defaultValue="booked" className="w-full">
+        <TabsList className="justify-start w-full">
+          <TabsTrigger value="booked">Booked</TabsTrigger>
+          <TabsTrigger value="completed">Completed</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
-          Make changes to your account here.
+        <TabsContent value="booked">
+          <BookingHistoryList />
         </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
+        <TabsContent value="completed">Change your password here.</TabsContent>
       </Tabs>
     </div>
   );
