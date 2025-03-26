@@ -7,7 +7,7 @@ const BusinessInfo = ({ business }: BusinessDetailsProps) => {
   return (
     <div className="flex flex-col items-center gap-4 md:flex-row ">
       <img
-        src={business?.images?.[0]?.url || noImage}
+        src={business ? business?.images?.[0]?.url : noImage}
         alt={business?.name}
         width={150}
         height={200}
