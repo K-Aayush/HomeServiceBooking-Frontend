@@ -1,4 +1,11 @@
-import { Home, LayoutDashboard, SquarePlus, User } from "lucide-react";
+import {
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  SquarePlus,
+  User,
+} from "lucide-react";
 import logo from "../../assets/Logo.svg";
 import {
   Avatar,
@@ -47,15 +54,20 @@ const RequiterDashboard = () => {
                   <User />
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute top-0 right-0 z-10 hidden pt-12 text-black rounded group-hover:block">
-                <ul className="p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
+              <div className="absolute top-0 right-0 z-10 hidden pt-12 text-black rounded w-52 group-hover:block">
+                <ul className="flex flex-col gap-2 p-2 m-0 text-sm list-none border rounded-md bg-gray-50 hover:bg-gray-100">
                   <Link to={"/requiterDashboard/profile"}>
-                    <li className="px-2 py-1 pr-10 cursor-pointer">Profile</li>
+                    <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Account Settings
+                    </li>
                   </Link>
+
                   <li
                     onClick={handleLogout}
-                    className="px-2 py-1 pr-10 cursor-pointer"
+                    className="flex items-center px-2 py-1 pr-10 cursor-pointer"
                   >
+                    <LogOut className="w-4 h-4 mr-2" />
                     Logout
                   </li>
                 </ul>

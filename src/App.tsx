@@ -21,6 +21,7 @@ import ViewUsers from "./pages/AdminDashboard/ManageUsers";
 import UserLogin from "./components/UserLogin";
 import UserProfile from "./pages/userProfile";
 import Profile from "./pages/Profile";
+import MyBooking from "./pages/MyBooking";
 
 const App = () => {
   const location = useLocation();
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/category/:id" element={<Category />} />
         <Route path="/businessDetails/:id" element={<BusinessDetails />} />
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/my-booking" element={<MyBooking />} />
 
         <Route
           path="/requiterDashboard"
