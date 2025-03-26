@@ -124,7 +124,6 @@ const RequiterLogin = () => {
           if (data.requiter.role === "REQUITER") {
             navigate("/requiterDashboard/dashboard");
           } else if (data.requiter.role === "ADMIN") {
-            await new Promise((resolve) => setTimeout(resolve, 100));
             navigate("/adminDashboard/dashboard");
           } else {
             navigate("/");
