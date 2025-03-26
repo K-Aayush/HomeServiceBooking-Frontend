@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import BookingHistoryList from "../components/BookingHistoryList";
 import {
   Tabs,
@@ -8,10 +8,19 @@ import {
 } from "../components/ui/tabs";
 import { AppContext } from "../context/AppContext";
 import axios, { AxiosError } from "axios";
+import { Booking } from "../lib/type";
+
+interface BookingResponse {
+  success: boolean;
+  booking: Booking[];
+}
 
 const MyBooking = () => {
   const { backendUrl, userToken, isLoading, setIsLoading, error, setError } =
     useContext(AppContext);
+  const [bookingHistory, setBookingHistory] = useState<BookingResponse | null>(
+    null
+  );
 
   useEffect(() => {
     const getUserBookingsData = async () => {
@@ -28,7 +37,7 @@ const MyBooking = () => {
         );
 
         if (data.success) {
-          console.log(data.booking);
+          setBookingHistory(data.booking);
         } else {
           setError(data.message);
         }
@@ -59,7 +68,7 @@ const MyBooking = () => {
           <TabsTrigger value="completed">Completed</TabsTrigger>
         </TabsList>
         <TabsContent value="booked">
-          <BookingHistoryList />
+          <BookingHistoryList bookingHistory={bookingHistory} />
         </TabsContent>
         <TabsContent value="completed">Change your password here.</TabsContent>
       </Tabs>

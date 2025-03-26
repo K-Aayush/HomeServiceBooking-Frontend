@@ -1,6 +1,10 @@
-import React from "react";
+import { Booking } from "../lib/type";
 
-const BookingHistoryList = () => {
+interface BookingHistoryListProps {
+  bookingHistory: Booking[];
+}
+
+const BookingHistoryList = ({ bookingHistory }: BookingHistoryListProps) => {
   return <div>BookingHistoryList</div>;
 };
 
