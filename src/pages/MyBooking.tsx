@@ -49,6 +49,15 @@ const MyBooking = () => {
     getUserBookingsData();
   }, [backendUrl, setError, setIsLoading, userToken]);
 
+  const filterBookingData = (type: string) => {
+    const result = bookingHistory.filter((item) =>
+      type === "booked"
+        ? new Date(item.date) > new Date()
+        : new Date(item.date) < new Date()
+    );
+    return result;
+  };
+
   if (isLoading) return <div>Loading data...</div>;
   if (error) return <div className="text-sm text-red-500">{error}</div>;
 
@@ -61,9 +70,11 @@ const MyBooking = () => {
           <TabsTrigger value="completed">Completed</TabsTrigger>
         </TabsList>
         <TabsContent value="booked">
-          <BookingHistoryList bookingHistory={bookingHistory} />
+          <BookingHistoryList bookingHistory={filterBookingData("booked")} />
         </TabsContent>
-        <TabsContent value="completed">Change your password here.</TabsContent>
+        <TabsContent value="completed">
+          <BookingHistoryList bookingHistory={filterBookingData("completed")} />
+        </TabsContent>
       </Tabs>
     </div>
   );

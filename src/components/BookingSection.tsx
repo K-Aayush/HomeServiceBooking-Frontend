@@ -101,6 +101,8 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
     }
   };
 
+  
+
   return (
     <div>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
