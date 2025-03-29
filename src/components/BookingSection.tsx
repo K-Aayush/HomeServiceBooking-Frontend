@@ -1,4 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+"use client";
+
+import type React from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -14,6 +17,7 @@ import { Button } from "./ui/button";
 import { AppContext } from "../context/AppContext";
 import { toast } from "sonner";
 import axios, { AxiosError } from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface BookingSectionProps {
   children: React.ReactNode;
@@ -24,17 +28,19 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   const { backendUrl, userToken, isLoading, setIsLoading } =
     useContext(AppContext);
 
-  //usestate for selecting date and timeslots
+  // useState for selecting date and timeslots
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [timeSlot, setTimeSLot] = useState<{ time: string }[]>([]);
+  const [timeSlot, setTimeSlot] = useState<{ time: string }[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const [amount, setAmount] = useState<number>(500);
 
   useEffect(() => {
     getTime();
   }, []);
 
-  //Creating custom timelist
+  // Creating custom timelist
   const getTime = () => {
     const timeList = [];
     for (let i = 10; i <= 12; i++) {
@@ -53,10 +59,11 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
         time: i + ":30 PM",
       });
     }
-    setTimeSLot(timeList);
+    setTimeSlot(timeList);
   };
 
-  const onBooking = async () => {
+  // Initiate Khalti payment
+  const initiatePayment = async () => {
     if (!date || !selectedTime || !businessId) {
       toast.error("Please select date, time and business");
       return;
@@ -65,13 +72,30 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
     setIsLoading(true);
 
     try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/booking/create`,
-        {
+      // Store booking details in localStorage for retrieval after payment
+      localStorage.setItem(
+        "pendingBooking",
+        JSON.stringify({
           businessId,
           date: date.toISOString().split("T")[0],
           time: selectedTime,
-        },
+        })
+      );
+
+      // Prepare payment payload for Khalti
+      const payload = {
+        return_url: `${window.location.origin}/payment-success`,
+        website_url: window.location.origin,
+        amount: amount * 100,
+        purchase_order_id: `BOOKING-${Date.now()}`,
+        purchase_order_name: `Booking for ${selectedTime} on ${
+          date.toISOString().split("T")[0]
+        }`,
+      };
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/payment/khalti`,
+        payload,
         {
           headers: {
             Authorization: userToken,
@@ -81,18 +105,20 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
       );
 
       if (data.success) {
-        toast.success(data.message);
-        setIsOpen(false);
-        // Reset form
-        setDate(new Date());
-        setSelectedTime(undefined);
+        // Store payment ID for later verification
+        localStorage.setItem("paymentId", data.payment);
+
+        // Redirect to Khalti payment page
+        window.location.href = data.data.payment_url;
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Failed to initiate payment");
       }
     } catch (error) {
-      console.error("Booking error:", error);
+      console.error("Payment initiation error:", error);
       if (error instanceof AxiosError && error.response) {
-        toast.error(error.response.data.message || "Failed to create booking");
+        toast.error(
+          error.response.data.message || "Failed to initiate payment"
+        );
       } else {
         toast.error("Something went wrong");
       }
@@ -101,17 +127,15 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
     }
   };
 
-  
-
   return (
     <div>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger onClick={() => setIsOpen(true)}>{children}</SheetTrigger>
         <SheetContent className="overflow-auto">
           <SheetHeader>
-            <SheetTitle>Book an Service</SheetTitle>
+            <SheetTitle>Book a Service</SheetTitle>
             <SheetDescription>
-              Select Date and Time Slot to book an service
+              Select Date and Time Slot to book a service
             </SheetDescription>
           </SheetHeader>
           <div>
@@ -147,6 +171,19 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                 ))}
               </div>
             </div>
+
+            {/* Payment Information */}
+            <div className="mt-5">
+              <h2 className="font-bold text-gray-600">Payment Details</h2>
+              <div className="p-4 mt-2 border rounded-md">
+                <p className="text-sm text-gray-600">
+                  Service Fee: Rs. {amount}
+                </p>
+                <p className="mt-1 text-xs text-gray-500">
+                  Payment will be processed via Khalti
+                </p>
+              </div>
+            </div>
           </div>
           <SheetFooter className="mt-5">
             <SheetClose asChild>
@@ -158,8 +195,11 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                 >
                   Cancel
                 </Button>
-                <Button disabled={!(selectedTime && date)} onClick={onBooking}>
-                  {isLoading ? "Booking..." : "Book"}
+                <Button
+                  disabled={!(selectedTime && date) || isLoading}
+                  onClick={initiatePayment}
+                >
+                  {isLoading ? "Processing..." : "Pay & Book"}
                 </Button>
               </div>
             </SheetClose>
