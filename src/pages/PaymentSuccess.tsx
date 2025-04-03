@@ -1,3 +1,4 @@
+import KhaltiSuccess from "../components/khaltiSuccess";
 
 export default function PaymentSuccess() {
   return (
