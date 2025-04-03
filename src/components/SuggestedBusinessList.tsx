@@ -6,7 +6,7 @@ import noImage from "../assets/no-image.png";
 import BookingSection from "./BookingSection";
 
 interface SuggestedBusinessListProps extends SuggestedBusinessDetailsProps {
-  selectedBusinessId?: string; // Add this prop
+  selectedBusinessId?: string;
 }
 
 const SuggestedBusinessList = ({
