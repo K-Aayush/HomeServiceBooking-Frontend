@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
 import { businessDataResponse } from "../../lib/type";
 
+import { Input } from "../ui/input";
+
 const categories = [
   "Cleaning",
   "Repair",
@@ -33,6 +35,7 @@ const AddRequiterService = () => {
       category: "",
       address: "",
       about: "",
+      amount: 0,
       images: [],
     },
   });
@@ -82,6 +85,7 @@ const AddRequiterService = () => {
       formData.append("category", businessData.category);
       formData.append("about", businessData.about);
       formData.append("address", businessData.address);
+      formData.append("amount", businessData.amount.toString());
 
       if (Array.isArray(businessData.images)) {
         businessData.images.forEach((image) => {
@@ -110,6 +114,7 @@ const AddRequiterService = () => {
           category: "",
           address: "",
           about: "",
+          amount: 0,
           images: [],
         });
         setPreviewImages([]);
@@ -154,14 +159,33 @@ const AddRequiterService = () => {
               />
             </div>
 
-            <FormInput
-              control={form.control}
-              name="address"
-              label="Address"
-              placeholder="Enter Your address"
-              type="text"
-              required
-            />
+            <div className="flex items-center w-full gap-4">
+              <div className="w-full">
+                <FormInput
+                  control={form.control}
+                  name="address"
+                  label="Address"
+                  placeholder="Enter Your address"
+                  type="text"
+                  required
+                />
+              </div>
+
+              <div className="w-full">
+                <label className="text-sm font-semibold">Amount per hour</label>
+                <Input
+                  className="mt-2"
+                  {...form.register("amount", { valueAsNumber: true })}
+                  type="number"
+                  placeholder="Enter an amount"
+                />
+                {form.formState.errors.amount && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {form.formState.errors.amount.message}
+                  </p>
+                )}
+              </div>
+            </div>
 
             <div className="flex w-full gap-5">
               <div className="flex-1">

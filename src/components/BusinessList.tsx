@@ -17,7 +17,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
     } else {
       setTimeout(() => setIsLoading(false), 2000); // Simulate a loading state
     }
-  }, [businessList]);
+  }, [businessList, setIsLoading]);
 
   //calculate total pages
   const totalpages = Math.ceil(businessList.length / 8);
@@ -86,9 +86,17 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                   <h2 className="px-2 py-1 text-sm bg-purple-200 rounded-full text-primary">
                     {item.category}
                   </h2>
+
                   <h2 className="text-lg font-bold">{item.name}</h2>
                   <h2 className="text-primary">{item.requiter.name}</h2>
                   <h2 className="text-sm text-gray-500">{item.address}</h2>
+
+                  <div className="w-full mt-2 mb-1">
+                    <span className="text-xl font-bold text-green-600">
+                      Rs. {item.amount}
+                    </span>
+                  </div>
+
                   <Button className="mt-3">Book now</Button>
                 </div>
               </Link>
