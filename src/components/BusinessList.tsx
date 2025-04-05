@@ -17,7 +17,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
     } else {
       setTimeout(() => setIsLoading(false), 2000); // Simulate a loading state
     }
-  }, [businessList]);
+  }, [businessList, setIsLoading]);
 
   //calculate total pages
   const totalpages = Math.ceil(businessList.length / 8);
