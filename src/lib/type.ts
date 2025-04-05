@@ -2,6 +2,7 @@ export interface PopularBusinessListType {
   id: string;
   name: string;
   about: string;
+  amount: number;
   address: string;
   category: string;
   requiter: {
@@ -159,10 +160,10 @@ export interface Booking {
   id: string;
   userId: string;
   businessId: string;
-  date: string; 
+  date: string;
   time: string;
-  bookingStatus: "BOOKED" | "CANCELLED" | "PENDING"; 
-  createdAt: string; 
+  bookingStatus: "BOOKED" | "CANCELLED" | "PENDING";
+  createdAt: string;
   updateaAt: string;
   business: businessList;
-};
+}
