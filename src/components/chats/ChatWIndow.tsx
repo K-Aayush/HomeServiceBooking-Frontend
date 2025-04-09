@@ -1,7 +1,7 @@
 import React from "react";
 
-const ChatWIndow = () => {
+const ChatWindow = () => {
   return <div>ChatWIndow</div>;
 };
 
-export default ChatWIndow;
+export default ChatWindow;
