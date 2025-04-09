@@ -1,6 +1,9 @@
 import { Star, Shield, CheckCircle, MessageCircle } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { teamMembers } from "../lib/data";
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 
 // Benefits data
 const benefits = [
@@ -171,9 +174,12 @@ const About = () => {
             professional skills, we welcome you to join our growing community
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
-              Find a Service
-            </Button>
+            <Link to={"/Services"}>
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                Find a Service
+              </Button>
+            </Link>
+
             <Button
               size="lg"
               variant="outline"
