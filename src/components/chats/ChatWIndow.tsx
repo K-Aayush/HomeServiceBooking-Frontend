@@ -44,6 +44,44 @@ const ChatWindow = ({
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col flex-1 bg-white">
+        <div className="p-4 border-b border-gray-200">
+          <Skeleton className="w-1/4 h-6" />
+        </div>
+        <div className="flex-1 p-4 overflow-y-auto">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className={`flex mb-4 ${index % 2 === 0 ? "justify-end" : ""}`}
+            >
+              <div
+                className={`max-w-[70%] p-3 rounded-lg ${
+                  index % 2 === 0 ? "bg-primary text-white" : "bg-gray-100"
+                }`}
+              >
+                <Skeleton
+                  className={`h-4 w-full ${
+                    index % 2 === 0 ? "bg-white/20" : ""
+                  }`}
+                />
+                <Skeleton
+                  className={`h-4 w-2/3 mt-2 ${
+                    index % 2 === 0 ? "bg-white/20" : ""
+                  }`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="p-4 border-t border-gray-200">
+          <Skeleton className="w-full h-10" />
+        </div>
+      </div>
+    );
+  }
+
   return <div>ChatWIndow</div>;
 };
 
