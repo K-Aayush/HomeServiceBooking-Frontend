@@ -23,6 +23,7 @@ import UserProfile from "./pages/userProfile";
 import Profile from "./pages/Profile";
 import MyBooking from "./pages/MyBooking";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Chat from "./pages/Chat";
 
 const App = () => {
   const location = useLocation();
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/my-booking" element={<MyBooking />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/chat" element={<Chat />} />
 
         <Route
           path="/requiterDashboard"
