@@ -6,7 +6,6 @@ import {
   LogOut,
   MenuIcon,
   MessageCircle,
-  MessageCircleDashed,
   Settings,
   User,
 } from "lucide-react";
