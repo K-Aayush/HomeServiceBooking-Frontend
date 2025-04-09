@@ -73,3 +73,59 @@ export const teamMembers = [
     bio: "David drives our marketing strategies to connect more customers with quality service providers.",
   },
 ];
+
+// Sample service categories
+export const categories = [
+  { id: 1, name: "Home Cleaning", icon: "🧹", count: 124 },
+  { id: 2, name: "Plumbing", icon: "🔧", count: 89 },
+  { id: 3, name: "Electrical", icon: "⚡", count: 76 },
+  { id: 4, name: "Gardening", icon: "🌱", count: 52 },
+  { id: 5, name: "Painting", icon: "🎨", count: 67 },
+  { id: 6, name: "Moving", icon: "📦", count: 43 },
+  { id: 7, name: "Appliance Repair", icon: "🔌", count: 58 },
+  { id: 8, name: "Pest Control", icon: "🐜", count: 31 },
+];
+
+// Sample featured services
+export const featuredServices = [
+  {
+    id: 1,
+    title: "Professional Home Cleaning",
+    provider: "CleanPro Services",
+    rating: 4.8,
+    reviews: 156,
+    price: 80,
+    image: "/placeholder.svg?height=300&width=400",
+    location: "New York, NY",
+  },
+  {
+    id: 2,
+    title: "Expert Plumbing Solutions",
+    provider: "Quick Fix Plumbing",
+    rating: 4.7,
+    reviews: 124,
+    price: 95,
+    image: "/placeholder.svg?height=300&width=400",
+    location: "Boston, MA",
+  },
+  {
+    id: 3,
+    title: "Electrical Installation & Repair",
+    provider: "PowerUp Electricians",
+    rating: 4.9,
+    reviews: 203,
+    price: 110,
+    image: "/placeholder.svg?height=300&width=400",
+    location: "Chicago, IL",
+  },
+  {
+    id: 4,
+    title: "Garden Maintenance & Design",
+    provider: "Green Thumb Gardens",
+    rating: 4.6,
+    reviews: 87,
+    price: 75,
+    image: "/placeholder.svg?height=300&width=400",
+    location: "Seattle, WA",
+  },
+];
