@@ -1,7 +1,15 @@
 import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Book, LogOut, MenuIcon, Settings, User } from "lucide-react";
+import {
+  Book,
+  LogOut,
+  MenuIcon,
+  MessageCircle,
+  MessageCircleDashed,
+  Settings,
+  User,
+} from "lucide-react";
 import { useContext, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -79,6 +87,12 @@ const Navbar = () => {
                       <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
                         <Settings className="w-4 h-4 mr-2" />
                         Account Settings
+                      </li>
+                    </Link>
+                    <Link to={"/chat"}>
+                      <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Messages
                       </li>
                     </Link>
                     <Link to={"/my-booking"}>
