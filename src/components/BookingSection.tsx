@@ -63,7 +63,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   // Helper function to format date as YYYY-MM-DD in local timezone
   const formatLocalDate = (date: Date): string => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
@@ -222,7 +222,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
         `${backendUrl}/api/booking/create`,
         {
           businessId,
-          date: formatLocalDate(date), // Use local date
+          date: formatLocalDate(date),
           time: selectedTime,
         },
         { headers: { Authorization: userToken } }
@@ -398,7 +398,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                     paymentId={paymentId}
                     bookingDetails={{
                       businessId,
-                      date: formatLocalDate(date!), // Use local date
+                      date: formatLocalDate(date!),
                       time: selectedTime || "",
                     }}
                     onSuccess={handleBookingSuccess}
