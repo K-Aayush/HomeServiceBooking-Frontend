@@ -3,13 +3,13 @@ import { BusinessCategories } from "../lib/data";
 
 const CategoryList = () => {
   return (
-    <div className="mx-4 md:mx-22 lg:mx-52 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-3 gap-4 mx-4 md:mx-22 lg:mx-52 md:grid-cols-4 lg:grid-cols-6">
       {BusinessCategories.length > 0
         ? BusinessCategories.map((item) => (
             <Link
               to={`/category/${item.name}`}
               key={item.id}
-              className="flex flex-col items-center justify-center gap-2 bg-purple-100 p-5 rounded-lg cursor-pointer hover:scale-110 transition-all ease-in-out"
+              className="flex flex-col items-center justify-center gap-2 p-5 transition-all ease-in-out bg-purple-100 rounded-lg cursor-pointer hover:scale-110"
             >
               <img
                 src={item.icon}

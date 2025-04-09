@@ -8,7 +8,7 @@ interface CategorySidebarProps {
 const CategorySidebar = ({ categoryList }: CategorySidebarProps) => {
   return (
     <div>
-      <h2 className="text-lg mb-3 font-bold text-primary">Categories</h2>
+      <h2 className="mb-3 text-lg font-bold text-primary">Categories</h2>
       <div>
         {BusinessCategories.map((item, index) => {
           const isActive = categoryList === item.name;

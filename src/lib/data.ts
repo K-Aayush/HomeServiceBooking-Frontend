@@ -4,7 +4,6 @@ import electricity from "../assets/electricity.png";
 import brush from "../assets/paintbrush.png";
 import repair from "../assets/repairing.png";
 import support from "../assets/support.png";
-import { CheckCircle, MessageCircle, Shield, Star } from "lucide-react";
 
 export const BusinessCategories = [
   {
@@ -45,60 +44,32 @@ export const teamMembers = [
     id: 1,
     name: "Sarah Johnson",
     role: "CEO & Founder",
-    image: "/placeholder.svg?height=300&width=300",
+    image:
+      "https://plus.unsplash.com/premium_photo-1672239496290-5061cfee7ebb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     bio: "With over 15 years of experience in the service industry, Sarah founded the platform to connect quality service providers with customers.",
   },
   {
     id: 2,
     name: "Michael Chen",
     role: "CTO",
-    image: "/placeholder.svg?height=300&width=300",
+    image:
+      "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     bio: "Michael leads our technology team, ensuring a seamless and secure platform experience for all users.",
   },
   {
     id: 3,
     name: "Priya Patel",
     role: "Head of Operations",
-    image: "/placeholder.svg?height=300&width=300",
+    image:
+      "https://images.unsplash.com/photo-1590649880765-91b1956b8276?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     bio: "Priya oversees day-to-day operations and ensures service quality standards are maintained across the platform.",
   },
   {
     id: 4,
     name: "David Wilson",
     role: "Marketing Director",
-    image: "/placeholder.svg?height=300&width=300",
+    image:
+      "https://images.unsplash.com/photo-1508243771214-6e95d137426b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     bio: "David drives our marketing strategies to connect more customers with quality service providers.",
-  },
-];
-
-// Benefits data
-export const benefits = [
-  {
-    id: 1,
-    title: "Verified Professionals",
-    description:
-      "All service providers undergo thorough background checks and verification",
-    icon: <Shield className="w-10 h-10 text-primary" />,
-  },
-  {
-    id: 2,
-    title: "Quality Guarantee",
-    description:
-      "We stand behind the quality of every service booked through our platform",
-    icon: <CheckCircle className="w-10 h-10 text-primary" />,
-  },
-  {
-    id: 3,
-    title: "Secure Payments",
-    description:
-      "Your payment information is protected with industry-leading encryption",
-    icon: <Star className="w-10 h-10 text-primary" />,
-  },
-  {
-    id: 4,
-    title: "Direct Communication",
-    description:
-      "Chat directly with service providers to discuss your specific needs",
-    icon: <MessageCircle className="w-10 h-10 text-primary" />,
   },
 ];
