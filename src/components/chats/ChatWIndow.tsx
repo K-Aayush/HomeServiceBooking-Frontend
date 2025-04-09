@@ -1,5 +1,5 @@
-import type React from "react";
-
+import React from "react";
+import { useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
@@ -19,7 +19,7 @@ interface ChatWindowProps {
   setNewMessage: (message: string) => void;
   handleSendMessage: () => void;
   isUser: boolean;
-  currentId: string;
+
   loading: boolean;
 }
 
@@ -29,9 +29,22 @@ const ChatWindow = ({
   setNewMessage,
   handleSendMessage,
   isUser,
-  currentId,
+
   loading,
 }: ChatWindowProps) => {
+  // Reference to the messages container for auto-scrolling
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Auto-scroll when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   // Function to format timestamp
   const formatTime = (timestamp: string) => {
     return format(new Date(timestamp), "h:mm a");
@@ -46,7 +59,7 @@ const ChatWindow = ({
 
   if (loading) {
     return (
-      <div className="flex flex-col flex-1 bg-white">
+      <div className="flex flex-col flex-1 h-full bg-white">
         <div className="p-4 border-b border-gray-200">
           <Skeleton className="w-1/4 h-6" />
         </div>
@@ -83,83 +96,86 @@ const ChatWindow = ({
   }
 
   return (
-    <div className="flex flex-col flex-1 bg-white">
+    <div className="flex flex-col flex-1 h-full bg-white">
       {/* Chat Header */}
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold">Messages</h2>
+      <div className="p-4 bg-gray-100 border-b border-gray-200">
+        <h2 className="mb-3 text-xl font-semibold">Messages</h2>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500">
+            <p className="p-6 text-gray-500 bg-white rounded-lg shadow-md">
               No messages yet. Start the conversation!
             </p>
           </div>
         ) : (
-          messages.map((message) => {
-            const isCurrentUser =
-              (isUser && message.senderType === "USER") ||
-              (!isUser && message.senderType === "REQUITER");
+          <div className="space-y-4">
+            {messages.map((message) => {
+              const isCurrentUser =
+                (isUser && message.senderType === "USER") ||
+                (!isUser && message.senderType === "REQUITER");
 
-            // Special styling for system messages
-            const isSystemMessage = message.senderId === "system";
+              const isSystemMessage = message.senderId === "system";
 
-            if (isSystemMessage) {
+              if (isSystemMessage) {
+                return (
+                  <div key={message.id} className="flex justify-center mb-4">
+                    <div className="bg-gray-100 text-gray-600 p-2 rounded-lg text-sm max-w-[80%] text-center shadow-sm">
+                      {message.content}
+                    </div>
+                  </div>
+                );
+              }
+
               return (
-                <div key={message.id} className="flex justify-center mb-4">
-                  <div className="bg-gray-100 text-gray-600 p-2 rounded-lg text-sm max-w-[80%] text-center">
-                    {message.content}
+                <div
+                  key={message.id}
+                  className={`flex mb-4 ${
+                    isCurrentUser ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-[70%] p-3 rounded-lg shadow-md ${
+                      isCurrentUser
+                        ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-tr-none"
+                        : "bg-white rounded-tl-none border border-gray-200"
+                    }`}
+                  >
+                    <p className="leading-relaxed">{message.content}</p>
+                    <p
+                      className={`text-xs mt-1 text-right ${
+                        isCurrentUser ? "text-white/70" : "text-gray-500"
+                      }`}
+                    >
+                      {formatTime(message.createdAt)}
+                    </p>
                   </div>
                 </div>
               );
-            }
+            })}
 
-            return (
-              <div
-                key={message.id}
-                className={`flex mb-4 ${
-                  isCurrentUser ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[70%] p-3 rounded-lg ${
-                    isCurrentUser
-                      ? "bg-primary text-white rounded-tr-none"
-                      : "bg-gray-100 rounded-tl-none"
-                  }`}
-                >
-                  <p>{message.content}</p>
-                  <p
-                    className={`text-xs mt-1 text-right ${
-                      isCurrentUser ? "text-white/70" : "text-gray-500"
-                    }`}
-                  >
-                    {formatTime(message.createdAt)}
-                  </p>
-                </div>
-              </div>
-            );
-          })
+            <div ref={messagesEndRef} />
+          </div>
         )}
       </div>
 
       {/* Message Input */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center gap-2">
+      <div className="p-4 bg-white border-t border-gray-200">
+        <div className="flex items-center gap-2 p-2 rounded-full shadow-sm bg-gray-50">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Type a message..."
-            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 p-2 bg-transparent border-none focus:outline-none focus:ring-0"
           />
           <Button
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="p-2"
+            className="p-2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
           >
             <Send size={20} />
           </Button>

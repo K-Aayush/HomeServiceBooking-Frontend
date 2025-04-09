@@ -5,6 +5,7 @@ import { io, type Socket } from "socket.io-client";
 import ChatSidebar from "../components/chats/ChatSidebar";
 import ChatWindow from "../components/chats/ChatWindow";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
 
 interface Conversation {
   id: string;
@@ -36,16 +37,33 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState<Socket | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [showMessageView, setShowMessageView] = useState(false);
 
   const isUser = !!userData;
   const isRequiter = !!requiterData;
-  const currentId = isUser ? userData.id : requiterData?.id;
+  const currentId = isUser ? userData?.id : requiterData?.id;
+
+  // Check if we're on a mobile device
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkMobileView();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobileView);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkMobileView);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!userToken) return;
-
-    const socketUrl =
-      backendUrl || import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+    const socketUrl = backendUrl || import.meta.env.VITE_BACKEND_URL;
     console.log("Attempting to connect to:", socketUrl);
 
     const newSocket = io(socketUrl, {
@@ -56,10 +74,15 @@ const Chat = () => {
 
     newSocket.on("connect", () => {
       console.log("Connected to socket server:", newSocket.id);
-      newSocket.emit("authenticate", {
-        token: userToken,
-        type: isUser ? "user" : "requiter",
-      });
+      const token = isUser ? userToken : requiterToken;
+      if (token) {
+        newSocket.emit("authenticate", {
+          token,
+          type: isUser ? "user" : "requiter",
+        });
+      } else {
+        console.warn("No token available for authentication");
+      }
     });
 
     newSocket.on("connect_error", (error) => {
@@ -96,11 +119,16 @@ const Chat = () => {
     return () => {
       newSocket.disconnect();
     };
-  }, [backendUrl, userToken, isUser, isRequiter, selectedConversation]);
+  }, [
+    backendUrl,
+    userToken,
+    isUser,
+    isRequiter,
+    requiterToken,
+    selectedConversation,
+  ]);
 
   useEffect(() => {
-    if (!userToken) return;
-
     const fetchConversations = async () => {
       try {
         setLoading(true);
@@ -108,6 +136,12 @@ const Chat = () => {
           ? `${backendUrl}/api/chat/user/conversations`
           : `${backendUrl}/api/chat/requiter/conversations`;
         const token = isUser ? userToken : requiterToken;
+
+        if (!token) {
+          console.warn("No token available for fetching conversations");
+          setLoading(false);
+          return;
+        }
 
         const { data } = await axios.get(endpoint, {
           headers: { Authorization: token },
@@ -127,7 +161,9 @@ const Chat = () => {
       }
     };
 
-    fetchConversations();
+    if (userToken || requiterToken) {
+      fetchConversations();
+    }
   }, [
     backendUrl,
     userToken,
@@ -143,8 +179,19 @@ const Chat = () => {
     const fetchMessages = async () => {
       try {
         setLoading(true);
+        const token = isUser ? userToken : requiterToken;
+
+        if (!token) {
+          console.warn("No token available for fetching messages");
+          setLoading(false);
+          return;
+        }
+
         const { data } = await axios.get(
-          `${backendUrl}/api/chat/conversation/${selectedConversation}/messages`
+          `${backendUrl}/api/chat/conversation/${selectedConversation}/messages`,
+          {
+            headers: { Authorization: token },
+          }
         );
 
         if (data.success) {
@@ -159,7 +206,7 @@ const Chat = () => {
     };
 
     fetchMessages();
-  }, [backendUrl, selectedConversation]);
+  }, [backendUrl, selectedConversation, isUser, userToken, requiterToken]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversation || !socket) return;
@@ -183,32 +230,105 @@ const Chat = () => {
     setNewMessage("");
   };
 
+  const handleConversationSelect = (id: string) => {
+    setSelectedConversation(id);
+    if (isMobileView) {
+      setShowMessageView(true);
+    }
+  };
+
+  const handleBackToList = () => {
+    setShowMessageView(false);
+  };
+
+  // For mobile view, we'll use a simpler layout where the sidebar and chat window
+  // are stacked on top of each other rather than side by side
+  if (isMobileView) {
+    return (
+      <div className="flex flex-col h-screen bg-gray-100">
+        {showMessageView ? (
+          // Show message view
+          <div className="flex flex-col h-full">
+            <div className="flex items-center p-4 text-white bg-gradient-to-r from-purple-500 to-indigo-600">
+              <button
+                onClick={handleBackToList}
+                className="flex items-center text-white hover:text-white/80"
+              >
+                <ArrowLeft size={20} className="mr-2" />
+                <span>Back</span>
+              </button>
+              <div className="ml-4">
+                {conversations.find((c) => c.id === selectedConversation) && (
+                  <h2 className="font-semibold">
+                    {isUser
+                      ? conversations.find((c) => c.id === selectedConversation)
+                          ?.requiter?.name
+                      : conversations.find((c) => c.id === selectedConversation)
+                          ?.user?.name}
+                  </h2>
+                )}
+              </div>
+            </div>
+            <div className="flex-1">
+              <ChatWindow
+                messages={messages}
+                newMessage={newMessage}
+                setNewMessage={setNewMessage}
+                handleSendMessage={handleSendMessage}
+                isUser={isUser}
+                loading={loading}
+              />
+            </div>
+          </div>
+        ) : (
+          // Show conversation list
+          <div className="h-full">
+            <ChatSidebar
+              conversations={conversations}
+              selectedConversation={selectedConversation}
+              setSelectedConversation={handleConversationSelect}
+              isUser={isUser}
+              loading={loading}
+              isMobile={true}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop view with side-by-side layout
   return (
-    <div className="flex h-screen bg-gray-100">
-      <ChatSidebar
-        conversations={conversations}
-        selectedConversation={selectedConversation}
-        setSelectedConversation={setSelectedConversation}
-        isUser={isUser}
-        loading={loading}
-      />
-      {selectedConversation ? (
-        <ChatWindow
-          messages={messages}
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-          handleSendMessage={handleSendMessage}
+    <div className="flex h-screen overflow-hidden bg-gray-100">
+      <div className="w-1/4 min-w-[300px] h-full">
+        <ChatSidebar
+          conversations={conversations}
+          selectedConversation={selectedConversation}
+          setSelectedConversation={handleConversationSelect}
           isUser={isUser}
-          currentId={currentId}
           loading={loading}
+          isMobile={false}
         />
-      ) : (
-        <div className="flex items-center justify-center flex-1 p-4">
-          <p className="text-gray-500">
-            Select a conversation to start chatting
-          </p>
-        </div>
-      )}
+      </div>
+
+      <div className="flex-1 h-full">
+        {selectedConversation ? (
+          <ChatWindow
+            messages={messages}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            handleSendMessage={handleSendMessage}
+            isUser={isUser}
+            loading={loading}
+          />
+        ) : (
+          <div className="flex items-center justify-center flex-1 h-full p-4">
+            <p className="p-6 text-gray-500 bg-white rounded-lg shadow-md">
+              Select a conversation to start chatting
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

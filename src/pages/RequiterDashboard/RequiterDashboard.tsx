@@ -2,6 +2,7 @@ import {
   Home,
   LayoutDashboard,
   LogOut,
+  MessageCircle,
   Settings,
   SquarePlus,
   User,
@@ -60,6 +61,12 @@ const RequiterDashboard = () => {
                     <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
                       <Settings className="w-4 h-4 mr-2" />
                       Account Settings
+                    </li>
+                  </Link>
+                  <Link to={"/chat"}>
+                    <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Messages
                     </li>
                   </Link>
 

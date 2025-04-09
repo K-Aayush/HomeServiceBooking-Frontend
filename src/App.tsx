@@ -75,7 +75,8 @@ const App = () => {
       </Routes>
 
       {!location.pathname.startsWith("/category/") &&
-        !location.pathname.startsWith("/requiterDashboard") && <Footer />}
+        !location.pathname.startsWith("/requiterDashboard") &&
+        !location.pathname.startsWith("/chat") && <Footer />}
     </div>
   );
 };
