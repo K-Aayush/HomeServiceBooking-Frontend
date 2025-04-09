@@ -137,6 +137,33 @@ const Chat = () => {
     selectedConversation,
   ]);
 
+  // Fetch messages when conversation is selected
+  useEffect(() => {
+    if (!selectedConversation) return;
+
+    const fetchMessages = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get(
+          `${backendUrl}/api/chat/conversation/${selectedConversation}/messages`
+        );
+
+        if (data.success) {
+          setMessages(data.messages);
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+        toast.error("Failed to load messages");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [backendUrl, selectedConversation]);
+
+  
+
   return <div>Chat</div>;
 };
 
