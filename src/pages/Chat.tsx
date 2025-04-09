@@ -162,9 +162,60 @@ const Chat = () => {
     fetchMessages();
   }, [backendUrl, selectedConversation]);
 
-  
+  // Handle sending a message
+  const handleSendMessage = () => {
+    if (!newMessage.trim() || !selectedConversation || !socket) return;
 
-  return <div>Chat</div>;
+    const conversation = conversations.find(
+      (c) => c.id === selectedConversation
+    );
+    if (!conversation) return;
+
+    const receiverId = isUser ? conversation.requiterId : conversation.userId;
+
+    const messageData = {
+      conversationId: selectedConversation,
+      content: newMessage,
+      senderId: currentId,
+      senderType: isUser ? "USER" : "REQUITER",
+      receiverId,
+    };
+
+    socket.emit("send_message", messageData);
+    setNewMessage("");
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Chat Sidebar */}
+      <ChatSidebar
+        conversations={conversations}
+        selectedConversation={selectedConversation}
+        setSelectedConversation={setSelectedConversation}
+        isUser={isUser}
+        loading={loading}
+      />
+
+      {/* Chat Window */}
+      {selectedConversation ? (
+        <ChatWindow
+          messages={messages}
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          handleSendMessage={handleSendMessage}
+          isUser={isUser}
+          currentId={currentId}
+          loading={loading}
+        />
+      ) : (
+        <div className="flex items-center justify-center flex-1 p-4">
+          <p className="text-gray-500">
+            Select a conversation to start chatting
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Chat;
