@@ -82,7 +82,91 @@ const ChatWindow = ({
     );
   }
 
-  return <div>ChatWIndow</div>;
+  return (
+    <div className="flex flex-col flex-1 bg-white">
+      {/* Chat Header */}
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-xl font-semibold">Messages</h2>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 p-4 overflow-y-auto">
+        {messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-500">
+              No messages yet. Start the conversation!
+            </p>
+          </div>
+        ) : (
+          messages.map((message) => {
+            const isCurrentUser =
+              (isUser && message.senderType === "USER") ||
+              (!isUser && message.senderType === "REQUITER");
+
+            // Special styling for system messages
+            const isSystemMessage = message.senderId === "system";
+
+            if (isSystemMessage) {
+              return (
+                <div key={message.id} className="flex justify-center mb-4">
+                  <div className="bg-gray-100 text-gray-600 p-2 rounded-lg text-sm max-w-[80%] text-center">
+                    {message.content}
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={message.id}
+                className={`flex mb-4 ${
+                  isCurrentUser ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] p-3 rounded-lg ${
+                    isCurrentUser
+                      ? "bg-primary text-white rounded-tr-none"
+                      : "bg-gray-100 rounded-tl-none"
+                  }`}
+                >
+                  <p>{message.content}</p>
+                  <p
+                    className={`text-xs mt-1 text-right ${
+                      isCurrentUser ? "text-white/70" : "text-gray-500"
+                    }`}
+                  >
+                    {formatTime(message.createdAt)}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Message Input */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="Type a message..."
+            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <Button
+            onClick={handleSendMessage}
+            disabled={!newMessage.trim()}
+            className="p-2"
+          >
+            <Send size={20} />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ChatWindow;
