@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 import { useContext, useEffect, useState } from "react";
 import {
@@ -24,8 +22,13 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 
-// Initialize Stripe
-const stripePromise = loadStripe(process.env.STRIPE_PUBLISHABLE_KEY as string);
+const STRIPE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
+
+// Initialize Stripe only if we have a key
+const stripePromise = STRIPE_PUBLISHABLE_KEY
+  ? loadStripe(STRIPE_PUBLISHABLE_KEY)
+  : null;
 
 interface BookingSectionProps {
   children: React.ReactNode;
@@ -41,7 +44,6 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   const { backendUrl, userToken, isLoading, setIsLoading, business } =
     useContext(AppContext);
 
-  // useState for selecting date and timeslots
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [timeSlot, setTimeSlot] = useState<TimeSlot[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>();
@@ -51,65 +53,77 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   const [paymentId, setPaymentId] = useState<string>("");
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [bookingComplete, setBookingComplete] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
 
-  // Find the current business from the context
   const currentBusiness = business.find((b) => b.id === businessId);
-
-  // Get the amount in dollars
   const amountInDollars = currentBusiness
     ? currentBusiness.amount.toFixed(2)
     : "0.00";
 
-  // Fetch booked slots when date changes
+  // Helper function to format date as YYYY-MM-DD in local timezone
+  const formatLocalDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    if (!stripePromise && showPaymentForm) {
+      setStripeError(
+        "Stripe could not be initialized. Please check your configuration."
+      );
+    } else {
+      setStripeError(null);
+    }
+  }, [showPaymentForm]);
+
   useEffect(() => {
     if (date && businessId) {
       fetchBookedTimeSlots();
+    } else {
+      setBookedSlots([]);
     }
   }, [date, businessId]);
 
-  // Initialize time slots
   useEffect(() => {
     getTime();
   }, [bookedSlots]);
 
-  // Reset state when sheet is closed
   useEffect(() => {
     if (!isOpen) {
       setShowPaymentForm(false);
       setBookingComplete(false);
       setClientSecret("");
       setPaymentId("");
+      setStripeError(null);
     }
   }, [isOpen]);
 
-  // Fetch booked time slots for the selected date
   const fetchBookedTimeSlots = async () => {
     if (!date) return;
 
     try {
       setIsLoading(true);
-      const formattedDate = date.toISOString().split("T")[0];
-
+      const formattedDate = formatLocalDate(date); // Use local date
       const { data } = await axios.get(
         `${backendUrl}/api/booking/booked-slots?businessId=${businessId}&date=${formattedDate}`,
-        {
-          headers: {
-            Authorization: userToken,
-          },
-        }
+        { headers: { Authorization: userToken } }
       );
 
       if (data.success) {
         setBookedSlots(data.bookedSlots || []);
+      } else {
+        setBookedSlots([]);
       }
     } catch (error) {
       console.error("Error fetching booked slots:", error);
+      setBookedSlots([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Creating custom timelist with booked status
   const getTime = () => {
     const timeList: TimeSlot[] = [];
     for (let i = 10; i <= 12; i++) {
@@ -135,17 +149,20 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
     setTimeSlot(timeList);
   };
 
-  // Initiate Stripe payment
   const initiatePayment = async () => {
     if (!date || !selectedTime || !businessId || !currentBusiness) {
       toast.error("Please select date and time");
       return;
     }
 
+    if (!stripePromise) {
+      toast.error("Stripe is not properly configured. Please contact support.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Create a payment intent with Stripe
       const { data } = await axios.post(
         `${backendUrl}/api/payment/stripe/create-payment`,
         {
@@ -161,7 +178,6 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
       );
 
       if (data.success) {
-        // Store payment ID for later verification
         setPaymentId(data.paymentId);
         setClientSecret(data.clientSecret);
         setShowPaymentForm(true);
@@ -182,11 +198,52 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
     }
   };
 
-  // Handle successful booking
   const handleBookingSuccess = () => {
     setBookingComplete(true);
-    // Refresh booked slots after a successful booking
     fetchBookedTimeSlots();
+  };
+
+  const createBookingWithoutPayment = async () => {
+    if (
+      !date ||
+      !selectedTime ||
+      !businessId ||
+      !currentBusiness ||
+      !userToken
+    ) {
+      toast.error("Please select date and time");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const bookingResponse = await axios.post(
+        `${backendUrl}/api/booking/create`,
+        {
+          businessId,
+          date: formatLocalDate(date), // Use local date
+          time: selectedTime,
+        },
+        { headers: { Authorization: userToken } }
+      );
+
+      if (bookingResponse.data.success) {
+        toast.success("Booking created successfully!");
+        handleBookingSuccess();
+      } else {
+        toast.error(bookingResponse.data.message || "Failed to create booking");
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      if (error instanceof AxiosError && error.response) {
+        toast.error(error.response.data.message || "Failed to create booking");
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -228,15 +285,14 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
             </div>
           ) : !showPaymentForm ? (
             <div>
-              {/* Date Picker */}
-              <div className="flex flex-col items-baseline gap-5">
+              <div className="flex flex-col items-baseline gap-s5">
                 <h2 className="mt-5 font-bold text-gray-600">Select Date</h2>
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={(newDate) => {
                     setDate(newDate);
-                    setSelectedTime(undefined); // Reset selected time when date changes
+                    setSelectedTime(undefined);
                   }}
                   className="border rounded-md"
                   disabled={(date) =>
@@ -245,8 +301,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                 />
               </div>
 
-              <div className="">
-                {/* Time Slot Picker */}
+              <div>
                 <h2 className="my-5 font-bold text-gray-600">
                   Select Time Slot
                 </h2>
@@ -272,15 +327,11 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                       disabled={item.isBooked}
                     >
                       {item.time}
-                      {item.isBooked && (
-                        <span className="ml-1 text-xs">(Booked)</span>
-                      )}
                     </Button>
                   ))}
                 </div>
               </div>
 
-              {/* Payment Information */}
               <div className="mt-5">
                 <h2 className="font-bold text-gray-600">Payment Details</h2>
                 <div className="p-4 mt-2 border rounded-md">
@@ -303,28 +354,51 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                   >
                     Cancel
                   </Button>
-                  <Button
-                    disabled={
-                      !(selectedTime && date) || isLoading || !currentBusiness
-                    }
-                    onClick={initiatePayment}
-                    className="flex-1"
-                  >
-                    {isLoading ? "Processing..." : "Proceed to Payment"}
-                  </Button>
+                  {stripePromise ? (
+                    <Button
+                      disabled={
+                        !(selectedTime && date) || isLoading || !currentBusiness
+                      }
+                      onClick={initiatePayment}
+                      className="flex-1"
+                    >
+                      {isLoading ? "Processing..." : "Proceed to Payment"}
+                    </Button>
+                  ) : (
+                    <Button
+                      disabled={
+                        !(selectedTime && date) || isLoading || !currentBusiness
+                      }
+                      onClick={createBookingWithoutPayment}
+                      className="flex-1"
+                    >
+                      {isLoading ? "Processing..." : "Book Now (Test)"}
+                    </Button>
+                  )}
                 </div>
               </SheetFooter>
             </div>
           ) : (
             <div className="mt-5">
               <h2 className="mb-4 font-bold text-gray-600">Complete Payment</h2>
-              {clientSecret && (
+              {stripeError ? (
+                <div className="p-4 mb-4 border border-red-200 rounded-md bg-red-50">
+                  <p className="text-red-600">{stripeError}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowPaymentForm(false)}
+                    className="w-full mt-4"
+                  >
+                    Back to Booking Details
+                  </Button>
+                </div>
+              ) : clientSecret && stripePromise ? (
                 <Elements stripe={stripePromise} options={{ clientSecret }}>
                   <CheckoutForm
                     paymentId={paymentId}
                     bookingDetails={{
                       businessId,
-                      date: date?.toISOString().split("T")[0] || "",
+                      date: formatLocalDate(date!), // Use local date
                       time: selectedTime || "",
                     }}
                     onSuccess={handleBookingSuccess}
@@ -332,6 +406,10 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                     userToken={userToken}
                   />
                 </Elements>
+              ) : (
+                <div className="p-4 border border-yellow-200 rounded-md bg-yellow-50">
+                  <p className="text-yellow-600">Loading payment form...</p>
+                </div>
               )}
               <Button
                 variant="outline"
@@ -381,49 +459,32 @@ const CheckoutForm = ({
     setIsProcessing(true);
 
     try {
-      // Confirm the payment
       const result = await stripe.confirmPayment({
         elements,
         redirect: "if_required",
-        confirmParams: {
-          return_url: window.location.origin, // This won't be used since we're handling it in-app
-        },
+        confirmParams: { return_url: window.location.origin },
       });
 
       if (result.error) {
         toast.error(result.error.message || "Payment failed");
       } else if (result.paymentIntent) {
-        // Payment succeeded, verify on server
         const verifyResponse = await axios.post(
           `${backendUrl}/api/payment/stripe/verify-payment`,
-          {
-            paymentIntentId: result.paymentIntent.id,
-            paymentId,
-          }
+          { paymentIntentId: result.paymentIntent.id, paymentId }
         );
 
         if (verifyResponse.data.success) {
-          // Create booking
-          const bookingResponse = await axios.post(
-            `${backendUrl}/api/booking`,
-            {
-              ...bookingDetails,
-              paymentId,
-            },
-            {
-              headers: {
-                Authorization: userToken,
-              },
-            }
+          const { data } = await axios.post(
+            `${backendUrl}/api/booking/create`,
+            { ...bookingDetails, paymentId },
+            { headers: { Authorization: userToken } }
           );
 
-          if (bookingResponse.data.success) {
-            toast.success("Booking created successfully!");
+          if (data.success) {
+            toast.success(data.message);
             onSuccess();
           } else {
-            toast.error(
-              "Payment successful but booking failed. Please contact support."
-            );
+            toast.error(data.message);
           }
         } else {
           toast.error("Payment verification failed");
