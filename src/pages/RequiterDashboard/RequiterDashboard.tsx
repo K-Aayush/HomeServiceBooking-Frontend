@@ -2,6 +2,7 @@ import {
   Home,
   LayoutDashboard,
   LogOut,
+  MessageCircle,
   Settings,
   SquarePlus,
   User,
@@ -13,22 +14,54 @@ import {
   AvatarFallback,
 } from "../../components/ui/avatar";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
+import axios from "axios";
 
 const RequiterDashboard = () => {
-  const { logout, requiterData } = useContext(AppContext);
+  const { logout, requiterData, backendUrl, requiterToken } =
+    useContext(AppContext);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch unread message count
+    const fetchUnreadCount = async () => {
+      if (!requiterData || !requiterToken) return;
+
+      try {
+        const { data } = await axios.get(
+          `${backendUrl}/api/chat/requiter/unread`,
+          {
+            headers: { Authorization: requiterToken },
+          }
+        );
+
+        if (data.success) {
+          setUnreadCount(data.unreadCount);
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Set up interval to check for new messages every minute
+    const intervalId = setInterval(fetchUnreadCount, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [requiterData, backendUrl, requiterToken]);
 
   const handleLogout = async () => {
     logout();
-
     navigate("/");
   };
 
   const isProfilePage = location.pathname.includes(
     "/requiterDashboard/profile"
   );
+
   return (
     <div className="min-h-screen">
       {/*Navbar for requiter pannel*/}
@@ -36,7 +69,7 @@ const RequiterDashboard = () => {
         <div className="flex items-start justify-between px-5">
           <img
             className="cursor-pointer max-sm:w-32"
-            src={logo}
+            src={logo || "/placeholder.svg"}
             alt="logo"
             width={200}
             height={200}
@@ -60,6 +93,17 @@ const RequiterDashboard = () => {
                     <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
                       <Settings className="w-4 h-4 mr-2" />
                       Account Settings
+                    </li>
+                  </Link>
+                  <Link to={"/chat"}>
+                    <li className="relative flex items-center px-2 py-1 pr-10 cursor-pointer">
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Messages
+                      {unreadCount > 0 && (
+                        <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -right-2 -top-1">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
                     </li>
                   </Link>
 
@@ -115,6 +159,22 @@ const RequiterDashboard = () => {
               >
                 <Home />
                 <p>Manage Services</p>
+              </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  `flex items-center p-3 sm:px-6 gap-2 w-full hover:bg-gray-100 relative ${
+                    isActive && "bg-indigo-100 border-r-4 border-primary"
+                  }`
+                }
+                to={"/chat"}
+              >
+                <MessageCircle />
+                <p>Messages</p>
+                {unreadCount > 0 && (
+                  <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full right-2">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </NavLink>
             </ul>
           </div>

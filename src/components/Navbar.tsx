@@ -1,23 +1,70 @@
 import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Book, LogOut, MenuIcon, Settings, User } from "lucide-react";
-import { useContext, useState } from "react";
+import {
+  Book,
+  LogOut,
+  MenuIcon,
+  MessageCircle,
+  Settings,
+  User,
+} from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import axios from "axios";
 
 const Navbar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
-  const { setShowRequiterLogin, setShowUserLogin, userData, logout } =
-    useContext(AppContext);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const {
+    setShowRequiterLogin,
+    setShowUserLogin,
+    userData,
+    logout,
+    backendUrl,
+    userToken,
+    requiterToken,
+  } = useContext(AppContext);
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch unread message count if user is logged in
+    const fetchUnreadCount = async () => {
+      if (!userData || (!userToken && !requiterToken)) return;
+
+      try {
+        const endpoint = userData
+          ? `${backendUrl}/api/chat/user/unread`
+          : `${backendUrl}/api/chat/requiter/unread`;
+
+        const token = userData ? userToken : requiterToken;
+
+        const { data } = await axios.get(endpoint, {
+          headers: { Authorization: token },
+        });
+
+        if (data.success) {
+          setUnreadCount(data.unreadCount);
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Set up interval to check for new messages every minute
+    const intervalId = setInterval(fetchUnreadCount, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [userData, backendUrl, userToken, requiterToken]);
+
   const handleLogout = async () => {
     logout();
-
     navigate("/");
     window.location.reload();
   };
@@ -26,13 +73,19 @@ const Navbar = () => {
   const handleCloseSheet = () => {
     setIsSheetOpen(false);
   };
+
   return (
     <div className="">
       <div className="flex justify-between px-6 py-5 shadow-sm">
         <div className="flex items-center gap-8">
           {/* logo */}
           <Link to={"/"}>
-            <img src={logo} alt="logo" width={200} height={200} />
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="logo"
+              width={200}
+              height={200}
+            />
           </Link>
           {/* navLinks */}
 
@@ -79,6 +132,17 @@ const Navbar = () => {
                       <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
                         <Settings className="w-4 h-4 mr-2" />
                         Account Settings
+                      </li>
+                    </Link>
+                    <Link to={"/chat"}>
+                      <li className="relative flex items-center px-2 py-1 pr-10 cursor-pointer">
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Messages
+                        {unreadCount > 0 && (
+                          <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -right-2 -top-1">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </span>
+                        )}
                       </li>
                     </Link>
                     <Link to={"/my-booking"}>
@@ -143,7 +207,21 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <Button variant="outline">Profile</Button>
+                    <Link to="/user-profile" onClick={handleCloseSheet}>
+                      <Button variant="outline" className="w-full">
+                        Profile
+                      </Button>
+                    </Link>
+                    <Link to="/chat" onClick={handleCloseSheet}>
+                      <Button variant="outline" className="relative w-full">
+                        Messages
+                        {unreadCount > 0 && (
+                          <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -right-2 -top-1">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </span>
+                        )}
+                      </Button>
+                    </Link>
                     <Button variant={"destructive"} onClick={handleLogout}>
                       Logout
                     </Button>

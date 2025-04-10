@@ -4,14 +4,6 @@ import electricity from "../assets/electricity.png";
 import brush from "../assets/paintbrush.png";
 import repair from "../assets/repairing.png";
 import support from "../assets/support.png";
-import paint from "../assets/paint.jpg";
-import repairing from "../assets/repair.jpg";
-import women from "../assets/women.jpg";
-import women1 from "../assets/women1.jpg";
-import delivery from "../assets/delivery.jpg";
-import electric from "../assets/electricy.jpg";
-import plumbing from "../assets/plumbing.jpg";
-import { PopularBusinessListType } from "./type";
 
 export const BusinessCategories = [
   {
@@ -46,53 +38,38 @@ export const BusinessCategories = [
   },
 ];
 
-export const PopularBusinessList: PopularBusinessListType[] = [
-  ...Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    name: [
-      "House Cleaning",
-      "Car Repairing",
-      "Furniture Shifting",
-      "Plumbing Services",
-      "House Painting",
-      "Electrician Service",
-    ][i % 6],
-    about:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    address: [
-      "Itahari, Sunsari",
-      "Dharan, Sunsari",
-      "Biratnagar, Morang",
-      "Imadol, Lalitpur",
-      "Pokhara, Kaski",
-      "Butwal, Rupandehi",
-    ][i % 6],
-    category: {
-      name: [
-        "Cleaning",
-        "Repair",
-        "Shifting",
-        "Plumbing",
-        "Painting",
-        "Electric",
-      ][i % 6],
-    },
-    contactPerson: [
-      "Aasma Gautam",
-      "Pratham Neupane",
-      "Aadarsha Dhungana",
-      "Aayush Karki",
-      "Sandesh Poudel",
-      "Sujan Acharya",
-    ][i % 6],
-    email: `business${i + 1}@gmail.com`,
-    images: [
-      [women, women1],
-      [repairing],
-      [delivery],
-      [plumbing],
-      [paint],
-      [electric],
-    ][i % 6],
-  })),
+// Team members data
+export const teamMembers = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    role: "CEO & Founder",
+    image:
+      "https://plus.unsplash.com/premium_photo-1672239496290-5061cfee7ebb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    bio: "With over 15 years of experience in the service industry, Sarah founded the platform to connect quality service providers with customers.",
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    role: "CTO",
+    image:
+      "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    bio: "Michael leads our technology team, ensuring a seamless and secure platform experience for all users.",
+  },
+  {
+    id: 3,
+    name: "Priya Patel",
+    role: "Head of Operations",
+    image:
+      "https://images.unsplash.com/photo-1590649880765-91b1956b8276?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    bio: "Priya oversees day-to-day operations and ensures service quality standards are maintained across the platform.",
+  },
+  {
+    id: 4,
+    name: "David Wilson",
+    role: "Marketing Director",
+    image:
+      "https://images.unsplash.com/photo-1508243771214-6e95d137426b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    bio: "David drives our marketing strategies to connect more customers with quality service providers.",
+  },
 ];
