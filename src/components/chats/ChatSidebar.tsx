@@ -1,6 +1,6 @@
 import { Skeleton } from "../ui/skeleton";
 import { Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Conversation {
   id: string;
@@ -34,6 +34,34 @@ const ChatSidebar = ({
 }: ChatSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [unreadByConversation, setUnreadByConversation] = useState<
+    Record<string, number>
+  >({});
+
+  // Calculate unread messages for each conversation
+  useEffect(() => {
+    const unreadCounts: Record<string, number> = {};
+
+    conversations.forEach((conversation) => {
+      // Count unread messages in this conversation
+      const unreadMessages = conversation.messages.filter((msg) => {
+        // If user is viewing, count unread messages from requiters
+        if (isUser) {
+          return msg.senderType === "REQUITER" && !msg.read;
+        }
+        // If requiter is viewing, count unread messages from users
+        else {
+          return msg.senderType === "USER" && !msg.read;
+        }
+      });
+
+      if (unreadMessages.length > 0) {
+        unreadCounts[conversation.id] = unreadMessages.length;
+      }
+    });
+
+    setUnreadByConversation(unreadCounts);
+  }, [conversations, isUser]);
 
   const filteredConversations = searchQuery
     ? conversations.filter((conversation) => {
@@ -48,7 +76,7 @@ const ChatSidebar = ({
     return (
       <div className="flex flex-col w-full h-full bg-white border-r border-gray-200">
         <div className="p-4 bg-gradient-to-r from-purple-500 to-indigo-600">
-          <h2 className="text-xl font-bold text-white">Conversations</h2>
+          <h2 className="text-xl font-bold text-white">Messages</h2>
         </div>
         <div className="flex-1 p-4 overflow-y-auto">
           {Array.from({ length: 5 }).map((_, index) => (
@@ -108,7 +136,7 @@ const ChatSidebar = ({
           </div>
         ) : (
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-white">Conversations</h2>
+            <h2 className="text-xl font-bold text-white">Messages</h2>
             <button
               onClick={() => setShowSearch(true)}
               className="p-2 text-white rounded-full hover:bg-white/10"
@@ -147,6 +175,8 @@ const ChatSidebar = ({
                 : conversation.user?.userProfileImage;
               const lastMessage =
                 conversation.messages[0]?.content || "No messages yet";
+              const hasUnread = unreadByConversation[conversation.id] > 0;
+              const unreadCount = unreadByConversation[conversation.id] || 0;
 
               return (
                 <div
@@ -154,6 +184,8 @@ const ChatSidebar = ({
                   className={`flex items-center gap-3 ${
                     isMobile ? "p-4 mb-3" : "p-3 mb-2"
                   } rounded-lg cursor-pointer transition-all duration-200 ${
+                    hasUnread ? "bg-blue-50" : ""
+                  } ${
                     selectedConversation === conversation.id
                       ? "bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-500 shadow-md"
                       : "hover:bg-gray-50 border-l-4 border-transparent"
@@ -185,18 +217,31 @@ const ChatSidebar = ({
                     ></span>
                   </div>
                   <div className="flex-1 overflow-hidden">
-                    <h3
-                      className={`font-medium ${
-                        isMobile ? "text-lg" : "text-base"
-                      } truncate ${
-                        selectedConversation === conversation.id
-                          ? "text-purple-700"
-                          : "text-gray-800"
+                    <div className="flex items-center justify-between">
+                      <h3
+                        className={`font-medium ${
+                          isMobile ? "text-lg" : "text-base"
+                        } truncate ${hasUnread ? "font-bold text-black" : ""} ${
+                          selectedConversation === conversation.id
+                            ? "text-purple-700"
+                            : "text-gray-800"
+                        }`}
+                      >
+                        {name || "Unknown User"}
+                      </h3>
+                      {hasUnread && (
+                        <span className="flex items-center justify-center min-w-5 h-5 px-1.5 text-xs text-white bg-red-500 rounded-full">
+                          {unreadCount > 99 ? "99+" : unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={`text-gray-500 truncate ${
+                        hasUnread ? "font-semibold text-black" : ""
                       }`}
                     >
-                      {name || "Unknown User"}
-                    </h3>
-                    <p className="text-gray-500 truncate">{lastMessage}</p>
+                      {lastMessage}
+                    </p>
                   </div>
                 </div>
               );
