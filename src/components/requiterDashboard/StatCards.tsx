@@ -22,7 +22,7 @@ const StatCards = ({
   return (
     <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2 lg:grid-cols-4">
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 text-blue-800 bg-blue-100">
           <CardDescription>Total Bookings</CardDescription>
           <CardTitle className="flex items-center text-3xl">
             {totalBookings || 0}
@@ -31,7 +31,7 @@ const StatCards = ({
         </CardHeader>
       </Card>
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 text-yellow-800 bg-yellow-100">
           <CardDescription>Pending Bookings</CardDescription>
           <CardTitle className="flex items-center text-3xl">
             {pendingBookings || 0}
@@ -40,7 +40,7 @@ const StatCards = ({
         </CardHeader>
       </Card>
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 text-red-800 bg-red-100">
           <CardDescription>Completed Bookings</CardDescription>
           <CardTitle className="flex items-center text-3xl">
             {completedBookings || 0}
@@ -49,7 +49,7 @@ const StatCards = ({
         </CardHeader>
       </Card>
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 text-green-800 bg-green-100">
           <CardDescription>Total Revenue</CardDescription>
           <CardTitle className="flex items-center text-3xl">
             ${totalRevenue.toFixed(2) || "0.00"}
