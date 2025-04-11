@@ -42,7 +42,7 @@ const COLORS = [
   "#82ca9d",
 ];
 
-export const BookingCharts = ({
+const BookingCharts = ({
   monthlyBookings,
   categoryDistribution,
 }: BookingChartsProps) => {
@@ -107,3 +107,5 @@ export const BookingCharts = ({
     </div>
   );
 };
+
+export default BookingCharts;

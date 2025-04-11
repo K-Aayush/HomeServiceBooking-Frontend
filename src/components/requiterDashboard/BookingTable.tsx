@@ -36,7 +36,7 @@ interface BookingTableProps {
   onUpdateStatus: (bookingId: string, status: string) => void;
 }
 
-export const BookingTable = ({
+const BookingTable = ({
   bookings,
   isRecent = false,
   onViewAll,
@@ -144,3 +144,5 @@ export const BookingTable = ({
     </Card>
   );
 };
+
+export default BookingTable;
