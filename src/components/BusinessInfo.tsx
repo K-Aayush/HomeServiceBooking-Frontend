@@ -2,6 +2,7 @@ import { Clock, Mail, MapPin, Share, User } from "lucide-react";
 import { BusinessDetailsProps } from "../lib/type";
 import { Button } from "./ui/button";
 import noImage from "../assets/no-image.png";
+import { Badge } from "./ui/badge";
 
 const BusinessInfo = ({ business }: BusinessDetailsProps) => {
   return (
@@ -17,20 +18,20 @@ const BusinessInfo = ({ business }: BusinessDetailsProps) => {
       />
 
       <div className="w-full">
-        <div className="flex justify-start mb-2 md:justify-end">
-          <div className="px-4 py-1 text-xl font-bold text-white bg-green-600 rounded-lg shadow-md">
-            <span className="flex items-center gap-1">
-              Rs. {business?.amount}
-            </span>
-          </div>
-        </div>
-
         <div className="items-center justify-between w-full md:flex">
           {/* left side */}
           <div className="flex flex-col items-baseline gap-3 mt-4 md:mt-0">
-            <h2 className="px-3 py-1 text-lg bg-purple-100 rounded-full text-primary">
-              {business?.category}
-            </h2>
+            <div className="flex justify-between gap-4">
+              <Badge className=" bg-primary w-fit">{business?.category}</Badge>
+
+              <Badge
+                variant="outline"
+                className="text-green-800 bg-green-100 border-green-200 "
+              >
+                ${business?.amount.toFixed(2)}/hr
+              </Badge>
+            </div>
+
             <h2 className="text-4xl font-bold">{business?.name}</h2>
             <h2 className="flex items-center gap-2 text-lg text-gray-500">
               <MapPin />
