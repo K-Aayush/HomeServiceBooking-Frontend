@@ -28,7 +28,8 @@ import ProtectedUserRoutes from "./middleware/ProtectedUserRoutes";
 
 const App = () => {
   const location = useLocation();
-  const { showRequiterLogin, showUserLogin } = useContext(AppContext);
+  const { showRequiterLogin, showUserLogin, userToken } =
+    useContext(AppContext);
   return (
     <div>
       {!location.pathname.startsWith("/requiterDashboard") &&
@@ -50,14 +51,8 @@ const App = () => {
             </ProtectedUserRoutes>
           }
         />
-        <Route
-          path="/my-booking"
-          element={
-            <ProtectedUserRoutes>
-              <MyBooking />
-            </ProtectedUserRoutes>
-          }
-        />
+
+        {userToken && <Route path="/my-booking" element={<MyBooking />} />}
 
         <Route
           path="/chat"

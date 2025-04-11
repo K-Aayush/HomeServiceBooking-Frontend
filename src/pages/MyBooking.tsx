@@ -50,12 +50,20 @@ const MyBooking = () => {
   }, [backendUrl, setError, setIsLoading, userToken]);
 
   const filterBookingData = (type: string) => {
-    const result = bookingHistory.filter((item) =>
-      type === "booked"
-        ? new Date(item.date) > new Date()
-        : new Date(item.date) < new Date()
-    );
-    return result;
+    if (type === "booked") {
+      return bookingHistory.filter(
+        (item) =>
+          item.bookingStatus === "PENDING" ||
+          (new Date(item.date) > new Date() &&
+            item.bookingStatus !== "COMPLETED")
+      );
+    } else {
+      return bookingHistory.filter(
+        (item) =>
+          item.bookingStatus === "COMPLETED" ||
+          (new Date(item.date) < new Date() && item.bookingStatus !== "PENDING")
+      );
+    }
   };
 
   if (isLoading) return <div>Loading data...</div>;
@@ -66,7 +74,7 @@ const MyBooking = () => {
       <h2 className="my-2 text-3xl font-bold text-gray-700">My Bookings</h2>
       <Tabs defaultValue="booked" className="w-full">
         <TabsList className="justify-start w-full">
-          <TabsTrigger value="booked">Booked</TabsTrigger>
+          <TabsTrigger value="booked">Bookings</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>
         </TabsList>
         <TabsContent value="booked">
