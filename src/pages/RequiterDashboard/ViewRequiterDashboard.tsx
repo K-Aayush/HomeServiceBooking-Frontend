@@ -1,14 +1,15 @@
 import { useContext, useEffect, useState } from "react"
-import { AppContext } from "../context/AppContext"
+import { AppContext } from "../../context/AppContext"
 import axios from "axios"
 import { toast } from "sonner"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { Badge } from "../../components/ui/badge"
-import { StatCards } from "../components/dashboard/StatCards"
-import { BookingCharts } from "../components/dashboard/BookingCharts"
-import { BookingTable } from "../components/dashboard/BookingTable"
-import { NotificationsList } from "../components/dashboard/NotificationsList"
-import { DashboardSkeleton } from "../components/dashboard/DashboardSkeleton"
+import DashboardSkeleton from "../../components/requiterDashboard/DashboardSkeleton"
+import StatCards from "../../components/requiterDashboard/StatCards"
+import BookingCharts from "../../components/requiterDashboard/BookingCharts"
+import BookingTable from "../../components/requiterDashboard/BookingTable"
+import NotificationsList from "../../components/requiterDashboard/NotificationsList"
+
 
 interface Booking {
   id: string
