@@ -1,97 +1,109 @@
-import { useContext, useEffect, useState } from "react"
-import { AppContext } from "../../context/AppContext"
-import axios from "axios"
-import { toast } from "sonner"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
-import { Badge } from "../../components/ui/badge"
-import DashboardSkeleton from "../../components/requiterDashboard/DashboardSkeleton"
-import StatCards from "../../components/requiterDashboard/StatCards"
-import BookingCharts from "../../components/requiterDashboard/BookingCharts"
-import BookingTable from "../../components/requiterDashboard/BookingTable"
-import NotificationsList from "../../components/requiterDashboard/NotificationsList"
-
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../context/AppContext";
+import axios from "axios";
+import { toast } from "sonner";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
+import { Badge } from "../../components/ui/badge";
+import DashboardSkeleton from "../../components/requiterDashboard/DashboardSkeleton";
+import StatCards from "../../components/requiterDashboard/StatCards";
+import BookingCharts from "../../components/requiterDashboard/BookingCharts";
+import BookingTable from "../../components/requiterDashboard/BookingTable";
+import NotificationsList from "../../components/requiterDashboard/NotificationsList";
 
 interface Booking {
-  id: string
-  userId: string
-  businessId: string
-  date: string
-  time: string
-  bookingStatus: string
-  createdAt: string
+  id: string;
+  userId: string;
+  businessId: string;
+  date: string;
+  time: string;
+  bookingStatus: string;
+  createdAt: string;
   user: {
-    name: string
-    email: string
-    userProfileImage?: string
-  }
+    name: string;
+    email: string;
+    userProfileImage?: string;
+  };
   business: {
-    name: string
-    category: string
-    amount: number
-  }
+    name: string;
+    category: string;
+    amount: number;
+  };
 }
 
 interface BookingStats {
-  totalBookings: number
-  pendingBookings: number
-  completedBookings: number
-  totalRevenue: number
-  monthlyBookings: { month: string; count: number }[]
-  categoryDistribution: { name: string; value: number }[]
+  totalBookings: number;
+  pendingBookings: number;
+  completedBookings: number;
+  totalRevenue: number;
+  monthlyBookings: { month: string; count: number }[];
+  categoryDistribution: { name: string; value: number }[];
 }
 
 interface Notification {
-  id: string
-  message: string
-  isRead: boolean
-  createdAt: string
+  id: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
 }
 
 const ViewRequiterDashboard = () => {
-  const { backendUrl, requiterToken } = useContext(AppContext)
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [stats, setStats] = useState<BookingStats | null>(null)
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("overview")
+  const { backendUrl, requiterToken } = useContext(AppContext);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [stats, setStats] = useState<BookingStats | null>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      if (!requiterToken) return
+      if (!requiterToken) return;
 
       try {
-        setLoading(true)
+        setLoading(true);
 
         // Fetch bookings
-        const bookingsResponse = await axios.get(`${backendUrl}/api/booking/requiter`, {
-          headers: { Authorization: requiterToken },
-        })
+        const bookingsResponse = await axios.get(
+          `${backendUrl}/api/booking/requiter`,
+          {
+            headers: { Authorization: requiterToken },
+          }
+        );
 
         if (bookingsResponse.data.success) {
-          setBookings(bookingsResponse.data.bookings || [])
+          setBookings(bookingsResponse.data.bookings || []);
 
           // Calculate stats from bookings
-          calculateStats(bookingsResponse.data.bookings)
+          calculateStats(bookingsResponse.data.bookings);
         }
 
         // Fetch notifications
-        const notificationsResponse = await axios.get(`${backendUrl}/api/requiter/notifications`, {
-          headers: { Authorization: requiterToken },
-        })
+        const notificationsResponse = await axios.get(
+          `${backendUrl}/api/requiter/notifications`,
+          {
+            headers: { Authorization: requiterToken },
+          }
+        );
 
         if (notificationsResponse.data.success) {
-          setNotifications(notificationsResponse.data.notifications || [])
+          setNotifications(notificationsResponse.data.notifications || []);
         }
       } catch (error: any) {
-        console.error("Error fetching dashboard data:", error)
-        toast.error(error.response?.data?.message || "Failed to fetch dashboard data")
+        console.error("Error fetching dashboard data:", error);
+        toast.error(
+          error.response?.data?.message || "Failed to fetch dashboard data"
+        );
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchDashboardData()
-  }, [backendUrl, requiterToken])
+    fetchDashboardData();
+  }, [backendUrl, requiterToken]);
 
   // Calculate statistics from bookings
   const calculateStats = (bookingData: Booking[]) => {
@@ -103,46 +115,67 @@ const ViewRequiterDashboard = () => {
         totalRevenue: 0,
         monthlyBookings: [],
         categoryDistribution: [],
-      })
-      return
+      });
+      return;
     }
 
     // Count total, pending, and completed bookings
-    const totalBookings = bookingData.length
-    const pendingBookings = bookingData.filter((b) => b.bookingStatus === "PENDING").length
-    const completedBookings = bookingData.filter((b) => b.bookingStatus === "COMPLETED").length
+    const totalBookings = bookingData.length;
+    const pendingBookings = bookingData.filter(
+      (b) => b.bookingStatus === "PENDING"
+    ).length;
+    const completedBookings = bookingData.filter(
+      (b) => b.bookingStatus === "COMPLETED"
+    ).length;
 
     // Calculate total revenue (from completed bookings)
     const totalRevenue = bookingData
       .filter((b) => b.bookingStatus === "COMPLETED")
-      .reduce((sum, booking) => sum + booking.business.amount, 0)
+      .reduce((sum, booking) => sum + booking.business.amount, 0);
 
     // Group bookings by month
-    const monthlyData: Record<string, number> = {}
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const monthlyData: Record<string, number> = {};
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
 
     bookingData.forEach((booking) => {
-      const date = new Date(booking.date)
-      const monthKey = months[date.getMonth()]
-      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1
-    })
+      const date = new Date(booking.date);
+      const monthKey = months[date.getMonth()];
+      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;
+    });
 
-    const monthlyBookings = Object.entries(monthlyData).map(([month, count]) => ({
-      month,
-      count,
-    }))
+    const monthlyBookings = Object.entries(monthlyData).map(
+      ([month, count]) => ({
+        month,
+        count,
+      })
+    );
 
     // Group bookings by category
-    const categoryData: Record<string, number> = {}
+    const categoryData: Record<string, number> = {};
     bookingData.forEach((booking) => {
-      const category = booking.business.category
-      categoryData[category] = (categoryData[category] || 0) + 1
-    })
+      const category = booking.business.category;
+      categoryData[category] = (categoryData[category] || 0) + 1;
+    });
 
-    const categoryDistribution = Object.entries(categoryData).map(([name, value]) => ({
-      name,
-      value,
-    }))
+    const categoryDistribution = Object.entries(categoryData).map(
+      ([name, value]) => ({
+        name,
+        value,
+      })
+    );
 
     setStats({
       totalBookings,
@@ -151,78 +184,99 @@ const ViewRequiterDashboard = () => {
       totalRevenue,
       monthlyBookings,
       categoryDistribution,
-    })
-  }
+    });
+  };
 
   // Handle booking status update
-  const handleUpdateBookingStatus = async (bookingId: string, status: string) => {
-    if (!requiterToken) return
+  const handleUpdateBookingStatus = async (
+    bookingId: string,
+    status: string
+  ) => {
+    if (!requiterToken) return;
 
     try {
       const { data } = await axios.put(
         `${backendUrl}/api/booking/${bookingId}`,
         { status },
-        { headers: { Authorization: requiterToken } },
-      )
+        { headers: { Authorization: requiterToken } }
+      );
 
       if (data.success) {
-        toast.success(`Booking marked as ${status.toLowerCase()}`)
+        toast.success(`Booking marked as ${status.toLowerCase()}`);
 
         // Update booking in state
         setBookings((prev) =>
-          prev.map((booking) => (booking.id === bookingId ? { ...booking, bookingStatus: status } : booking)),
-        )
+          prev.map((booking) =>
+            booking.id === bookingId
+              ? { ...booking, bookingStatus: status }
+              : booking
+          )
+        );
 
         // Recalculate stats
         calculateStats(
-          bookings.map((booking) => (booking.id === bookingId ? { ...booking, bookingStatus: status } : booking)),
-        )
+          bookings.map((booking) =>
+            booking.id === bookingId
+              ? { ...booking, bookingStatus: status }
+              : booking
+          )
+        );
       } else {
-        toast.error(data.message || "Failed to update booking status")
+        toast.error(data.message || "Failed to update booking status");
       }
     } catch (error: any) {
-      console.error("Error updating booking status:", error)
-      toast.error(error.response?.data?.message || "Failed to update booking status")
+      console.error("Error updating booking status:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to update booking status"
+      );
     }
-  }
+  };
 
   // Mark notification as read
   const markNotificationAsRead = async (notificationId: string) => {
-    if (!requiterToken) return
+    if (!requiterToken) return;
 
     try {
       const { data } = await axios.put(
         `${backendUrl}/api/requiter/notifications/${notificationId}`,
         { isRead: true },
-        { headers: { Authorization: requiterToken } },
-      )
+        { headers: { Authorization: requiterToken } }
+      );
 
       if (data.success) {
         setNotifications((prev) =>
           prev.map((notification) =>
-            notification.id === notificationId ? { ...notification, isRead: true } : notification,
-          ),
-        )
+            notification.id === notificationId
+              ? { ...notification, isRead: true }
+              : notification
+          )
+        );
       }
     } catch (error) {
-      console.error("Error marking notification as read:", error)
+      console.error("Error marking notification as read:", error);
     }
-  }
+  };
 
   // Mark all notifications as read
   const markAllNotificationsAsRead = () => {
-    setNotifications((prev) => prev.map((notification) => ({ ...notification, isRead: true })))
-  }
+    setNotifications((prev) =>
+      prev.map((notification) => ({ ...notification, isRead: true }))
+    );
+  };
 
   if (loading) {
-    return <DashboardSkeleton />
+    return <DashboardSkeleton />;
   }
 
   return (
     <div className="container p-4 mx-auto">
       <h1 className="mb-6 text-2xl font-bold">Dashboard</h1>
 
-      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs
+        defaultValue="overview"
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
@@ -249,7 +303,10 @@ const ViewRequiterDashboard = () => {
 
           {/* Charts */}
           {stats && (
-            <BookingCharts monthlyBookings={stats.monthlyBookings} categoryDistribution={stats.categoryDistribution} />
+            <BookingCharts
+              monthlyBookings={stats.monthlyBookings}
+              categoryDistribution={stats.categoryDistribution}
+            />
           )}
 
           {/* Recent Bookings */}
@@ -262,21 +319,24 @@ const ViewRequiterDashboard = () => {
         </TabsContent>
 
         <TabsContent value="bookings">
-          <BookingTable bookings={bookings} onUpdateStatus={handleUpdateBookingStatus} />
+          <BookingTable
+            bookings={bookings}
+            onUpdateStatus={handleUpdateBookingStatus}
+          />
         </TabsContent>
 
         <TabsContent value="notifications">
           <NotificationsList
             notifications={notifications}
             backendUrl={backendUrl}
-            requiterToken={requiterToken}
+            requiterToken={requiterToken || ""}
             onMarkAsRead={markNotificationAsRead}
             onMarkAllAsRead={markAllNotificationsAsRead}
           />
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default ViewRequiterDashboard
+export default ViewRequiterDashboard;

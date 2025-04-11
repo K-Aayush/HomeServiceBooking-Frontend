@@ -117,8 +117,7 @@ const RequiterDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Navbar for requiter panel */}
+    <div className="flex flex-col h-screen overflow-hidden">
       <div className="py-4 shadow">
         <div className="flex items-start justify-between px-5">
           <img
@@ -171,10 +170,9 @@ const RequiterDashboard = () => {
         </div>
       </div>
 
-      <div className="flex items-start">
-        {/* Sidebar for requiter panel */}
+      <div className="flex flex-1 overflow-auto">
         {!isProfileorChatPage && (
-          <div className="inline-block min-h-screen border-r-2">
+          <div className="min-w-[220px] border-r-2 h-full">
             <ul className="flex flex-col items-start pt-5 text-gray-800">
               <NavLink
                 className={({ isActive }) =>
@@ -227,7 +225,7 @@ const RequiterDashboard = () => {
 
         {/* Main content area */}
         {!isProfileorChatPage ? (
-          <div className="flex-1 p-5">
+          <div className="flex-1 p-5 overflow-y-auto">
             <Outlet />
           </div>
         ) : (

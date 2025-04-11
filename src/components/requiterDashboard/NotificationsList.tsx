@@ -37,7 +37,6 @@ const NotificationsList = ({
     try {
       const { data } = await axios.put(
         `${backendUrl}/api/requiter/notifications`,
-        {},
         { headers: { Authorization: requiterToken } }
       );
 
