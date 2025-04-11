@@ -22,9 +22,9 @@ import UserLogin from "./components/UserLogin";
 import UserProfile from "./pages/userProfile";
 import Profile from "./pages/Profile";
 import MyBooking from "./pages/MyBooking";
-import PaymentSuccess from "./pages/PaymentSuccess";
 import Chat from "./pages/Chat";
 import RequiterChat from "./pages/RequiterChat";
+import ProtectedUserRoutes from "./middleware/ProtectedUserRoutes";
 
 const App = () => {
   const location = useLocation();
@@ -42,10 +42,31 @@ const App = () => {
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
         <Route path="/businessDetails/:id" element={<BusinessDetails />} />
-        <Route path="/user-profile" element={<UserProfile />} />
-        <Route path="/my-booking" element={<MyBooking />} />
-        <Route path="/payment-success" element={<PaymentSuccess />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route
+          path="/user-profile"
+          element={
+            <ProtectedUserRoutes>
+              <UserProfile />
+            </ProtectedUserRoutes>
+          }
+        />
+        <Route
+          path="/my-booking"
+          element={
+            <ProtectedUserRoutes>
+              <MyBooking />
+            </ProtectedUserRoutes>
+          }
+        />
+
+        <Route
+          path="/chat"
+          element={
+            <ProtectedUserRoutes>
+              <Chat />
+            </ProtectedUserRoutes>
+          }
+        />
 
         <Route
           path="/requiterDashboard"
