@@ -1,5 +1,7 @@
-import React from "react";
-import { useEffect, useRef } from "react";
+"use client";
+
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
@@ -10,6 +12,7 @@ interface Message {
   content: string;
   senderId: string;
   senderType: "USER" | "REQUITER";
+  read: boolean;
   createdAt: string;
 }
 
@@ -19,8 +22,10 @@ interface ChatWindowProps {
   setNewMessage: (message: string) => void;
   handleSendMessage: () => void;
   isUser: boolean;
-
+  currentId: string;
   loading: boolean;
+  socket?: any;
+  conversationId?: string;
 }
 
 const ChatWindow = ({
@@ -29,21 +34,75 @@ const ChatWindow = ({
   setNewMessage,
   handleSendMessage,
   isUser,
-
+  currentId,
   loading,
+  socket,
+  conversationId,
 }: ChatWindowProps) => {
   // Reference to the messages container for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [prevMessagesLength, setPrevMessagesLength] = useState(0);
 
   // Function to scroll to bottom of messages
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
-  // Auto-scroll when messages change
+  // Auto-scroll when messages changes
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+
+    if (messages.length > 0 && socket && conversationId) {
+      const unreadMessageIds = messages
+        .filter((msg) => {
+          return (
+            (isUser && msg.senderType === "REQUITER" && !msg.read) ||
+            (!isUser && msg.senderType === "USER" && !msg.read)
+          );
+        })
+        .map((msg) => msg.id);
+
+      if (unreadMessageIds.length > 0) {
+        console.log(
+          `Auto-marking ${unreadMessageIds.length} visible messages as read`
+        );
+        socket.emit("mark_as_read", {
+          messageIds: unreadMessageIds,
+          conversationId,
+        });
+      }
+    }
+
+    setPrevMessagesLength(messages.length);
+  }, [messages, conversationId, socket, isUser]);
+
+  // Handle typing indicator
+  useEffect(() => {
+    if (!socket || !conversationId) return;
+
+    const handleTypingStatus = ({
+      conversationId: convId,
+      isTyping: typing,
+    }: {
+      conversationId: string;
+      isTyping: boolean;
+    }) => {
+      if (convId === conversationId) {
+        setIsTyping(typing);
+      }
+    };
+
+    socket.on("typing_status", handleTypingStatus);
+
+    return () => {
+      socket.off("typing_status", handleTypingStatus);
+    };
+  }, [socket, conversationId]);
 
   // Function to format timestamp
   const formatTime = (timestamp: string) => {
@@ -57,10 +116,38 @@ const ChatWindow = ({
     }
   };
 
+  // Handle input change and emit typing status
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
+
+    if (socket && conversationId) {
+      // Clear existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+
+      // Emit typing status
+      socket.emit("typing", {
+        conversationId,
+        userId: currentId,
+        isTyping: true,
+      });
+
+      // Set timeout to stop typing indicator after 2 seconds of inactivity
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("typing", {
+          conversationId,
+          userId: currentId,
+          isTyping: false,
+        });
+      }, 2000);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col flex-1 h-full bg-white">
-        <div className="p-4 border-b border-gray-200">
+        <div className="hidden p-4 border-b border-gray-200 md:block">
           <Skeleton className="w-1/4 h-6" />
         </div>
         <div className="flex-1 p-4 overflow-y-auto">
@@ -97,13 +184,16 @@ const ChatWindow = ({
 
   return (
     <div className="flex flex-col flex-1 h-full bg-white">
-      {/* Chat Header */}
-      <div className="p-4 bg-gray-100 border-b border-gray-200">
-        <h2 className="mb-3 text-xl font-semibold">Messages</h2>
+      {/* Chat Header - Only visible on desktop */}
+      <div className="hidden p-4 border-b border-gray-200 bg-gradient-to-r from-purple-500 to-indigo-600 md:block">
+        <h2 className="text-xl font-semibold text-white">Messages</h2>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 p-4 overflow-y-auto bg-gray-50"
+      >
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="p-6 text-gray-500 bg-white rounded-lg shadow-md">
@@ -117,6 +207,7 @@ const ChatWindow = ({
                 (isUser && message.senderType === "USER") ||
                 (!isUser && message.senderType === "REQUITER");
 
+              // Special styling for system messages
               const isSystemMessage = message.senderId === "system";
 
               if (isSystemMessage) {
@@ -144,17 +235,42 @@ const ChatWindow = ({
                     }`}
                   >
                     <p className="leading-relaxed">{message.content}</p>
-                    <p
-                      className={`text-xs mt-1 text-right ${
+                    <div
+                      className={`text-xs mt-1 text-right flex justify-end items-center gap-1 ${
                         isCurrentUser ? "text-white/70" : "text-gray-500"
                       }`}
                     >
-                      {formatTime(message.createdAt)}
-                    </p>
+                      <span>{formatTime(message.createdAt)}</span>
+                      {isCurrentUser && message.read && (
+                        <span className="text-xs">✓</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
             })}
+
+            {/* Typing indicator */}
+            {isTyping && (
+              <div className="flex justify-start mb-4">
+                <div className="bg-gray-100 p-3 rounded-lg shadow-sm max-w-[70%]">
+                  <div className="flex space-x-1">
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div ref={messagesEndRef} />
           </div>
@@ -167,7 +283,7 @@ const ChatWindow = ({
           <input
             type="text"
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyPress}
             placeholder="Type a message..."
             className="flex-1 p-2 bg-transparent border-none focus:outline-none focus:ring-0"

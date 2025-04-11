@@ -24,6 +24,7 @@ import Profile from "./pages/Profile";
 import MyBooking from "./pages/MyBooking";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Chat from "./pages/Chat";
+import RequiterChat from "./pages/RequiterChat";
 
 const App = () => {
   const location = useLocation();
@@ -58,6 +59,7 @@ const App = () => {
           <Route path="add-service" element={<AddService />} />
           <Route path="manage-service" element={<ManageService />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="chat" element={<RequiterChat />} />
         </Route>
         <Route
           path="/adminDashboard"
