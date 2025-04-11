@@ -57,7 +57,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
 
   const currentBusiness = business.find((b) => b.id === businessId);
   const amountInDollars = currentBusiness
-    ? currentBusiness.amount.toFixed(2)
+    ? currentBusiness?.amount?.toFixed(2)
     : "0.00";
 
   // Helper function to format date as YYYY-MM-DD in local timezone
