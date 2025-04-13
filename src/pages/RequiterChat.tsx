@@ -1,5 +1,3 @@
-"use client";
-
 import { useContext, useEffect, useState, useRef } from "react";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
@@ -29,7 +27,7 @@ interface Message {
   createdAt: string;
 }
 
-const Chat = () => {
+const RequiterChat = () => {
   const { backendUrl, userToken, userData, requiterData, requiterToken } =
     useContext(AppContext);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -45,7 +43,6 @@ const Chat = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
 
-  // Use a ref to track the selected conversation for socket events
   const selectedConversationRef = useRef<string | null>(null);
 
   const isUser = !!userData;
@@ -53,6 +50,7 @@ const Chat = () => {
   const currentId = isUser ? userData?.id : requiterData?.id;
   const token = isUser ? userToken : requiterToken;
 
+  // Update the ref whenever selectedConversation changes
   useEffect(() => {
     selectedConversationRef.current = selectedConversation;
   }, [selectedConversation]);
@@ -123,17 +121,16 @@ const Chat = () => {
 
       if (data.success) {
         setConversations(data.conversations);
+        console.log(`Loaded ${data.conversations.length} conversations`);
 
         if (data.conversations.length > 0 && !selectedConversation) {
           const firstConversationId = data.conversations[0].id;
           setSelectedConversation(firstConversationId);
           selectedConversationRef.current = firstConversationId;
-          console.log(
-            `Setting initial selected conversation to ${firstConversationId}`
-          );
         }
       }
 
+      // Also fetch unread count
       fetchUnreadCount();
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -176,7 +173,6 @@ const Chat = () => {
     setNewMessage("");
   };
 
-  // Improve the socket event handling
   useEffect(() => {
     const newSocket = io(backendUrl, {
       reconnection: true,
@@ -185,6 +181,8 @@ const Chat = () => {
     });
 
     newSocket.on("connect", () => {
+      console.log("Connected to socket server:", newSocket.id);
+
       if (token) {
         console.log(
           `Authenticating socket as ${isUser ? "user" : "requiter"} with token`
@@ -204,6 +202,8 @@ const Chat = () => {
     });
 
     newSocket.on("authenticated", () => {
+      console.log("Socket authenticated successfully");
+      // Refresh data after authentication
       fetchConversations();
     });
 
@@ -213,20 +213,13 @@ const Chat = () => {
     });
 
     newSocket.on("new_message", (message: Message) => {
+      // Use the ref to get the current selected conversation
       const currentSelectedConversation = selectedConversationRef.current;
 
-      console.log("Received new_message event:", {
-        messageId: message.id,
-        conversationId: message.conversationId,
-        senderType: message.senderType,
-        currentConversation: currentSelectedConversation,
-      });
-
-      // Compare with the ref value instead of the state
       if (message.conversationId === currentSelectedConversation) {
-        console.log("Adding new message to current conversation");
         setMessages((prev) => {
           if (prev.some((m) => m.id === message.id)) {
+            console.log("Message already exists, not adding duplicate");
             return prev;
           }
           return [...prev, message];
@@ -254,6 +247,7 @@ const Chat = () => {
       } else {
         setUnreadCount((prev) => prev + 1);
 
+        // Only show toast if not in the current conversation
         if (currentSelectedConversation !== message.conversationId) {
           toast.info("New message in another conversation");
         }
@@ -376,7 +370,6 @@ const Chat = () => {
       try {
         setLoading(true);
 
-        // Use the appropriate endpoint based on user type
         const endpoint = isUser
           ? `${backendUrl}/api/chat/user/conversation/${selectedConversation}/messages`
           : `${backendUrl}/api/chat/requiter/conversation/${selectedConversation}/messages`;
@@ -393,16 +386,22 @@ const Chat = () => {
 
         if (data.success) {
           setMessages(data.messages);
+          console.log(
+            `Loaded ${data.messages.length} messages, automatically marked ${data.markedAsRead} as read`
+          );
 
+          // If messages were marked as read, update the unread count
           if (data.markedAsRead > 0) {
             fetchUnreadCount();
 
+            // Also update the conversation in the sidebar
             setConversations((prev) => {
               return prev.map((conv) => {
                 if (conv.id === selectedConversation) {
                   return {
                     ...conv,
                     messages: conv.messages.map((msg) => {
+                      // Mark messages from the other party as read
                       if (
                         (isUser && msg.senderType === "REQUITER") ||
                         (!isUser && msg.senderType === "USER")
@@ -448,6 +447,7 @@ const Chat = () => {
     if (conversation) {
       const unreadMessageIds = conversation.messages
         .filter((msg) => {
+          // Only mark messages from the other party as read
           return (
             (isUser && msg.senderType === "REQUITER" && !msg.read) ||
             (!isUser && msg.senderType === "USER" && !msg.read)
@@ -456,6 +456,9 @@ const Chat = () => {
         .map((msg) => msg.id);
 
       if (unreadMessageIds.length > 0 && socket) {
+        console.log(
+          `Marking ${unreadMessageIds.length} messages as read when selecting conversation`
+        );
         socket.emit("mark_as_read", {
           messageIds: unreadMessageIds,
           conversationId: id,
@@ -474,7 +477,7 @@ const Chat = () => {
 
   const handleConversationRead = (conversationId: string) => {
     console.log(`Conversation ${conversationId} marked as read`);
-
+    // Update unread count after a conversation is read
     fetchUnreadCount();
   };
 
@@ -482,6 +485,7 @@ const Chat = () => {
     return (
       <div className="flex flex-col h-screen bg-gray-100">
         {showMessageView ? (
+          // Show message view
           <div className="flex flex-col h-full">
             <div className="flex items-center p-4 text-white bg-gradient-to-r from-purple-500 to-indigo-600">
               <button
@@ -577,4 +581,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default RequiterChat;

@@ -162,7 +162,7 @@ export interface Booking {
   businessId: string;
   date: string;
   time: string;
-  bookingStatus: "BOOKED" | "CANCELLED" | "PENDING";
+  bookingStatus: "COMPLETED" | "CANCELLED" | "PENDING";
   createdAt: string;
   updateaAt: string;
   business: businessList;

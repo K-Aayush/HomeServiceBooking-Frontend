@@ -22,12 +22,14 @@ import UserLogin from "./components/UserLogin";
 import UserProfile from "./pages/userProfile";
 import Profile from "./pages/Profile";
 import MyBooking from "./pages/MyBooking";
-import PaymentSuccess from "./pages/PaymentSuccess";
 import Chat from "./pages/Chat";
+import RequiterChat from "./pages/RequiterChat";
+import ProtectedUserRoutes from "./middleware/ProtectedUserRoutes";
 
 const App = () => {
   const location = useLocation();
-  const { showRequiterLogin, showUserLogin } = useContext(AppContext);
+  const { showRequiterLogin, showUserLogin, userToken } =
+    useContext(AppContext);
   return (
     <div>
       {!location.pathname.startsWith("/requiterDashboard") &&
@@ -41,10 +43,25 @@ const App = () => {
         <Route path="/Services" element={<Services />} />
         <Route path="/category/:id" element={<Category />} />
         <Route path="/businessDetails/:id" element={<BusinessDetails />} />
-        <Route path="/user-profile" element={<UserProfile />} />
-        <Route path="/my-booking" element={<MyBooking />} />
-        <Route path="/payment-success" element={<PaymentSuccess />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route
+          path="/user-profile"
+          element={
+            <ProtectedUserRoutes>
+              <UserProfile />
+            </ProtectedUserRoutes>
+          }
+        />
+
+        {userToken && <Route path="/my-booking" element={<MyBooking />} />}
+
+        <Route
+          path="/chat"
+          element={
+            <ProtectedUserRoutes>
+              <Chat />
+            </ProtectedUserRoutes>
+          }
+        />
 
         <Route
           path="/requiterDashboard"
@@ -58,6 +75,7 @@ const App = () => {
           <Route path="add-service" element={<AddService />} />
           <Route path="manage-service" element={<ManageService />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="chat" element={<RequiterChat />} />
         </Route>
         <Route
           path="/adminDashboard"

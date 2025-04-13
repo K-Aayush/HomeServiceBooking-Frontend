@@ -6,6 +6,7 @@ import { BusinessListProps } from "../lib/type";
 import noImage from "../assets/no-image.png";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import { Badge } from "./ui/badge";
 
 const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,9 +14,9 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
 
   useEffect(() => {
     if (businessList.length > 0) {
-      setIsLoading(false); // Stop loading once data is available
+      setIsLoading(false);
     } else {
-      setTimeout(() => setIsLoading(false), 2000); // Simulate a loading state
+      setTimeout(() => setIsLoading(false), 2000);
     }
   }, [businessList, setIsLoading]);
 
@@ -82,22 +83,27 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                   />
                 )}
 
-                <div className="flex flex-col items-baseline gap-1 p-3">
-                  <h2 className="px-2 py-1 text-sm bg-purple-200 rounded-full text-primary">
-                    {item.category}
-                  </h2>
-
-                  <h2 className="text-lg font-bold">{item.name}</h2>
-                  <h2 className="text-primary">{item.requiter.name}</h2>
-                  <h2 className="text-sm text-gray-500">{item.address}</h2>
-
-                  <div className="w-full mt-2 mb-1">
-                    <span className="text-xl font-bold text-green-600">
-                      Rs. {item.amount}
-                    </span>
+                <div className="flex items-start justify-between p-4 mb-2">
+                  <div className="flex flex-col">
+                    <h2 className="mb-1 text-lg font-bold">{item.name}</h2>
+                    <Badge className="mb-2 bg-primary w-fit">
+                      {item.category}
+                    </Badge>
+                    <h2 className="text-primary">{item.requiter.name}</h2>
+                    <h2 className="text-sm text-gray-600 line-clamp-2">
+                      {item.address}
+                    </h2>
+                    <Button className="mt-3">Book now</Button>
                   </div>
 
-                  <Button className="mt-3">Book now</Button>
+                  <div>
+                    <Badge
+                      variant="outline"
+                      className="text-green-800 bg-green-100 border-green-200 "
+                    >
+                      ${item.amount.toFixed(2)}/hr
+                    </Badge>
+                  </div>
                 </div>
               </Link>
             ))}

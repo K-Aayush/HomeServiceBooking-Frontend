@@ -1,6 +1,18 @@
 import { Skeleton } from "../ui/skeleton";
 import { Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { AppContext } from "../../context/AppContext";
+
+interface Message {
+  id: string;
+  content: string;
+  senderId: string;
+  senderType: "USER" | "REQUITER";
+  read: boolean;
+  conversationId: string;
+  createdAt: string;
+}
 
 interface Conversation {
   id: string;
@@ -12,7 +24,7 @@ interface Conversation {
     name: string;
     requiterProfileImage: string;
   };
-  messages: any[];
+  messages: Message[];
 }
 
 interface ChatSidebarProps {
@@ -22,6 +34,8 @@ interface ChatSidebarProps {
   isUser: boolean;
   loading: boolean;
   isMobile?: boolean;
+  socket: any;
+  onConversationRead?: (conversationId: string) => void;
 }
 
 const ChatSidebar = ({
@@ -31,26 +45,59 @@ const ChatSidebar = ({
   isUser,
   loading,
   isMobile = false,
+  socket,
+  onConversationRead,
 }: ChatSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [unreadByConversation, setUnreadByConversation] = useState<
     Record<string, number>
   >({});
+  const [typingStatus, setTypingStatus] = useState<Record<string, boolean>>({});
+  const { backendUrl, userToken, requiterToken } = useContext(AppContext);
+
+  // Listen for typing status updates
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTypingStatus = ({
+      conversationId,
+      isTyping,
+    }: {
+      conversationId: string;
+      isTyping: boolean;
+    }) => {
+      setTypingStatus((prev) => ({
+        ...prev,
+        [conversationId]: isTyping,
+      }));
+
+      if (isTyping) {
+        setTimeout(() => {
+          setTypingStatus((prev) => ({
+            ...prev,
+            [conversationId]: false,
+          }));
+        }, 3000);
+      }
+    };
+
+    socket.on("typing_status", handleTypingStatus);
+
+    return () => {
+      socket.off("typing_status", handleTypingStatus);
+    };
+  }, [socket]);
 
   // Calculate unread messages for each conversation
   useEffect(() => {
     const unreadCounts: Record<string, number> = {};
 
     conversations.forEach((conversation) => {
-      // Count unread messages in this conversation
       const unreadMessages = conversation.messages.filter((msg) => {
-        // If user is viewing, count unread messages from requiters
         if (isUser) {
           return msg.senderType === "REQUITER" && !msg.read;
-        }
-        // If requiter is viewing, count unread messages from users
-        else {
+        } else {
           return msg.senderType === "USER" && !msg.read;
         }
       });
@@ -62,6 +109,75 @@ const ChatSidebar = ({
 
     setUnreadByConversation(unreadCounts);
   }, [conversations, isUser]);
+
+  // Mark messages as read when a conversation is selected
+  const handleConversationSelect = async (id: string) => {
+    setSelectedConversation(id);
+
+    // Find the conversation
+    const conversation = conversations.find((c) => c.id === id);
+    if (!conversation) return;
+
+    // Get unread message IDs
+    const unreadMessageIds = conversation.messages
+      .filter((msg) => {
+        if (isUser) {
+          return msg.senderType === "REQUITER" && !msg.read;
+        } else {
+          return msg.senderType === "USER" && !msg.read;
+        }
+      })
+      .map((msg) => msg.id);
+
+    // If there are unread messages, mark them as read
+    if (unreadMessageIds.length > 0) {
+      console.log(
+        `Marking ${unreadMessageIds.length} messages as read in conversation ${id}`
+      );
+
+      // Update UI immediately
+      setUnreadByConversation((prev) => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
+
+      if (onConversationRead) {
+        onConversationRead(id);
+      }
+
+      if (socket) {
+        socket.emit("mark_as_read", {
+          messageIds: unreadMessageIds,
+          conversationId: id,
+        });
+      }
+
+      try {
+        const token = isUser ? userToken : requiterToken;
+        const endpoint = isUser
+          ? `${backendUrl}/api/chat/user/mark-as-read`
+          : `${backendUrl}/api/chat/requiter/mark-as-read`;
+
+        console.log(
+          "Using token for mark-as-read:",
+          token ? "Token exists" : "No token"
+        );
+
+        const response = await axios.post(
+          endpoint,
+          { messageIds: unreadMessageIds },
+          { headers: { Authorization: token } }
+        );
+        console.log("Mark as read API response:", response.data);
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+        if (axios.isAxiosError(error) && error.response) {
+          console.error("API error response:", error.response.data);
+        }
+      }
+    }
+  };
 
   const filteredConversations = searchQuery
     ? conversations.filter((conversation) => {
@@ -177,6 +293,7 @@ const ChatSidebar = ({
                 conversation.messages[0]?.content || "No messages yet";
               const hasUnread = unreadByConversation[conversation.id] > 0;
               const unreadCount = unreadByConversation[conversation.id] || 0;
+              const isTyping = typingStatus[conversation.id] || false;
 
               return (
                 <div
@@ -190,7 +307,7 @@ const ChatSidebar = ({
                       ? "bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-500 shadow-md"
                       : "hover:bg-gray-50 border-l-4 border-transparent"
                   }`}
-                  onClick={() => setSelectedConversation(conversation.id)}
+                  onClick={() => handleConversationSelect(conversation.id)}
                 >
                   <div className="relative">
                     {image ? (
@@ -213,7 +330,9 @@ const ChatSidebar = ({
                     <span
                       className={`absolute bottom-0 right-0 ${
                         isMobile ? "w-4 h-4" : "w-3 h-3"
-                      } bg-green-500 border-2 border-white rounded-full`}
+                      } ${
+                        isTyping ? "bg-green-500 animate-pulse" : "bg-green-500"
+                      } border-2 border-white rounded-full`}
                     ></span>
                   </div>
                   <div className="flex-1 overflow-hidden">
@@ -240,7 +359,11 @@ const ChatSidebar = ({
                         hasUnread ? "font-semibold text-black" : ""
                       }`}
                     >
-                      {lastMessage}
+                      {isTyping ? (
+                        <span className="italic text-green-600">Typing...</span>
+                      ) : (
+                        lastMessage
+                      )}
                     </p>
                   </div>
                 </div>

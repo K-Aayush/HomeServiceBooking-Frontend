@@ -1,3 +1,5 @@
+"use client";
+
 import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -9,9 +11,8 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
-
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import axios from "axios";
@@ -28,8 +29,9 @@ const Navbar = () => {
     userToken,
     requiterToken,
   } = useContext(AppContext);
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const isOnChatPage = location.pathname === "/chat";
 
   useEffect(() => {
     // Fetch unread message count if user is logged in
@@ -55,13 +57,22 @@ const Navbar = () => {
       }
     };
 
-    fetchUnreadCount();
+    if (!isOnChatPage) {
+      fetchUnreadCount();
 
-    // Set up interval to check for new messages every minute
-    const intervalId = setInterval(fetchUnreadCount, 60000);
-
-    return () => clearInterval(intervalId);
-  }, [userData, backendUrl, userToken, requiterToken]);
+      const intervalId = setInterval(fetchUnreadCount, 15000);
+      return () => clearInterval(intervalId);
+    } else {
+      setUnreadCount(0);
+    }
+  }, [
+    userData,
+    backendUrl,
+    userToken,
+    requiterToken,
+    isOnChatPage,
+    location.pathname,
+  ]);
 
   const handleLogout = async () => {
     logout();
@@ -69,7 +80,6 @@ const Navbar = () => {
     window.location.reload();
   };
 
-  //close the sidebar when navigating the pages
   const handleCloseSheet = () => {
     setIsSheetOpen(false);
   };
@@ -138,7 +148,7 @@ const Navbar = () => {
                       <li className="relative flex items-center px-2 py-1 pr-10 cursor-pointer">
                         <MessageCircle className="w-4 h-4 mr-2" />
                         Messages
-                        {unreadCount > 0 && (
+                        {!isOnChatPage && unreadCount > 0 && (
                           <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -right-2 -top-1">
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
@@ -215,7 +225,7 @@ const Navbar = () => {
                     <Link to="/chat" onClick={handleCloseSheet}>
                       <Button variant="outline" className="relative w-full">
                         Messages
-                        {unreadCount > 0 && (
+                        {!isOnChatPage && unreadCount > 0 && (
                           <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -right-2 -top-1">
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
