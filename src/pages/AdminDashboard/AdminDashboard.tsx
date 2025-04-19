@@ -66,7 +66,7 @@ const AdminDashboard = () => {
                   <li className="px-3 py-2 font-medium text-gray-900 border-b">
                     {requiterData?.name || "Admin User"}
                   </li>
-                  <Link to="/admin/settings">
+                  <Link to="/adminDashboard/profile">
                     <li className="flex items-center px-3 py-2 rounded-md cursor-pointer hover:bg-gray-100">
                       <Settings className="w-4 h-4 mr-2" />
                       Settings
@@ -100,7 +100,7 @@ const AdminDashboard = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`
                   }
-                  to="/admin/dashboard"
+                  to="/adminDashboard/dashboard"
                 >
                   <LayoutDashboard className="w-5 h-5 mr-3" />
                   Dashboard
@@ -113,7 +113,7 @@ const AdminDashboard = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`
                   }
-                  to="/admin/users"
+                  to="/adminDashboard/users"
                 >
                   <Users className="w-5 h-5 mr-3" />
                   User Management
@@ -126,7 +126,7 @@ const AdminDashboard = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`
                   }
-                  to="/admin/services"
+                  to="/adminDashboard/services"
                 >
                   <List className="w-5 h-5 mr-3" />
                   Service Management
@@ -139,7 +139,7 @@ const AdminDashboard = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`
                   }
-                  to="/admin/notifications"
+                  to="/adminDashboard/notifications"
                 >
                   <Bell className="w-5 h-5 mr-3" />
                   Notifications
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
                         : "text-gray-700 hover:bg-gray-100"
                     }`
                   }
-                  to="/admin/settings"
+                  to="/adminDashboard/settings"
                 >
                   <Settings className="w-5 h-5 mr-3" />
                   System Settings

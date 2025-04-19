@@ -86,7 +86,7 @@ const App = () => {
           }
         >
           <Route path="dashboard" element={<ViewAdminDashboard />} />
-          <Route path="viewUsers" element={<ViewUsers />} />
+          <Route path="users" element={<ViewUsers />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
