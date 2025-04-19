@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Search, ThumbsUp, ThumbsDown, MoreHorizontal } from "lucide-react";
+import  { useState } from "react";
+import { Search,  MoreHorizontal } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
-import { useNotifications } from "../../context/NotificationContext";
 
 // Mock service data
 const mockServices = [
@@ -22,7 +21,7 @@ const mockServices = [
     amount: 35,
     requiterName: "John Smith",
     requiterId: "req456",
-    status: "pending",
+    status: "active",
     created: "2023-05-18T14:20:00.000Z",
   },
   {
@@ -32,7 +31,7 @@ const mockServices = [
     amount: 75,
     requiterName: "Mike Johnson",
     requiterId: "req789",
-    status: "rejected",
+    status: "active",
     created: "2023-05-10T09:15:00.000Z",
   },
   {
@@ -52,63 +51,22 @@ const mockServices = [
     amount: 85,
     requiterName: "Robert Davis",
     requiterId: "req202",
-    status: "pending",
+    status: "active",
     created: "2023-05-19T11:30:00.000Z",
   },
 ];
 
 const ManageServices = () => {
-  const [services, setServices] = useState(mockServices);
+  const [services] = useState(mockServices);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const { addNotification } = useNotifications();
-
-  const handleApproveService = (
-    serviceId: string,
-    serviceName: string,
-    requiterId: string
-  ) => {
-    setServices(
-      services.map((service) =>
-        service.id === serviceId ? { ...service, status: "active" } : service
-      )
-    );
-
-    addNotification({
-      message: `Service approved: ${serviceName}`,
-      isRead: false,
-      type: "success",
-      requiterId,
-    });
-  };
-
-  const handleRejectService = (
-    serviceId: string,
-    serviceName: string,
-    requiterId: string
-  ) => {
-    setServices(
-      services.map((service) =>
-        service.id === serviceId ? { ...service, status: "rejected" } : service
-      )
-    );
-
-    addNotification({
-      message: `Service rejected: ${serviceName}`,
-      isRead: false,
-      type: "warning",
-      requiterId,
-    });
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
         return <Badge variant="default">Active</Badge>;
-      case "pending":
-        return <Badge variant="outline">Pending</Badge>;
-      case "rejected":
-        return <Badge variant="destructive">Rejected</Badge>;
+      case "inactive":
+        return <Badge variant="destructive">Inactive</Badge>;
       default:
         return null;
     }
@@ -152,8 +110,7 @@ const ManageServices = () => {
           >
             <option value="all">All Services</option>
             <option value="active">Active</option>
-            <option value="pending">Pending Approval</option>
-            <option value="rejected">Rejected</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
       </div>
@@ -186,7 +143,7 @@ const ManageServices = () => {
                   scope="col"
                   className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                 >
-                  Requiter
+                  Provider
                 </th>
                 <th
                   scope="col"
@@ -233,41 +190,9 @@ const ManageServices = () => {
                       {getStatusBadge(service.status)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        {service.status === "pending" && (
-                          <>
-                            <button
-                              onClick={() =>
-                                handleApproveService(
-                                  service.id,
-                                  service.name,
-                                  service.requiterId
-                                )
-                              }
-                              className="p-1 text-green-600 rounded hover:bg-green-50"
-                              title="Approve"
-                            >
-                              <ThumbsUp className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleRejectService(
-                                  service.id,
-                                  service.name,
-                                  service.requiterId
-                                )
-                              }
-                              className="p-1 text-red-600 rounded hover:bg-red-50"
-                              title="Reject"
-                            >
-                              <ThumbsDown className="w-5 h-5" />
-                            </button>
-                          </>
-                        )}
-                        <button className="p-1 text-gray-600 rounded hover:bg-gray-100">
-                          <MoreHorizontal className="w-5 h-5" />
-                        </button>
-                      </div>
+                      <button className="p-1 text-gray-600 rounded hover:bg-gray-100">
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
                     </td>
                   </tr>
                 ))

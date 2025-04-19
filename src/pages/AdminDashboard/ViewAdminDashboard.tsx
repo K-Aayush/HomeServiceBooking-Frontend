@@ -185,7 +185,7 @@ const ViewAdminDashboard = () => {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Notifications</CardTitle>
             <a
-              href="/admin/notifications"
+              href="/adminDashboard/notifications"
               className="text-sm text-blue-600 hover:underline"
             >
               View all

@@ -32,7 +32,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/*Navbar for admin panel*/}
-      <div className="py-3 bg-white shadow-sm">
+      <div className="z-50 py-3 bg-white shadow-sm ">
         <div className="flex items-center justify-between px-5">
           <div className="flex items-center">
             <img
@@ -89,7 +89,7 @@ const AdminDashboard = () => {
       <div className="flex">
         {/*sidebar for admin panel*/}
         {!isProfilePage && (
-          <div className="fixed inset-y-0 left-0 z-50 flex flex-col w-64 pt-16 overflow-y-auto bg-white border-r shadow-sm">
+          <div className="fixed inset-y-0 left-0 flex flex-col w-64 pt-16 overflow-y-auto bg-white border-r shadow-sm">
             <div className="flex flex-col flex-1 pt-5">
               <nav className="flex-1 px-2 space-y-1">
                 <NavLink

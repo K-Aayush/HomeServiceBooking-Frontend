@@ -6,12 +6,14 @@ interface UserActionsProps {
   userId: string;
   userName: string;
   isBanned?: boolean;
+  onViewDetails: () => void;
 }
 
 const UserActions: React.FC<UserActionsProps> = ({
   userId,
   userName,
   isBanned = false,
+  onViewDetails,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { addNotification } = useNotifications();
@@ -21,8 +23,9 @@ const UserActions: React.FC<UserActionsProps> = ({
   };
 
   const handleViewDetails = () => {
-    window.location.href = `/admin/users/${userId}`;
+    onViewDetails();
     setIsOpen(false);
+    console.log(window.location.href);
   };
 
   const handleBanUser = () => {
