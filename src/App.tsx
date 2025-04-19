@@ -25,6 +25,7 @@ import MyBooking from "./pages/MyBooking";
 import Chat from "./pages/Chat";
 import RequiterChat from "./pages/RequiterChat";
 import ProtectedUserRoutes from "./middleware/ProtectedUserRoutes";
+import UserDetails from "./pages/AdminDashboard/UserDetails";
 
 const App = () => {
   const location = useLocation();
@@ -87,6 +88,7 @@ const App = () => {
         >
           <Route path="dashboard" element={<ViewAdminDashboard />} />
           <Route path="users" element={<ViewUsers />} />
+          <Route path="users/:id" element={<UserDetails />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
