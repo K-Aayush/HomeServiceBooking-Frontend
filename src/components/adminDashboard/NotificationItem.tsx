@@ -1,7 +1,7 @@
 import React from "react";
 import { CheckCircle, AlertTriangle, Info, X } from "lucide-react";
 import { Notification } from "../../context/NotificationContext";
-import { formatDate } from "../../lib/utils";
+import { format } from "date-fns";
 import { Badge } from "../ui/badge";
 
 interface NotificationItemProps {
@@ -49,7 +49,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-gray-500">{formatDate(createdAt)}</p>
+            <p className="text-sm text-gray-500">
+              {format(createdAt, "MM/dd/yyyy")}
+            </p>
           </div>
         </div>
         <div className="flex space-x-2">
