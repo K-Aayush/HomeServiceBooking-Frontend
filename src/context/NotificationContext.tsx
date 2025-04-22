@@ -5,6 +5,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
+import axios from "axios";
 
 export interface Notification {
   id: string;
@@ -19,11 +20,11 @@ export interface Notification {
 interface NotificationContextType {
   notifications: Notification[];
   unreadCount: number;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
   addNotification: (
     notification: Omit<Notification, "id" | "createdAt">
-  ) => void;
+  ) => Promise<void>;
   deleteNotification: (id: string) => void;
   clearAllNotifications: () => void;
 }
@@ -52,75 +53,93 @@ export const NotificationProvider = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  useEffect(() => {
-    // Mock fetch notifications from API
-    const mockNotifications: Notification[] = [
-      {
-        id: "1",
-        message: "New user registered",
-        isRead: false,
-        createdAt: new Date().toISOString(),
-        type: "info",
-        userId: "user123",
-      },
-      {
-        id: "2",
-        message: "Service request approved",
-        isRead: true,
-        createdAt: new Date(Date.now() - 86400000).toISOString(),
-        type: "success",
-        requiterId: "req456",
-      },
-      {
-        id: "3",
-        message: "User account flagged for review",
-        isRead: false,
-        createdAt: new Date(Date.now() - 172800000).toISOString(),
-        type: "warning",
-        userId: "user789",
-      },
-    ];
+  // Fetch notifications from backend
+  const fetchNotifications = async () => {
+    try {
+      const res = await axios.get("/api/admin/notifications", {
+        withCredentials: true,
+      });
+      if (
+        res.data &&
+        res.data.success &&
+        Array.isArray(res.data.notifications)
+      ) {
+        setNotifications(res.data.notifications);
+      } else {
+        setNotifications([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch notifications", err);
+      setNotifications([]);
+    }
+  };
 
-    setNotifications(mockNotifications);
+  useEffect(() => {
+    fetchNotifications();
   }, []);
 
   useEffect(() => {
     setUnreadCount(notifications.filter((n) => !n.isRead).length);
   }, [notifications]);
 
-  const markAsRead = (id: string) => {
-    setNotifications(
-      notifications.map((notification) =>
-        notification.id === id
-          ? { ...notification, isRead: true }
-          : notification
-      )
-    );
+  // Mark a single notification as read
+  const markAsRead = async (id: string) => {
+    try {
+      await axios.put(
+        `/api/admin/notifications/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === id
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
+    } catch (err) {
+      console.error("Failed to mark notification as read", err);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({ ...notification, isRead: true }))
-    );
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    try {
+      await axios.put(
+        "/api/admin/notifications",
+        {},
+        { withCredentials: true }
+      );
+      setNotifications((prev) =>
+        prev.map((notification) => ({ ...notification, isRead: true }))
+      );
+    } catch (err) {
+      console.error("Failed to mark all notifications as read", err);
+    }
   };
 
-  const addNotification = (
+  // Add notification: (Needs correct API in backend if you want to POST)
+  const addNotification = async (
     notification: Omit<Notification, "id" | "createdAt">
   ) => {
+    // You'll need to provide a POST endpoint for notifications if you want this to persist,
+    // but for now we'll simply add it to the local state:
     const newNotification: Notification = {
       ...notification,
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
     };
-    setNotifications([newNotification, ...notifications]);
+    setNotifications((prev) => [newNotification, ...prev]);
   };
 
+  // Delete notification from local state only
   const deleteNotification = (id: string) => {
-    setNotifications(
-      notifications.filter((notification) => notification.id !== id)
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
     );
   };
 
+  // Clear all notifications from local state only
   const clearAllNotifications = () => {
     setNotifications([]);
   };

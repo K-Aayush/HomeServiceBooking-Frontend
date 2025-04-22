@@ -18,6 +18,9 @@ import { AppContext } from "../../context/AppContext";
 import NotificationBell from "../../components/adminDashboard/NotificationBell";
 import { getInitials } from "../../lib/utils";
 
+// OPTIONAL: If you have a Footer component, import it here.
+// import Footer from "../../components/layout/Footer";
+
 const AdminDashboard = () => {
   const { logout, requiterData } = useContext(AppContext);
   const navigate = useNavigate();
@@ -30,9 +33,9 @@ const AdminDashboard = () => {
   const isProfilePage = location.pathname.includes("/admin/profile");
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/*Navbar for admin panel*/}
-      <div className="z-50 py-3 bg-white shadow-sm ">
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Navbar for admin panel */}
+      <div className="z-50 py-3 bg-white shadow-sm">
         <div className="flex items-center justify-between px-5">
           <div className="flex items-center">
             <img
@@ -86,10 +89,10 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="flex">
-        {/*sidebar for admin panel*/}
+      {/* Main content area: Sidebar + Content */}
+      <div className="flex flex-1 min-h-0">
         {!isProfilePage && (
-          <div className="fixed inset-y-0 left-0 flex flex-col w-64 pt-16 overflow-y-auto bg-white border-r shadow-sm">
+          <aside className="flex flex-col w-64 bg-white border-r shadow-sm">
             <div className="flex flex-col flex-1 pt-5">
               <nav className="flex-1 px-2 space-y-1">
                 <NavLink
@@ -158,7 +161,6 @@ const AdminDashboard = () => {
                   System Settings
                 </NavLink>
               </nav>
-
               <div className="px-2 pt-5 mt-auto mb-6">
                 <button
                   onClick={handleLogout}
@@ -169,14 +171,12 @@ const AdminDashboard = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </aside>
         )}
 
-        <div className="flex-1 min-h-screen pl-64">
-          <main className="p-6">
-            <Outlet />
-          </main>
-        </div>
+        <main className={`flex-1 ${!isProfilePage ? "px-6 py-6" : ""} min-h-0`}>
+          <Outlet />
+        </main>
       </div>
     </div>
   );

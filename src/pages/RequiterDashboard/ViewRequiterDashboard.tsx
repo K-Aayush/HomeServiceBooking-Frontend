@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import {
   Tabs,
@@ -92,11 +92,15 @@ const ViewRequiterDashboard = () => {
         if (notificationsResponse.data.success) {
           setNotifications(notificationsResponse.data.notifications || []);
         }
-      } catch (error: any) {
-        console.error("Error fetching dashboard data:", error);
-        toast.error(
-          error.response?.data?.message || "Failed to fetch dashboard data"
-        );
+      } catch (error) {
+        //Axios error
+        if (error instanceof AxiosError && error.response) {
+          toast.error(error.response.data.message);
+        } else if (error instanceof Error) {
+          toast.error(error.message || "An error occoured while fetching data");
+        } else {
+          toast.error("Internal Server Error");
+        }
       } finally {
         setLoading(false);
       }
@@ -224,11 +228,17 @@ const ViewRequiterDashboard = () => {
       } else {
         toast.error(data.message || "Failed to update booking status");
       }
-    } catch (error: any) {
-      console.error("Error updating booking status:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to update booking status"
-      );
+    } catch (error) {
+      //Axios error
+      if (error instanceof AxiosError && error.response) {
+        toast.error(error.response.data.message);
+      } else if (error instanceof Error) {
+        toast.error(
+          error.message || "An error occoured while updating booking status"
+        );
+      } else {
+        toast.error("Internal Server Error");
+      }
     }
   };
 

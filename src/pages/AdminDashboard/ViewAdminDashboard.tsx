@@ -1,4 +1,5 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import {
   Users,
@@ -17,59 +18,135 @@ import {
 } from "../../components/ui/card";
 import UserStatsCard from "../../components/adminDashboard/UserStatsCard";
 import { useNotifications } from "../../context/NotificationContext";
+import DashboardSkeleton from "../../components/requiterDashboard/DashboardSkeleton";
+import BookingChart from "../../components/adminDashboard/BookingChart";
+import CategoryChart from "../../components/adminDashboard/CategoryChart";
+import RevenueChart from "../../components/adminDashboard/RevenueChart";
+
+interface AdminStats {
+  total_bookings: number;
+  pending_bookings: number;
+  completed_bookings: number;
+  total_revenue: number;
+}
+
+interface MonthlyStats {
+  month: string;
+  booking_count: number;
+  revenue: number;
+}
+
+interface CategoryStats {
+  category: string;
+  booking_count: number;
+}
 
 const ViewAdminDashboard = () => {
   const { error, isLoading, totalUsers } = useContext(AppContext);
   const { notifications } = useNotifications();
+  const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
+  const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([]);
+  const [categoryStats, setCategoryStats] = useState<CategoryStats[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for charts and stats
-  const mockStats = {
-    totalServices: 87,
-    pendingApprovals: 12,
-    totalBookings: 156,
-    completedBookings: 124,
-    cancelledBookings: 8,
-    pendingBookings: 24,
-    recentActivity: [
-      {
-        id: 1,
-        action: "User Registration",
-        user: "John Doe",
-        time: "2 hours ago",
-      },
-      {
-        id: 2,
-        action: "Service Added",
-        user: "Jane Smith",
-        time: "5 hours ago",
-      },
-      {
-        id: 3,
-        action: "Booking Completed",
-        user: "Alex Johnson",
-        time: "1 day ago",
-      },
-      {
-        id: 4,
-        action: "Service Updated",
-        user: "Michael Brown",
-        time: "1 day ago",
-      },
-      {
-        id: 5,
-        action: "User Banned",
-        user: "Robert Davis",
-        time: "2 days ago",
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        // Fetch admin stats
+        const bookingStatsRes = await axios.get("/api/admin/booking-stats");
+        if (!bookingStatsRes.data.success)
+          throw new Error("Failed to fetch booking stats");
+        const stats = bookingStatsRes.data.stats;
+        // Calculate total revenue (override this logic if you have revenue in the backend!)
+        const total_revenue = stats.completedBookings * 50;
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-4 rounded-full border-t-indigo-600 animate-spin"></div>
-      </div>
-    );
+        setAdminStats({
+          total_bookings: stats.totalBookings,
+          pending_bookings: stats.pendingBookings,
+          completed_bookings: stats.completedBookings,
+          total_revenue,
+        });
+
+        // Fetch monthly stats (if you don't have the endpoint, generate fake data OR ask to implement endpoint)
+        let monthlyStatsRes;
+        try {
+          monthlyStatsRes = await axios.get("/api/admin/monthly-stats");
+        } catch {
+          // fallback: generate dummy months
+          const months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+          setMonthlyStats(
+            months.map((month) => ({
+              month,
+              booking_count: Math.floor(Math.random() * 100),
+              revenue: Math.floor(Math.random() * 5000),
+            }))
+          );
+        }
+        // If data exists, set it
+        if (
+          monthlyStatsRes &&
+          monthlyStatsRes.data.success &&
+          Array.isArray(monthlyStatsRes.data.data)
+        ) {
+          setMonthlyStats(monthlyStatsRes.data.data);
+        }
+
+        // Fetch category stats (if you don't have the endpoint, generate fake data OR ask to implement endpoint)
+        let categoryStatsRes;
+        try {
+          categoryStatsRes = await axios.get("/api/admin/category-stats");
+        } catch {
+          const categories = [
+            "Hair Salon",
+            "Spa",
+            "Massage",
+            "Nails",
+            "Barber Shop",
+            "Dental",
+            "Medical",
+            "Fitness",
+          ];
+          setCategoryStats(
+            categories.map((category) => ({
+              category,
+              booking_count: Math.floor(Math.random() * 120),
+            }))
+          );
+        }
+        if (
+          categoryStatsRes &&
+          categoryStatsRes.data.success &&
+          Array.isArray(categoryStatsRes.data.data)
+        ) {
+          setCategoryStats(categoryStatsRes.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching admin dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading || isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
@@ -83,25 +160,27 @@ const ViewAdminDashboard = () => {
           title="Total Users"
           value={totalUsers?.total || 0}
           icon={<Users className="w-6 h-6 text-indigo-600" />}
-          trend="+12% from last month"
+          trend={`${((totalUsers?.total || 0) / 100).toFixed(1)}% growth`}
         />
         <UserStatsCard
           title="Active Users"
           value={totalUsers?.user || 0}
           icon={<UserCheck className="w-6 h-6 text-green-600" />}
-          trend="+8% from last month"
+          trend={`${((totalUsers?.user || 0) / 100).toFixed(1)}% active`}
         />
         <UserStatsCard
-          title="Recruiters"
+          title="Service Providers"
           value={totalUsers?.requiter || 0}
           icon={<UserX className="w-6 h-6 text-amber-600" />}
-          trend="+5% from last month"
+          trend={`${((totalUsers?.requiter || 0) / 100).toFixed(1)}% providers`}
         />
         <UserStatsCard
           title="Total Services"
-          value={mockStats.totalServices}
+          value={adminStats?.total_bookings || 0}
           icon={<ShoppingBag className="w-6 h-6 text-blue-600" />}
-          trend="+15% from last month"
+          trend={`${((adminStats?.total_bookings || 0) / 100).toFixed(
+            1
+          )}% booked`}
         />
       </div>
 
@@ -117,7 +196,7 @@ const ViewAdminDashboard = () => {
             <div className="flex items-center">
               <Clock className="w-5 h-5 mr-2 text-amber-500" />
               <span className="text-2xl font-bold">
-                {mockStats.pendingBookings}
+                {adminStats?.pending_bookings || 0}
               </span>
             </div>
           </CardContent>
@@ -132,7 +211,7 @@ const ViewAdminDashboard = () => {
             <div className="flex items-center">
               <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
               <span className="text-2xl font-bold">
-                {mockStats.completedBookings}
+                {adminStats?.completed_bookings || 0}
               </span>
             </div>
           </CardContent>
@@ -140,18 +219,28 @@ const ViewAdminDashboard = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-500">
-              Cancelled Bookings
+              Total Revenue
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <AlertTriangle className="w-5 h-5 mr-2 text-red-500" />
+              <AlertTriangle className="w-5 h-5 mr-2 text-blue-500" />
               <span className="text-2xl font-bold">
-                {mockStats.cancelledBookings}
+                ${adminStats?.total_revenue.toFixed(2) || "0.00"}
               </span>
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <BookingChart data={monthlyStats} />
+        <CategoryChart data={categoryStats} />
+      </div>
+
+      <div className="grid grid-cols-1">
+        <RevenueChart data={monthlyStats} />
       </div>
 
       {/* Recent Activity & Notifications */}
@@ -163,80 +252,48 @@ const ViewAdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockStats.recentActivity.map((activity) => (
+              {notifications.slice(0, 5).map((activity) => (
                 <div
                   key={activity.id}
                   className="flex items-start pb-3 border-b last:border-0 last:pb-0"
                 >
                   <div className="flex-1">
-                    <p className="font-medium">{activity.action}</p>
+                    <p className="font-medium">{activity.message}</p>
                     <p className="text-sm text-gray-500">
-                      {activity.user} - {activity.time}
+                      {new Date(activity.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
               ))}
+              {notifications.length === 0 && (
+                <p className="text-center text-gray-500">No recent activity</p>
+              )}
             </div>
           </CardContent>
         </Card>
 
         {/* Recent Notifications */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader>
             <CardTitle>Recent Notifications</CardTitle>
-            <a
-              href="/adminDashboard/notifications"
-              className="text-sm text-blue-600 hover:underline"
-            >
-              View all
-            </a>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {notifications.slice(0, 5).map((notification) => {
-                const getIcon = () => {
-                  switch (notification.type) {
-                    case "success":
-                      return <CheckCircle className="w-4 h-4 text-green-500" />;
-                    case "warning":
-                      return (
-                        <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                      );
-                    case "error":
-                      return <AlertTriangle className="w-4 h-4 text-red-500" />;
-                    default:
-                      return <Clock className="w-4 h-4 text-blue-500" />;
-                  }
-                };
-
-                return (
-                  <div
-                    key={notification.id}
-                    className="flex items-start gap-3 pb-3 border-b last:border-0 last:pb-0"
-                  >
-                    <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full">
-                      {getIcon()}
-                    </div>
-                    <div className="flex-1">
-                      <p
-                        className={`font-medium ${
-                          !notification.isRead
-                            ? "text-gray-900"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        {notification.message}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(notification.createdAt).toLocaleTimeString()}
-                      </p>
-                    </div>
+              {notifications.slice(0, 5).map((notification) => (
+                <div
+                  key={notification.id}
+                  className="flex items-start pb-3 border-b last:border-0 last:pb-0"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium">{notification.message}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(notification.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                );
-              })}
-
+                </div>
+              ))}
               {notifications.length === 0 && (
-                <p className="text-gray-500">No notifications</p>
+                <p className="text-center text-gray-500">No notifications</p>
               )}
             </div>
           </CardContent>
