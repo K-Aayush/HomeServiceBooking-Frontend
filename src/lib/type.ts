@@ -144,6 +144,7 @@ export interface viewUserDataProps {
 }
 
 export interface businessList {
+  amount: number;
   address: string;
   name: string;
   category: string;
@@ -162,6 +163,7 @@ export interface Booking {
   businessId: string;
   date: string;
   time: string;
+  amount: string;
   bookingStatus: "COMPLETED" | "CANCELLED" | "PENDING";
   createdAt: string;
   updateaAt: string;
