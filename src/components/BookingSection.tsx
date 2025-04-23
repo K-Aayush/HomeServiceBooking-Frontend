@@ -21,6 +21,13 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { Map } from "./Map";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const STRIPE_PUBLISHABLE_KEY =
   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
@@ -39,7 +46,7 @@ interface TimeSlot {
 }
 
 const BookingSection = ({ children, businessId }: BookingSectionProps) => {
-  const { backendUrl, userToken, isLoading, setIsLoading, business } =
+  const { backendUrl, userToken, isLoading, setIsLoading, business, userData } =
     useContext(AppContext);
 
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -57,6 +64,9 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
     longitude: 0,
     locationName: "",
   });
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    "stripe" | "khalti"
+  >("stripe");
 
   const currentBusiness = business.find((b) => b.id === businessId);
   const amountInDollars = currentBusiness
@@ -79,14 +89,18 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   };
 
   useEffect(() => {
-    if (!stripePromise && showPaymentForm) {
+    if (
+      !stripePromise &&
+      showPaymentForm &&
+      selectedPaymentMethod === "stripe"
+    ) {
       setStripeError(
         "Stripe could not be initialized. Please check your configuration."
       );
     } else {
       setStripeError(null);
     }
-  }, [showPaymentForm]);
+  }, [showPaymentForm, selectedPaymentMethod]);
 
   useEffect(() => {
     if (date && businessId) {
@@ -165,34 +179,79 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
       return;
     }
 
-    if (!stripePromise) {
-      toast.error("Stripe is not properly configured. Please contact support.");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const { data } = await axios.post(
-        `${backendUrl}/api/payment/stripe/create-payment`,
-        {
-          amount: Number.parseFloat(amountInDollars),
-          businessName: currentBusiness.name,
-        },
-        {
-          headers: {
-            Authorization: userToken,
-            "Content-Type": "application/json",
-          },
+      if (selectedPaymentMethod === "stripe") {
+        if (!stripePromise) {
+          toast.error(
+            "Stripe is not properly configured. Please contact support."
+          );
+          return;
         }
-      );
 
-      if (data.success) {
-        setPaymentId(data.paymentId);
-        setClientSecret(data.clientSecret);
-        setShowPaymentForm(true);
+        const { data } = await axios.post(
+          `${backendUrl}/api/payment/stripe/create-payment`,
+          {
+            amount: Number.parseFloat(amountInDollars),
+            businessName: currentBusiness.name,
+          },
+          {
+            headers: {
+              Authorization: userToken,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (data.success) {
+          setPaymentId(data.paymentId);
+          setClientSecret(data.clientSecret);
+          setShowPaymentForm(true);
+        } else {
+          toast.error(data.message || "Failed to initiate payment");
+        }
       } else {
-        toast.error(data.message || "Failed to initiate payment");
+        const payload = {
+          return_url: import.meta.env.VITE_FRONEND_URL,
+          website_url: import.meta.env.VITE_FRONEND_URL,
+          amount: Number.parseFloat(amountInDollars),
+          purchase_order_id: Date.now().toString(),
+          purchase_order_name: business || "Service Booking",
+          customer_info: {
+            name: userData?.firstName,
+            email: userData?.email,
+          },
+        };
+        // Khalti payment initiation
+        const { data } = await axios.post(
+          `${backendUrl}/api/payment/khalti/create-payment`,
+          {
+            payload,
+          },
+          { headers: { Authorization: userToken } }
+        );
+
+        if (data.success) {
+          // Store payment details in localStorage for verification after redirect
+          localStorage.setItem(
+            "pendingPayment",
+            JSON.stringify({
+              paymentId: data.paymentId,
+              businessId,
+              date: formatLocalDate(date),
+              time: selectedTime,
+              latitude: location.latitude,
+              longitude: location.longitude,
+              locationName: location.locationName,
+            })
+          );
+
+          // Redirect to Khalti payment page
+          window.location.href = data.paymentUrl;
+        } else {
+          toast.error(data.message || "Failed to initiate Khalti payment");
+        }
       }
     } catch (error) {
       console.error("Payment initiation error:", error);
@@ -207,6 +266,62 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
       setIsLoading(false);
     }
   };
+
+  // Handle Khalti payment verification after redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pidx = params.get("pidx");
+    const status = params.get("status");
+
+    if (pidx && status) {
+      const pendingPayment = localStorage.getItem("pendingPayment");
+
+      if (pendingPayment) {
+        const paymentDetails = JSON.parse(pendingPayment);
+
+        const verifyPayment = async () => {
+          try {
+            const { data } = await axios.post(
+              `${backendUrl}/api/payment/khalti/verify-payment`,
+              {
+                pidx,
+                paymentId: paymentDetails.paymentId,
+              }
+            );
+
+            if (data.success && data.khaltiStatus === "Completed") {
+              const bookingResponse = await axios.post(
+                `${backendUrl}/api/booking/create`,
+                {
+                  ...paymentDetails,
+                  paymentId: paymentDetails.paymentId,
+                },
+                {
+                  headers: {
+                    Authorization: userToken,
+                  },
+                }
+              );
+
+              if (bookingResponse.data.success) {
+                toast.success("Payment successful and booking created!");
+                handleBookingSuccess();
+              }
+            } else {
+              toast.error("Payment verification failed");
+            }
+          } catch (error) {
+            console.error("Payment verification error:", error);
+            toast.error("Failed to verify payment");
+          } finally {
+            localStorage.removeItem("pendingPayment");
+          }
+        };
+
+        verifyPayment();
+      }
+    }
+  }, []);
 
   const handleBookingSuccess = () => {
     setBookingComplete(true);
@@ -363,9 +478,25 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                   <p className="text-sm text-gray-600">
                     Service Fee: ${amountInDollars}
                   </p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Payment will be processed via Stripe
-                  </p>
+                  <div className="mt-4">
+                    <label className="text-sm font-medium text-gray-700">
+                      Select Payment Method
+                    </label>
+                    <Select
+                      value={selectedPaymentMethod}
+                      onValueChange={(value: "stripe" | "khalti") =>
+                        setSelectedPaymentMethod(value)
+                      }
+                    >
+                      <SelectTrigger className="w-full mt-1">
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="stripe">Stripe</SelectItem>
+                        <SelectItem value="khalti">Khalti</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
@@ -379,7 +510,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                   >
                     Cancel
                   </Button>
-                  {stripePromise ? (
+                  {stripePromise || selectedPaymentMethod === "khalti" ? (
                     <Button
                       disabled={
                         !(selectedTime && date && location.latitude) ||
@@ -389,7 +520,13 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                       onClick={initiatePayment}
                       className="flex-1"
                     >
-                      {isLoading ? "Processing..." : "Proceed to Payment"}
+                      {isLoading
+                        ? "Processing..."
+                        : `Pay with ${
+                            selectedPaymentMethod === "stripe"
+                              ? "Stripe"
+                              : "Khalti"
+                          }`}
                     </Button>
                   ) : (
                     <Button
