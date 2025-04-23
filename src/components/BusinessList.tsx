@@ -20,29 +20,26 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
     }
   }, [businessList, setIsLoading]);
 
-  //calculate total pages
   const totalpages = Math.ceil(businessList.length / 8);
 
-  //function to go back in previous page
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  //function to go into next page
   const handleNextPage = () => {
     if (currentPage < totalpages) {
       setCurrentPage(currentPage + 1);
     }
   };
+
   return (
     <div className="mt-5">
       <h2 className="text-2xl font-bold scroll-mt-0" id={pagehref}>
         {title}
       </h2>
 
-      {/* Show Skeleton if Loading */}
       {isLoading ? (
         <div className="grid grid-cols-2 gap-6 mt-5 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -99,7 +96,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                   <div>
                     <Badge
                       variant="outline"
-                      className="text-green-800 bg-green-100 border-green-200 "
+                      className="text-green-800 bg-green-100 border-green-200"
                     >
                       ${item.amount.toFixed(2)}/hr
                     </Badge>
@@ -109,12 +106,14 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
             ))}
         </div>
       ) : (
-        <div className="mt-5 text-lg text-center text-gray-500">
-          No list available
+        <div className="p-8 mt-5 text-center border border-gray-200 rounded-lg bg-gray-50">
+          <p className="text-lg text-gray-500">No services found</p>
+          <p className="mt-2 text-sm text-gray-400">
+            Try different search terms or browse categories
+          </p>
         </div>
       )}
 
-      {/* Pagination */}
       {!isLoading && businessList.length > 0 && (
         <div className="flex items-center justify-center mt-10 space-x-2">
           <a onClick={handlePreviousPage} href={`#${pagehref}`}>

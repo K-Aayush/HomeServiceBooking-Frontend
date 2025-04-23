@@ -6,17 +6,21 @@ import { AppContext } from "../context/AppContext";
 
 const Hero = () => {
   const { setIsSearched, setSearchFilter } = useContext(AppContext);
-
-  //ref value for input
   const titleRef = useRef<HTMLInputElement>(null!);
 
-  //onsearch function
   const onSearch = () => {
     setSearchFilter({
       title: titleRef.current.value,
     });
     setIsSearched(true);
   };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      onSearch();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-3 pt-14 pb-7">
       <h2 className="font-bold text-[46px] text-center">
@@ -24,17 +28,22 @@ const Hero = () => {
         Near You
       </h2>
       <h2 className="text-xl text-gray-400">
-        Explore Best Home Service & Repair Near you
+        Search by service name, category, or provider
       </h2>
-      <div className="flex items-center gap-4 mt-4">
+      <div className="flex items-center w-full max-w-2xl gap-4 mt-4">
         <Input
           ref={titleRef}
-          placeholder="Search"
-          className="rounded-full md:w-[350px]"
+          placeholder="Search services, categories, or providers..."
+          className="rounded-full md:flex-1"
+          onKeyPress={handleKeyPress}
         />
-        <Button onClick={onSearch} className="h-12 rounded-full">
-          <Search className="w-4 h-4" />
+        <Button onClick={onSearch} className="h-10 px-6 rounded-full">
+          <Search className="w-2 h-2 mr-2" />
+          Search
         </Button>
+      </div>
+      <div className="mt-4 text-sm text-gray-500">
+        Popular: Cleaning, Repair, Plumbing, Electrical
       </div>
     </div>
   );
