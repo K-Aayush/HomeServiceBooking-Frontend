@@ -53,33 +53,36 @@ export const UserNotificationProvider = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const { backendUrl, userToken } = useContext(AppContext);
 
-  // Fetch notifications
-  const fetchNotifications = async () => {
-    if (!userToken) return;
-
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/user/notifications`, {
-        headers: { Authorization: userToken },
-      });
-
-      if (data.success) {
-        setNotifications(data.notifications);
-        setUnreadCount(
-          data.notifications.filter((n: UserNotification) => !n.isRead).length
-        );
-      }
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    }
-  };
-
   useEffect(() => {
     if (userToken) {
+      // Fetch notifications
+      const fetchNotifications = async () => {
+        if (!userToken) return;
+
+        try {
+          const { data } = await axios.get(
+            `${backendUrl}/api/user/notifications`,
+            {
+              headers: { Authorization: userToken },
+            }
+          );
+
+          if (data.success) {
+            setNotifications(data.notifications);
+            setUnreadCount(
+              data.notifications.filter((n: UserNotification) => !n.isRead)
+                .length
+            );
+          }
+        } catch (error) {
+          console.error("Failed to fetch notifications:", error);
+        }
+      };
       fetchNotifications();
       const interval = setInterval(fetchNotifications, 30000);
       return () => clearInterval(interval);
     }
-  }, [userToken]);
+  }, [userToken, backendUrl]);
 
   // Mark a single notification as read
   const markAsRead = async (id: string) => {

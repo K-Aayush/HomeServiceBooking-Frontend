@@ -120,7 +120,7 @@ const ViewAdminDashboard = () => {
     };
 
     fetchBookings();
-  }, []);
+  }, [backendUrl]);
 
   const cancelledBookings =
     stats.totalBookings - stats.pendingBookings - stats.completedBookings;

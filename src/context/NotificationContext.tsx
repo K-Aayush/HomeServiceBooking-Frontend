@@ -55,30 +55,29 @@ export const NotificationProvider = ({
   const [unreadCount, setUnreadCount] = useState(0);
   const { backendUrl, requiterToken } = useContext(AppContext);
 
-  // Fetch notifications from backend
-  const fetchNotifications = async () => {
-    try {
-      const res = await axios.get(`${backendUrl}/api/admin/notifications`, {
-        headers: { Authorization: requiterToken },
-      });
-      if (
-        res.data &&
-        res.data.success &&
-        Array.isArray(res.data.notifications)
-      ) {
-        setNotifications(res.data.notifications);
-      } else {
+  useEffect(() => {
+    // Fetch notifications from backend
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/admin/notifications`, {
+          headers: { Authorization: requiterToken },
+        });
+        if (
+          res.data &&
+          res.data.success &&
+          Array.isArray(res.data.notifications)
+        ) {
+          setNotifications(res.data.notifications);
+        } else {
+          setNotifications([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications", err);
         setNotifications([]);
       }
-    } catch (err) {
-      console.error("Failed to fetch notifications", err);
-      setNotifications([]);
-    }
-  };
-
-  useEffect(() => {
+    };
     fetchNotifications();
-  }, []);
+  }, [backendUrl, requiterToken]);
 
   useEffect(() => {
     setUnreadCount(notifications.filter((n) => !n.isRead).length);

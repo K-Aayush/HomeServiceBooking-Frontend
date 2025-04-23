@@ -29,31 +29,30 @@ const BusinessDetails = () => {
   const [businessData, setBusinessData] =
     useState<PopularBusinessListType | null>(null);
 
-  // fetching the business data by id
-  const fetchBusinessData = async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await axios.get(
-        `${backendUrl}/api/requiter/getBusinessDataById/${id}`
-      );
-
-      if (data.success) {
-        console.log(data.businessData);
-        setBusinessData(data.businessData);
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      console.log("BusinessDatabyId fetching error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   //calling the data in overall page
   useEffect(() => {
+    // fetching the business data by id
+    const fetchBusinessData = async () => {
+      try {
+        setIsLoading(true);
+        const { data } = await axios.get(
+          `${backendUrl}/api/requiter/getBusinessDataById/${id}`
+        );
+
+        if (data.success) {
+          console.log(data.businessData);
+          setBusinessData(data.businessData);
+        } else {
+          toast.error(data.error);
+        }
+      } catch (error) {
+        console.log("BusinessDatabyId fetching error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchBusinessData();
-  }, [id]);
+  }, [id, setIsLoading, backendUrl]);
 
   useEffect(() => {
     if (businessData?.category) {

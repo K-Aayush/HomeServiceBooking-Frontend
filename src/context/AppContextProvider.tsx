@@ -114,28 +114,6 @@ export const AppContextProvider = ({
     }
   }, [requiterToken]);
 
-  //function to fetch businessdata
-  const fetchBusiness = async () => {
-    // setBusiness(PopularBusinessList);
-    try {
-      setIsLoading(true);
-      const { data } = await axios.get(
-        `${backendUrl}/api/requiter/getBusinessData`
-      );
-
-      if (data.success) {
-        console.log(data.businessData);
-        setBusiness(data.businessData);
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      console.error("User data fetch error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   //function to fetch business by category
   const fetchBusinessByCategory = useCallback(
     (categoryName: string) => {
@@ -150,8 +128,29 @@ export const AppContextProvider = ({
   );
 
   useEffect(() => {
+    //function to fetch businessdata
+    const fetchBusiness = async () => {
+      try {
+        setIsLoading(true);
+        const { data } = await axios.get(
+          `${backendUrl}/api/requiter/getBusinessData`
+        );
+
+        if (data.success) {
+          console.log(data.businessData);
+          setBusiness(data.businessData);
+        } else {
+          setError(data.message);
+        }
+      } catch (error) {
+        console.error("User data fetch error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchBusiness();
-  }, []);
+  }, [backendUrl]);
 
   //fetch requiterdata
   useEffect(() => {

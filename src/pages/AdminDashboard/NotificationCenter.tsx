@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Bell, Check, RefreshCcw, Trash2, Search } from "lucide-react";
 import { UseNotifications } from "../../context/NotificationContext";
 import NotificationItem from "../../components/adminDashboard/NotificationItem";
