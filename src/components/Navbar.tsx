@@ -1,5 +1,3 @@
-"use client";
-
 import logo from "../assets/Logo.svg";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -16,6 +14,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import axios from "axios";
+import UserNotificationBell from "./UserNotificationBell";
 
 const Navbar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
@@ -34,7 +33,6 @@ const Navbar = () => {
   const isOnChatPage = location.pathname === "/chat";
 
   useEffect(() => {
-    // Fetch unread message count if user is logged in
     const fetchUnreadCount = async () => {
       if (!userData || (!userToken && !requiterToken)) return;
 
@@ -88,7 +86,6 @@ const Navbar = () => {
     <div className="">
       <div className="flex justify-between px-6 py-5 shadow-sm">
         <div className="flex items-center gap-8">
-          {/* logo */}
           <Link to={"/"}>
             <img
               src={logo || "/placeholder.svg"}
@@ -97,7 +94,6 @@ const Navbar = () => {
               height={200}
             />
           </Link>
-          {/* navLinks */}
 
           <div className="items-center hidden gap-6 md:flex">
             <Link to={"/"}>
@@ -124,6 +120,7 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center gap-3">
+              <UserNotificationBell />
               <p className="max-sm:hidden">Welcome, {userData?.name}</p>
               <div className="relative group">
                 <Avatar className="w-12 h-12">

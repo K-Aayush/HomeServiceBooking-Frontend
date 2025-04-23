@@ -1,4 +1,3 @@
-import type React from "react";
 import { useContext, useEffect, useState } from "react";
 import {
   Sheet,
@@ -21,11 +20,10 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import { Map } from "./Map";
 
 const STRIPE_PUBLISHABLE_KEY =
   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
-
-// Initialize Stripe only if we have a key
 const stripePromise = STRIPE_PUBLISHABLE_KEY
   ? loadStripe(STRIPE_PUBLISHABLE_KEY)
   : null;
@@ -54,18 +52,30 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [bookingComplete, setBookingComplete] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
+  const [location, setLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+    locationName: "",
+  });
 
   const currentBusiness = business.find((b) => b.id === businessId);
   const amountInDollars = currentBusiness
     ? currentBusiness?.amount?.toFixed(2)
     : "0.00";
 
-  // Helper function to format date as YYYY-MM-DD in local timezone
   const formatLocalDate = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  const handleLocationSelect = (lat: number, lng: number, name: string) => {
+    setLocation({
+      latitude: lat,
+      longitude: lng,
+      locationName: name,
+    });
   };
 
   useEffect(() => {
@@ -105,7 +115,7 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
 
     try {
       setIsLoading(true);
-      const formattedDate = formatLocalDate(date); // Use local date
+      const formattedDate = formatLocalDate(date);
       const { data } = await axios.get(
         `${backendUrl}/api/booking/booked-slots?businessId=${businessId}&date=${formattedDate}`,
         { headers: { Authorization: userToken } }
@@ -224,6 +234,9 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
           businessId,
           date: formatLocalDate(date),
           time: selectedTime,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          locationName: location.locationName,
         },
         { headers: { Authorization: userToken } }
       );
@@ -333,6 +346,18 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
               </div>
 
               <div className="mt-5">
+                <h2 className="font-bold text-gray-600">Your Location</h2>
+                <div className="mt-2 overflow-hidden border rounded-lg">
+                  <Map
+                    latitude={location.latitude}
+                    longitude={location.longitude}
+                    locationName={location.locationName}
+                    onLocationSelect={handleLocationSelect}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-5">
                 <h2 className="font-bold text-gray-600">Payment Details</h2>
                 <div className="p-4 mt-2 border rounded-md">
                   <p className="text-sm text-gray-600">
@@ -357,7 +382,9 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                   {stripePromise ? (
                     <Button
                       disabled={
-                        !(selectedTime && date) || isLoading || !currentBusiness
+                        !(selectedTime && date && location.latitude) ||
+                        isLoading ||
+                        !currentBusiness
                       }
                       onClick={initiatePayment}
                       className="flex-1"
@@ -367,7 +394,9 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                   ) : (
                     <Button
                       disabled={
-                        !(selectedTime && date) || isLoading || !currentBusiness
+                        !(selectedTime && date && location.latitude) ||
+                        isLoading ||
+                        !currentBusiness
                       }
                       onClick={createBookingWithoutPayment}
                       className="flex-1"
@@ -400,6 +429,9 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
                       businessId,
                       date: formatLocalDate(date!),
                       time: selectedTime || "",
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                      locationName: location.locationName,
                     }}
                     onSuccess={handleBookingSuccess}
                     backendUrl={backendUrl}
@@ -432,6 +464,9 @@ interface CheckoutFormProps {
     businessId: string;
     date: string;
     time: string;
+    latitude: number;
+    longitude: number;
+    locationName: string;
   };
   onSuccess: () => void;
   backendUrl: string;
