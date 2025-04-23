@@ -10,8 +10,8 @@ createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <AppContextProvider>
       <NotificationProvider>
-      <UserNotificationProvider>
-        <App />
+        <UserNotificationProvider>
+          <App />
         </UserNotificationProvider>
       </NotificationProvider>
     </AppContextProvider>

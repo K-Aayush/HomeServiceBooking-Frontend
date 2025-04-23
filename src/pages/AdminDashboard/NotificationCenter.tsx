@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Bell, Check, RefreshCcw, Trash2, Search } from "lucide-react";
-import { useNotifications } from "../../context/NotificationContext";
+import { UseNotifications } from "../../context/NotificationContext";
 import NotificationItem from "../../components/adminDashboard/NotificationItem";
 
 const NotificationCenter = () => {
@@ -10,7 +10,7 @@ const NotificationCenter = () => {
     markAllAsRead,
     deleteNotification,
     clearAllNotifications,
-  } = useNotifications();
+  } = UseNotifications();
 
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");

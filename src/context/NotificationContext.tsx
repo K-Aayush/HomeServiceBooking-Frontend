@@ -6,6 +6,7 @@ import {
   ReactNode,
 } from "react";
 import axios from "axios";
+import { AppContext } from "./AppContext";
 
 export interface Notification {
   id: string;
@@ -33,7 +34,7 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
   undefined
 );
 
-export const useNotifications = () => {
+export const UseNotifications = () => {
   const context = useContext(NotificationContext);
   if (!context) {
     throw new Error(
@@ -52,11 +53,12 @@ export const NotificationProvider = ({
 }: NotificationProviderProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { backendUrl, requiterToken } = useContext(AppContext);
 
   // Fetch notifications from backend
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get("/api/admin/notifications", {
+      const res = await axios.get(`${backendUrl}/api/admin/notifications`, {
         withCredentials: true,
       });
       if (
@@ -86,8 +88,8 @@ export const NotificationProvider = ({
   const markAsRead = async (id: string) => {
     try {
       await axios.put(
-        `/api/admin/notifications/${id}`,
-        {},
+        `${backendUrl}/api/admin/notifications/${id}`,
+        { headers: { Authorization: requiterToken } },
         { withCredentials: true }
       );
       setNotifications((prev) =>
@@ -106,8 +108,8 @@ export const NotificationProvider = ({
   const markAllAsRead = async () => {
     try {
       await axios.put(
-        "/api/admin/notifications",
-        {},
+        `${backendUrl}/api/admin/notifications`,
+        { headers: { Authorization: requiterToken } },
         { withCredentials: true }
       );
       setNotifications((prev) =>

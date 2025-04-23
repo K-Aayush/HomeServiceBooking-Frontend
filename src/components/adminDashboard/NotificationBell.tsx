@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Bell } from "lucide-react";
-import { useNotifications } from "../../context/NotificationContext";
+import { UseNotifications } from "../../context/NotificationContext";
 import NotificationItem from "./NotificationItem";
 
 const NotificationBell: React.FC = () => {
@@ -11,7 +11,7 @@ const NotificationBell: React.FC = () => {
     markAsRead,
     deleteNotification,
     markAllAsRead,
-  } = useNotifications();
+  } = UseNotifications();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);

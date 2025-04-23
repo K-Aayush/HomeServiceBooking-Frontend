@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MoreHorizontal, Trash2, Eye, Ban, UserCheck } from "lucide-react";
-import { useNotifications } from "../../context/NotificationContext";
+import { UseNotifications } from "../../context/NotificationContext";
 
 interface UserActionsProps {
   userId: string;
@@ -16,7 +16,7 @@ const UserActions: React.FC<UserActionsProps> = ({
   onViewDetails,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { addNotification } = useNotifications();
+  const { addNotification } = UseNotifications();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);

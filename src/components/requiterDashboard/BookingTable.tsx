@@ -7,7 +7,15 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { Users } from "lucide-react";
+import { Users, MapPin } from "lucide-react";
+import { useState } from "react";
+import { Map } from "../Map";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../../components/ui/dialog";
 
 interface Booking {
   id: string;
@@ -17,6 +25,9 @@ interface Booking {
   time: string;
   bookingStatus: string;
   createdAt: string;
+  latitude: number;
+  longitude: number;
+  locationName: string;
   user: {
     name: string;
     email: string;
@@ -43,6 +54,13 @@ const BookingTable = ({
   onUpdateStatus,
 }: BookingTableProps) => {
   const displayBookings = isRecent ? bookings.slice(0, 5) : bookings;
+  const [showMap, setShowMap] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
+  const handleViewLocation = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setShowMap(true);
+  };
 
   return (
     <Card>
@@ -71,6 +89,7 @@ const BookingTable = ({
                   <th className="px-4 py-3 text-left">Date & Time</th>
                   <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left">Amount</th>
+                  <th className="px-4 py-3 text-left">Location</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -106,6 +125,16 @@ const BookingTable = ({
                     <td className="px-4 py-3">
                       ${booking.business.amount.toFixed(2)}
                     </td>
+                    <td className="px-4 py-3">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleViewLocation(booking)}
+                      >
+                        <MapPin className="w-4 h-4 mr-1" />
+                        View
+                      </Button>
+                    </td>
                     <td className="px-4 py-3 text-right">
                       {booking.bookingStatus === "PENDING" && (
                         <Button
@@ -140,6 +169,25 @@ const BookingTable = ({
             </Button>
           </div>
         )}
+
+        <Dialog open={showMap} onOpenChange={setShowMap}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>
+                Booking Location - {selectedBooking?.user.name}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedBooking && (
+              <div className="h-[500px] mt-4">
+                <Map
+                  latitude={selectedBooking.latitude}
+                  longitude={selectedBooking.longitude}
+                  locationName={selectedBooking.locationName}
+                />
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
