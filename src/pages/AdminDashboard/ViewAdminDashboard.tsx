@@ -29,7 +29,6 @@ interface BookingStats {
 
 const ViewAdminDashboard = () => {
   const { totalUsers, backendUrl } = useContext(AppContext);
-  const [bookings, setBookings] = useState<Booking[]>([]);
   const [stats, setStats] = useState<BookingStats>({
     totalBookings: 0,
     pendingBookings: 0,
@@ -50,7 +49,6 @@ const ViewAdminDashboard = () => {
 
         if (response.data?.booking && Array.isArray(response.data.booking)) {
           const bookingData: Booking[] = response.data.booking;
-          setBookings(bookingData);
 
           // Calculate statistics
           const calculatedStats: BookingStats = {
@@ -178,12 +176,14 @@ const ViewAdminDashboard = () => {
                 value={totalUsers?.total || 0}
                 icon={<Users className="w-6 h-6 text-indigo-600" />}
                 trend={`${((totalUsers?.total || 0) / 100).toFixed(1)}% growth`}
+                className="border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100"
               />
               <UserStatsCard
                 title="Active Users"
                 value={totalUsers?.user || 0}
                 icon={<UserCheck className="w-6 h-6 text-green-600" />}
                 trend={`${((totalUsers?.user || 0) / 100).toFixed(1)}% active`}
+                className="border-green-200 bg-gradient-to-br from-green-50 to-green-100"
               />
               <UserStatsCard
                 title="Service Providers"
@@ -192,6 +192,7 @@ const ViewAdminDashboard = () => {
                 trend={`${((totalUsers?.requiter || 0) / 100).toFixed(
                   1
                 )}% providers`}
+                className="border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100"
               />
             </>
           )}

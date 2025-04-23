@@ -14,6 +14,13 @@ const mockUserStatuses = new Map([
   ["user4", "suspended"],
 ]);
 
+enum UserStatus {
+  active = "active",
+  banned = "banned",
+  pending = "pending",
+  suspended = "suspended",
+}
+
 const ManageUsers = () => {
   const { error, isLoading, users } = useContext(AppContext);
   const [selectedRole, setSelectedRole] = useState<keyof typeof users>("total");
@@ -25,7 +32,7 @@ const ManageUsers = () => {
   const getUserStatus = (
     id: string
   ): "active" | "banned" | "pending" | "suspended" => {
-    return (userStatuses.get(id) as any) || "active";
+    return (userStatuses.get(id) as UserStatus) || "active";
   };
 
   // Filter users based on search term

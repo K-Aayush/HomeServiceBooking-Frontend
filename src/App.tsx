@@ -28,6 +28,7 @@ import ProtectedUserRoutes from "./middleware/ProtectedUserRoutes";
 import UserDetails from "./pages/AdminDashboard/UserDetails";
 import ManageServices from "./pages/AdminDashboard/ManageServices";
 import NotificationCenter from "./pages/AdminDashboard/NotificationCenter";
+import PaymentHistory from "./pages/PaymentHistory";
 
 const App = () => {
   const location = useLocation();
@@ -51,6 +52,14 @@ const App = () => {
           element={
             <ProtectedUserRoutes>
               <UserProfile />
+            </ProtectedUserRoutes>
+          }
+        />
+        <Route
+          path="/payment-history"
+          element={
+            <ProtectedUserRoutes>
+              <PaymentHistory />
             </ProtectedUserRoutes>
           }
         />

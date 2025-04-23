@@ -26,6 +26,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import axios from "axios";
 import { toast } from "sonner";
+import DashboardSkeleton from "../../components/requiterDashboard/DashboardSkeleton";
 
 const RequiterDashboard = () => {
   const { logout, requiterData, backendUrl, requiterToken } =
@@ -115,6 +116,8 @@ const RequiterDashboard = () => {
       </span>
     );
   };
+
+  if (isLoading) return <DashboardSkeleton />;
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">

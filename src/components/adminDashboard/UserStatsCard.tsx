@@ -6,6 +6,7 @@ interface UserStatsCardProps {
   value: number;
   icon: ReactNode;
   trend?: string;
+  className?: string;
 }
 
 const UserStatsCard: React.FC<UserStatsCardProps> = ({
@@ -13,9 +14,10 @@ const UserStatsCard: React.FC<UserStatsCardProps> = ({
   value,
   icon,
   trend,
+  className,
 }) => {
   return (
-    <Card>
+    <Card className={`shadow-sm ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-gray-500">
           {title}

@@ -6,6 +6,7 @@ import {
   LogOut,
   MenuIcon,
   MessageCircle,
+  Receipt,
   Settings,
   User,
 } from "lucide-react";
@@ -158,6 +159,12 @@ const Navbar = () => {
                         My Bookings
                       </li>
                     </Link>
+                    <Link to={"/payment-history"}>
+                      <li className="flex items-center px-2 py-1 pr-10 cursor-pointer">
+                        <Receipt className="w-4 h-4 mr-2" />
+                        Payment History
+                      </li>
+                    </Link>
                     <li
                       onClick={handleLogout}
                       className="flex items-center px-2 py-1 pr-10 cursor-pointer"
@@ -227,6 +234,11 @@ const Navbar = () => {
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
                         )}
+                      </Button>
+                    </Link>
+                    <Link to="/payment-history" onClick={handleCloseSheet}>
+                      <Button variant="outline" className="w-full">
+                        Payment History
                       </Button>
                     </Link>
                     <Button variant={"destructive"} onClick={handleLogout}>
