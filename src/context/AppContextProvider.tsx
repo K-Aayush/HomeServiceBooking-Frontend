@@ -124,6 +124,7 @@ export const AppContextProvider = ({
       );
 
       if (data.success) {
+        console.log(data.businessData);
         setBusiness(data.businessData);
       } else {
         setError(data.message);

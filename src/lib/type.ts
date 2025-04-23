@@ -8,6 +8,7 @@ export interface PopularBusinessListType {
   requiter: {
     name: string;
     email: string;
+    contactNumber: string;
   };
   email: string;
   images: imageUrl[];

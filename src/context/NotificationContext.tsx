@@ -59,7 +59,7 @@ export const NotificationProvider = ({
   const fetchNotifications = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/admin/notifications`, {
-        withCredentials: true,
+        headers: { Authorization: requiterToken },
       });
       if (
         res.data &&

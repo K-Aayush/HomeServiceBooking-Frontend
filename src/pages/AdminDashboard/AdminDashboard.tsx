@@ -42,14 +42,9 @@ const AdminDashboard = () => {
               className="cursor-pointer max-sm:w-32"
               src={logo || "https://via.placeholder.com/150x50?text=Logo"}
               alt="logo"
-              width={150}
-              height={50}
+              width={200}
+              height={150}
             />
-            <div className="hidden ml-10 md:block">
-              <h1 className="text-xl font-semibold text-gray-800">
-                Admin Dashboard
-              </h1>
-            </div>
           </div>
           <div className="flex items-center gap-3">
             <NotificationBell />
@@ -146,19 +141,6 @@ const AdminDashboard = () => {
                 >
                   <Bell className="w-5 h-5 mr-3" />
                   Notifications
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    `flex items-center p-3 text-base font-medium rounded-md ${
-                      isActive
-                        ? "bg-indigo-50 text-indigo-600"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`
-                  }
-                  to="/adminDashboard/settings"
-                >
-                  <Settings className="w-5 h-5 mr-3" />
-                  System Settings
                 </NavLink>
               </nav>
               <div className="px-2 pt-5 mt-auto mb-6">

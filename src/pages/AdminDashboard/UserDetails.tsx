@@ -59,6 +59,7 @@ const UserDetails = () => {
 
         if (data.success) {
           setUser(data.user);
+          console.log(data.user);
           setIsBanned(data.user.status === "banned");
         } else {
           toast.error("Failed to fetch user details");
@@ -217,12 +218,11 @@ const UserDetails = () => {
                   className="w-24 h-24 mb-4 rounded-full"
                 />
                 <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
-                <p className="text-gray-600">User ID: {user.id}</p>
                 <div className="mt-2">
                   <Badge
-                    variant={user.role === "REQUITER" ? "default" : "secondary"}
+                    variant={user.role === "USER" ? "default" : "secondary"}
                   >
-                    {user.role === "REQUITER" ? "Service Provider" : "Customer"}
+                    {user.role === "USER" ? "Customer" : "Service Provider"}
                   </Badge>
                 </div>
                 <div className="w-full mt-6 space-y-4">
@@ -296,7 +296,7 @@ const UserDetails = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge
                               variant={
-                                booking.status === "completed"
+                                booking.status === "COMPLETED"
                                   ? "default"
                                   : "secondary"
                               }

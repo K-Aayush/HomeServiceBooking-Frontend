@@ -1,118 +1,48 @@
-import  { useState } from "react";
-import { Search,  MoreHorizontal } from "lucide-react";
-import { Badge } from "../../components/ui/badge";
+import { useContext, useState } from "react";
+import { Search } from "lucide-react";
 
-// Mock service data
-const mockServices = [
-  {
-    id: "1",
-    name: "House Cleaning",
-    category: "Cleaning",
-    amount: 50,
-    requiterName: "Jane Doe",
-    requiterId: "req123",
-    status: "active",
-    created: "2023-05-15T10:30:00.000Z",
-  },
-  {
-    id: "2",
-    name: "Lawn Mowing",
-    category: "Gardening",
-    amount: 35,
-    requiterName: "John Smith",
-    requiterId: "req456",
-    status: "active",
-    created: "2023-05-18T14:20:00.000Z",
-  },
-  {
-    id: "3",
-    name: "Computer Repair",
-    category: "Tech Support",
-    amount: 75,
-    requiterName: "Mike Johnson",
-    requiterId: "req789",
-    status: "active",
-    created: "2023-05-10T09:15:00.000Z",
-  },
-  {
-    id: "4",
-    name: "Dog Walking",
-    category: "Pet Care",
-    amount: 25,
-    requiterName: "Lisa Chen",
-    requiterId: "req101",
-    status: "active",
-    created: "2023-05-12T16:45:00.000Z",
-  },
-  {
-    id: "5",
-    name: "Plumbing Services",
-    category: "Home Repair",
-    amount: 85,
-    requiterName: "Robert Davis",
-    requiterId: "req202",
-    status: "active",
-    created: "2023-05-19T11:30:00.000Z",
-  },
-];
+import { AppContext } from "../../context/AppContext";
 
 const ManageServices = () => {
-  const [services] = useState(mockServices);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("all");
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="default">Active</Badge>;
-      case "inactive":
-        return <Badge variant="destructive">Inactive</Badge>;
-      default:
-        return null;
-    }
-  };
+  const { business } = useContext(AppContext);
 
-  const filteredServices = services.filter((service) => {
-    const matchesSearch =
-      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.requiterName.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredServices = business?.filter((b) => {
+    const name = b?.name?.toLowerCase() || "";
+    const category = b?.category?.toLowerCase() || "";
+    const requiterName = b?.requiter?.name?.toLowerCase() || "";
+    const requiterEmail = b?.requiter?.email?.toLowerCase() || "";
+    const requiterContact = b?.requiter?.contactNumber?.toLowerCase() || "";
 
-    const matchesFilter = filter === "all" || filter === service.status;
+    const search = searchTerm.toLowerCase();
 
-    return matchesSearch && matchesFilter;
+    return (
+      name.includes(search) ||
+      category.includes(search) ||
+      requiterName.includes(search) ||
+      requiterEmail.includes(search) ||
+      requiterContact.includes(search)
+    );
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-full space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Service Management</h1>
       </div>
 
       {/* Search and Filter */}
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center flex-1 px-3 py-2 bg-white border rounded-md min-w-[260px]">
-          <Search className="w-5 h-5 mr-2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search services..."
-            className="flex-1 text-sm bg-transparent border-0 outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
 
-        <div className="flex items-center gap-2">
-          <select
-            className="px-3 py-2 text-sm bg-white border rounded-md cursor-pointer"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="all">All Services</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
+      <div className="flex items-center flex-1 px-3 py-2 bg-white border rounded-md min-w-[260px]">
+        <Search className="w-5 h-5 mr-2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search services..."
+          className="flex-1 text-sm bg-transparent border-0 outline-none"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       {/* Services Table */}
@@ -149,13 +79,13 @@ const ManageServices = () => {
                   scope="col"
                   className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                 >
-                  Status
+                  Contact
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
                 >
-                  Actions
+                  Email
                 </th>
               </tr>
             </thead>
@@ -183,16 +113,18 @@ const ManageServices = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {service.requiterName}
+                        {service.requiter.name}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(service.status)}
+                      <div className="text-sm text-gray-900">
+                        {service.requiter.contactNumber}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                      <button className="p-1 text-gray-600 rounded hover:bg-gray-100">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {service.requiter.email}
+                      </div>
                     </td>
                   </tr>
                 ))
