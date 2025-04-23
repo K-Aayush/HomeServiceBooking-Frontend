@@ -27,15 +27,6 @@ interface BookingStats {
   categoryDistribution: { name: string; value: number }[];
 }
 
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
-
 const ViewAdminDashboard = () => {
   const { totalUsers, backendUrl } = useContext(AppContext);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -207,7 +198,7 @@ const ViewAdminDashboard = () => {
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3 ">
           {loading ? (
             <>
               {[1, 2, 3, 4].map((i) => (
@@ -252,12 +243,6 @@ const ViewAdminDashboard = () => {
                     : 0
                 }% of total`}
                 className="border-green-200 bg-gradient-to-br from-green-50 to-green-100"
-              />
-              <StatCard
-                title="Total Revenue"
-                value={formatCurrency(stats.totalRevenue)}
-                description="From completed bookings"
-                className="border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100"
               />
             </>
           )}
@@ -354,34 +339,18 @@ const ViewAdminDashboard = () => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div className="p-4 rounded-lg bg-gradient-to-br from-indigo-50 to-indigo-100">
-                        <div className="mb-1 text-sm font-medium text-indigo-800">
-                          Average Booking Value
-                        </div>
-                        <div className="text-2xl font-bold">
-                          {formatCurrency(
-                            stats.completedBookings > 0
-                              ? stats.totalRevenue / stats.completedBookings
-                              : 0
-                          )}
-                        </div>
-                        <div className="mt-1 text-xs text-indigo-700">
-                          Per completed booking
-                        </div>
+                    <div className="p-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100">
+                      <div className="mb-1 text-sm font-medium text-emerald-800">
+                        Revenue per Category
                       </div>
-                      <div className="p-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100">
-                        <div className="mb-1 text-sm font-medium text-emerald-800">
-                          Revenue per Category
-                        </div>
-                        <div className="text-2xl font-bold">
-                          {stats.categoryDistribution.length}
-                        </div>
-                        <div className="mt-1 text-xs text-emerald-700">
-                          Business categories
-                        </div>
+                      <div className="text-2xl font-bold">
+                        {stats.categoryDistribution.length}
+                      </div>
+                      <div className="mt-1 text-xs text-emerald-700">
+                        Business categories
                       </div>
                     </div>
+
                     <div className="p-4 rounded-lg bg-gradient-to-br from-sky-50 to-sky-100">
                       <div className="mb-1 text-sm font-medium text-sky-800">
                         Completion Rate

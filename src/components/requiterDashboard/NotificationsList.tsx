@@ -37,7 +37,13 @@ const NotificationsList = ({
     try {
       const { data } = await axios.put(
         `${backendUrl}/api/requiter/notifications`,
-        { headers: { Authorization: requiterToken } }
+        {},
+        {
+          headers: {
+            Authorization: requiterToken,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       if (data.success) {
@@ -47,6 +53,28 @@ const NotificationsList = ({
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
       toast.error("Failed to mark notifications as read");
+    }
+  };
+
+  const handleMarkAsRead = async (notificationId: string) => {
+    try {
+      const { data } = await axios.put(
+        `${backendUrl}/api/requiter/notifications/${notificationId}`,
+        {},
+        {
+          headers: {
+            Authorization: requiterToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (data.success) {
+        onMarkAsRead(notificationId);
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      toast.error("Failed to mark notification as read");
     }
   };
 
@@ -83,8 +111,8 @@ const NotificationsList = ({
                   notification.isRead
                     ? "bg-white"
                     : "bg-blue-50 border-blue-200"
-                }`}
-                onClick={() => onMarkAsRead(notification.id)}
+                } cursor-pointer`}
+                onClick={() => handleMarkAsRead(notification.id)}
               >
                 <div className="flex items-start justify-between">
                   <div>
