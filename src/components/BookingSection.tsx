@@ -67,7 +67,6 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     "stripe" | "khalti"
   >("stripe");
-  const [user, setUser] = useState([]);
 
   const currentBusiness = business.find((b) => b.id === businessId);
   const amountInDollars = currentBusiness
@@ -124,30 +123,6 @@ const BookingSection = ({ children, businessId }: BookingSectionProps) => {
       setStripeError(null);
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await axios.get(
-          `${backendUrl}/api/user/getUserData/${userData?.id}`,
-          { headers: { Authorization: userToken } }
-        );
-
-        if (data.success) {
-          setUser(data.user);
-          console.log(data.user);
-        } else {
-          console.log("error fetching user");
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUserData();
-  }, [setIsLoading, backendUrl, userData, userToken]);
 
   const fetchBookedTimeSlots = async () => {
     if (!date) return;
