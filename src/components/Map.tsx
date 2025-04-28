@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "leaflet-routing-machine";
 
 // Fix for default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -19,6 +20,12 @@ interface LocationData {
   longitude: number;
   locationName: string;
   onLocationSelect?: (lat: number, lng: number, name: string) => void;
+  requiterLocation?: {
+    latitude: number;
+    longitude: number;
+    locationName: string;
+  } | null;
+  showDirections?: boolean;
 }
 
 function LocationMarker({
@@ -57,14 +64,59 @@ function LocationMarker({
   );
 }
 
+function RoutingMachine({ start, end }: { start: L.LatLng; end: L.LatLng }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+
+    const routingControl = L.Routing.control({
+      waypoints: [start, end],
+      routeWhileDragging: true,
+      show: false,
+      addWaypoints: false,
+      lineOptions: {
+        styles: [{ color: "#6366F1", weight: 4 }],
+        extendToWaypoints: false,
+        missingRouteTolerance: 0,
+      },
+      createMarker: () => null,
+    } as L.Routing.RoutingControlOptions & { createMarker?: any }).addTo(map);
+
+    return () => {
+      map.removeControl(routingControl);
+    };
+  }, [map, start, end]);
+
+  return null;
+}
+
 export function Map({
   latitude,
   longitude,
   locationName,
   onLocationSelect,
+  requiterLocation,
+  showDirections,
 }: LocationData) {
   const position: [number, number] =
     latitude && longitude ? [latitude, longitude] : [0, 0];
+
+  const userIcon = new L.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  const requiterIcon = new L.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
 
   return (
     <MapContainer
@@ -78,11 +130,29 @@ export function Map({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {latitude && longitude ? (
-        <Marker position={position}>
-          <Popup>{locationName || "Selected Location"}</Popup>
+        <Marker position={position} icon={userIcon}>
+          <Popup>{locationName || "Customer Location"}</Popup>
         </Marker>
       ) : (
         <LocationMarker onLocationSelect={onLocationSelect} />
+      )}
+
+      {requiterLocation && (
+        <Marker
+          position={[requiterLocation.latitude, requiterLocation.longitude]}
+          icon={requiterIcon}
+        >
+          <Popup>{requiterLocation.locationName || "Your Location"}</Popup>
+        </Marker>
+      )}
+
+      {showDirections && requiterLocation && (
+        <RoutingMachine
+          start={
+            new L.LatLng(requiterLocation.latitude, requiterLocation.longitude)
+          }
+          end={new L.LatLng(latitude, longitude)}
+        />
       )}
     </MapContainer>
   );

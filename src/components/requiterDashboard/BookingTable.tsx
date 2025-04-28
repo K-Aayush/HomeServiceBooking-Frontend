@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -8,7 +9,6 @@ import {
 } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
 import { Users, MapPin } from "lucide-react";
-import { useState } from "react";
 import { Map } from "../Map";
 import {
   Dialog,
@@ -37,6 +37,9 @@ interface Booking {
     name: string;
     category: string;
     amount: number;
+    latitude?: number;
+    longitude?: number;
+    locationName?: string;
   };
 }
 
@@ -56,9 +59,29 @@ const BookingTable = ({
   const displayBookings = isRecent ? bookings.slice(0, 5) : bookings;
   const [showMap, setShowMap] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [requiterLocation, setRequiterLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    locationName: string;
+  } | null>(null);
 
   const handleViewLocation = (booking: Booking) => {
     setSelectedBooking(booking);
+    // Get requiter's current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setRequiterLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            locationName: "Your Location",
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
     setShowMap(true);
   };
 
@@ -183,6 +206,8 @@ const BookingTable = ({
                   latitude={selectedBooking.latitude}
                   longitude={selectedBooking.longitude}
                   locationName={selectedBooking.locationName}
+                  requiterLocation={requiterLocation}
+                  showDirections={true}
                 />
               </div>
             )}
