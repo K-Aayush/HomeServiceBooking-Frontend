@@ -22,6 +22,9 @@ interface Booking {
   date: string;
   time: string;
   bookingStatus: string;
+  latitude: number;
+  longitude: number;
+  locationName: string;
   createdAt: string;
   user: {
     name: string;
