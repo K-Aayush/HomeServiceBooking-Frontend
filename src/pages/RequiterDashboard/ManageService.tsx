@@ -3,7 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import axios from "axios";
 import { toast } from "sonner";
 import { Button } from "../../components/ui/button";
-import { Trash2, Edit, Eye, Loader2 } from "lucide-react";
+import { Trash2, Edit, Eye, Loader2, Save } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,14 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "../../components/ui/badge";
 import { Card, CardContent, CardFooter } from "../../components/ui/card";
 import { Skeleton } from "../../components/ui/skeleton";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
+import image from "../../assets/add-image.png";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addBusinessSchema } from "../../lib/validator";
+import type { addBusinessFormData } from "../../lib/validator";
 
 interface Business {
   id: string;
@@ -28,46 +36,93 @@ interface Business {
   requiterId: string;
 }
 
+const categories = [
+  "Cleaning",
+  "Repair",
+  "Shifting",
+  "Plumbing",
+  "Painting",
+  "Electric",
+];
+
 const ManageService = () => {
   const { backendUrl, requiterToken } = useContext(AppContext);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(
     null
   );
+  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(
+    null
+  );
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [updating, setUpdating] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch business data
-  useEffect(() => {
-    const fetchBusinessData = async () => {
-      if (!requiterToken) return;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<addBusinessFormData>({
+    resolver: zodResolver(addBusinessSchema),
+    defaultValues: {
+      name: "",
+      about: "",
+      address: "",
+      category: "",
+      amount: 0,
+      images: [],
+    },
+  });
 
-      try {
-        setLoading(true);
-        const { data } = await axios.get(
-          `${backendUrl}/api/requiter/getBusinessData`,
-          {
-            headers: { Authorization: requiterToken },
-          }
-        );
-
-        if (data.success) {
-          setBusinesses(data.businessData || []);
-        } else {
-          toast.error("Failed to fetch business data");
+  const handleCategorySelect = (category: string) => {
+    {
+      categories.map((cat) => {
+        if (selectedBusiness?.category === cat) {
+          return setSelectedCategory(category);
         }
-      } catch (error: any) {
-        console.error("Error fetching business data:", error);
-        toast.error(
-          error.response?.data?.message || "Failed to fetch business data"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+      });
 
+      setValue("category", category, { shouldValidate: true });
+    }
+  };
+
+  // Fetch business data
+  const fetchBusinessData = async () => {
+    if (!requiterToken) return;
+
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        `${backendUrl}/api/requiter/getBusinessDataForRequiter`,
+        {
+          headers: { Authorization: requiterToken },
+        }
+      );
+
+      if (data.success) {
+        setBusinesses(data.businessData || []);
+      } else {
+        toast.error("Failed to fetch business data");
+      }
+    } catch (error: any) {
+      console.error("Error fetching business data:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to fetch business data"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchBusinessData();
   }, [backendUrl, requiterToken]);
 
@@ -77,7 +132,6 @@ const ManageService = () => {
 
     try {
       setDeleteLoading(businessId);
-      // This is a placeholder - you'll need to implement the delete endpoint in your API
       const { data } = await axios.delete(
         `${backendUrl}/api/requiter/deleteBusiness/${businessId}`,
         {
@@ -87,7 +141,6 @@ const ManageService = () => {
 
       if (data.success) {
         toast.success("Business deleted successfully");
-        // Remove the deleted business from the state
         setBusinesses((prev) =>
           prev.filter((business) => business.id !== businessId)
         );
@@ -103,14 +156,98 @@ const ManageService = () => {
     }
   };
 
-  // Handle edit business
-  const handleEditBusiness = (businessId: string) => {
-    navigate(`/requiterDashboard/edit-service/${businessId}`);
+  // Open edit dialog
+  const openEditDialog = (business: Business) => {
+    setSelectedBusiness(business);
+    reset({
+      name: business.name,
+      about: business.about,
+      address: business.address,
+      category: business.category,
+      amount: business.amount,
+      images: [],
+    });
+    setPreviewImages(business.images.map((img) => img.url));
+    setEditDialogOpen(true);
+  };
+
+  // Handle image change
+  const handleImageChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const newPreviewUrl = URL.createObjectURL(file);
+
+      setPreviewImages((prev) => {
+        const updated = [...prev];
+        updated[index] = newPreviewUrl;
+        return updated;
+      });
+
+      setNewImages((prev) => {
+        const updated = [...prev];
+        updated[index] = file;
+        return updated;
+      });
+
+      // Update form images
+      const currentImages = [...newImages];
+      currentImages[index] = file;
+      setValue("images", currentImages);
+    }
+  };
+
+  // Handle form submit
+  const onSubmit = async (formData: addBusinessFormData) => {
+    if (!selectedBusiness || !requiterToken) return;
+
+    try {
+      setUpdating(true);
+      const submitFormData = new FormData();
+      submitFormData.append("name", formData.name);
+      submitFormData.append("about", formData.about);
+      submitFormData.append("address", formData.address);
+      submitFormData.append("category", formData.category);
+      submitFormData.append("amount", formData.amount.toString());
+
+      newImages.forEach((image) => {
+        if (image) {
+          submitFormData.append("images", image);
+        }
+      });
+
+      const { data } = await axios.put(
+        `${backendUrl}/api/requiter/updateBusiness/${selectedBusiness.id}`,
+        submitFormData,
+        {
+          headers: {
+            Authorization: requiterToken,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success("Business updated successfully");
+        await fetchBusinessData();
+        setEditDialogOpen(false);
+      } else {
+        toast.error(data.message || "Failed to update business");
+      }
+    } catch (error: any) {
+      console.error("Error updating business:", error);
+      toast.error(error.response?.data?.message || "Failed to update business");
+    } finally {
+      setUpdating(false);
+    }
   };
 
   // Handle view business
   const handleViewBusiness = (businessId: string) => {
-    navigate(`/requiterDashboard/view-service/${businessId}`);
+    navigate(`/businessDetails/${businessId}`);
   };
 
   // Open delete dialog
@@ -205,7 +342,7 @@ const ManageService = () => {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleEditBusiness(business.id)}
+                    onClick={() => openEditDialog(business)}
                   >
                     <Edit className="w-4 h-4 mr-1" /> Edit
                   </Button>
@@ -264,6 +401,142 @@ const ManageService = () => {
               )}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Business Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Edit Service</DialogTitle>
+            <DialogDescription>
+              Update your service information
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Service Name</Label>
+                <Input
+                  id="name"
+                  {...register("name")}
+                  className={errors.name ? "border-red-500" : ""}
+                />
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="amount">Amount per hour ($)</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  {...register("amount", { valueAsNumber: true })}
+                  className={errors.amount ? "border-red-500" : ""}
+                />
+                {errors.amount && (
+                  <p className="text-sm text-red-500">
+                    {errors.amount.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <Button
+                    key={cat}
+                    type="button"
+                    onClick={() => handleCategorySelect(cat)}
+                    variant={selectedCategory === cat ? "default" : "outline"}
+                    size="sm"
+                  >
+                    {cat}
+                  </Button>
+                ))}
+              </div>
+              {errors.category && (
+                <p className="text-sm text-red-500">
+                  {errors.category.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
+                {...register("address")}
+                className={errors.address ? "border-red-500" : ""}
+              />
+              {errors.address && (
+                <p className="text-sm text-red-500">{errors.address.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="about">Description</Label>
+              <Textarea
+                id="about"
+                {...register("about")}
+                className={errors.about ? "border-red-500" : ""}
+              />
+              {errors.about && (
+                <p className="text-sm text-red-500">{errors.about.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Images</Label>
+              <div className="flex gap-4">
+                {[...Array(4)].map((_, index) => (
+                  <label
+                    key={index}
+                    htmlFor={`image-${index}`}
+                    className="cursor-pointer"
+                  >
+                    <img
+                      src={previewImages[index] || image}
+                      alt={`Preview ${index + 1}`}
+                      className="object-cover w-24 h-24 rounded-lg"
+                    />
+                    <input
+                      type="file"
+                      id={`image-${index}`}
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageChange(index, e)}
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={updating}>
+                {updating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />{" "}
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" /> Save Changes
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
