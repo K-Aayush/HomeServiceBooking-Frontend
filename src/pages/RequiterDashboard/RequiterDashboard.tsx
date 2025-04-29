@@ -39,13 +39,12 @@ const RequiterDashboard = () => {
   // Check if requiter is on the chat page
   const isOnChatPage = location.pathname === "/requiterDashboard/chat";
 
-  // Fetch unread message count
   useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
     const fetchUnreadCount = async () => {
       if (!requiterData?.id || !requiterToken) return;
-
       try {
-        setIsLoading(true);
         const { data } = await axios.get(
           `${backendUrl}/api/chat/requiter/unread`,
           {
@@ -58,26 +57,28 @@ const RequiterDashboard = () => {
         }
       } catch (error) {
         console.error("Error fetching unread count:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
-    if (!isOnChatPage) {
-      fetchUnreadCount();
+    const startPolling = () => {
+      fetchUnreadCount(); // initial fetch
+      intervalId = setInterval(fetchUnreadCount, 30000);
+    };
 
-      const intervalId = setInterval(fetchUnreadCount, 30000);
-      return () => clearInterval(intervalId);
+    const stopPolling = () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+
+    if (!isOnChatPage) {
+      startPolling();
     } else {
       setUnreadCount(0);
     }
-  }, [
-    requiterData,
-    backendUrl,
-    requiterToken,
-    isOnChatPage,
-    location.pathname,
-  ]);
+
+    return () => {
+      stopPolling();
+    };
+  }, [requiterData?.id, requiterToken, backendUrl, isOnChatPage]);
 
   // Handle logout
   const handleLogout = async () => {

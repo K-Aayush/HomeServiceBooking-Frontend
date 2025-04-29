@@ -70,6 +70,8 @@ export const AppContextProvider = ({
   });
 
   const fetchAllUsers = async (role = "") => {
+    if (!requiterToken || requiterData?.role !== "ADMIN") return;
+
     setIsLoading(true);
     setError("");
     try {
@@ -88,16 +90,14 @@ export const AppContextProvider = ({
           ...prev,
           [role || "total"]: data.totalUsers,
         }));
-        console.log(data.totalUsers);
       } else {
         setError(data.message);
       }
     } catch (error) {
-      //Axios error
       if (error instanceof AxiosError && error.response) {
         setError(error.response.data.message);
       } else if (error instanceof Error) {
-        setError(error.message || "An error occoured while fetching data");
+        setError(error.message || "An error occurred while fetching data");
       } else {
         setError("Internal Server Error");
       }
@@ -107,12 +107,12 @@ export const AppContextProvider = ({
   };
 
   useEffect(() => {
-    if (requiterToken) {
+    if (requiterToken && requiterData?.role === "ADMIN") {
       fetchAllUsers("");
       fetchAllUsers("user");
       fetchAllUsers("requiter");
     }
-  }, [requiterToken]);
+  }, [requiterToken, requiterData]);
 
   //function to fetch business by category
   const fetchBusinessByCategory = useCallback(
@@ -137,13 +137,12 @@ export const AppContextProvider = ({
         );
 
         if (data.success) {
-          console.log(data.businessData);
           setBusiness(data.businessData);
         } else {
           setError(data.message);
         }
       } catch (error) {
-        console.error("User data fetch error:", error);
+        console.error("Business data fetch error:", error);
       } finally {
         setIsLoading(false);
       }
@@ -169,7 +168,7 @@ export const AppContextProvider = ({
             logout();
           }
         } catch (error) {
-          console.error("User data fetch error:", error);
+          console.error("Requiter data fetch error:", error);
           logout();
         } finally {
           setIsLoading(false);

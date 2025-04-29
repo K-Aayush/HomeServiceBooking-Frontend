@@ -11,7 +11,6 @@ import { AppContext } from "../../context/AppContext";
 import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
 import { businessDataResponse } from "../../lib/type";
-
 import { Input } from "../ui/input";
 
 const categories = [
@@ -52,35 +51,35 @@ const AddRequiterService = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-
-      // Generate previewImage
       const previewUrl = URL.createObjectURL(file);
 
-      // Update the specific image preview based on the index
       setPreviewImages((prev) => {
         const newImages = [...prev];
         newImages[index] = previewUrl;
         return newImages;
       });
 
-      // Set file for form validation (imageUrl expects an array of strings
       const currentFiles = form.getValues("images");
       currentFiles[index] = file;
       form.setValue("images", currentFiles, { shouldValidate: true });
     }
   };
 
-  // Submit Handler
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
   const handleSubmit: SubmitHandler<addBusinessFormData> = async (
-    businessData
+    businessData,
+    e
   ) => {
-    console.log("Form Submitted: ", businessData);
+    e?.preventDefault();
     try {
       setIsLoading(true);
-      //creating new formdata
       const formData = new FormData();
 
-      //append each formData
       formData.append("name", businessData.name);
       formData.append("category", businessData.category);
       formData.append("about", businessData.about);
@@ -96,7 +95,7 @@ const AddRequiterService = () => {
       }
 
       const { data } = await axios.post<businessDataResponse>(
-        backendUrl + "/api/requiter/addBusiness",
+        `${backendUrl}/api/requiter/addBusiness`,
         formData,
         {
           headers: {
@@ -107,7 +106,6 @@ const AddRequiterService = () => {
       );
 
       if (data.success) {
-        console.log(data);
         toast.success(data.message);
         form.reset({
           name: "",
@@ -118,15 +116,15 @@ const AddRequiterService = () => {
           images: [],
         });
         setPreviewImages([]);
-      } else toast.error(data.message);
+        setSelectedCategory(null);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-      //Error handling
       if (error instanceof AxiosError && error.response) {
-        //400, 401 or 500 error
         toast.error(error.response.data.message);
       } else if (error instanceof Error) {
-        //unexpected error
-        toast.error(error.message || "An error occured while registering");
+        toast.error(error.message || "An error occurred while registering");
       } else {
         toast.error("Internal Server Error");
       }
@@ -138,7 +136,11 @@ const AddRequiterService = () => {
   return (
     <div className="flex flex-col w-full">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          onKeyDown={handleKeyDown}
+          noValidate
+        >
           <div className="flex flex-col max-w-3xl gap-4 text-gray-700">
             <FormInput
               control={form.control}
@@ -223,14 +225,13 @@ const AddRequiterService = () => {
                 <label key={index} htmlFor={`Image-${index}`}>
                   <img
                     src={previewImages[index] || image}
-                    alt="image"
+                    alt="preview"
                     className="object-cover w-32 h-32 rounded-sm cursor-pointer"
                   />
                   <input
-                    {...form.register(`images.${index}`)}
                     type="file"
                     id={`Image-${index}`}
-                    hidden={true}
+                    hidden
                     onChange={(e) => handleImageChange(index, e)}
                   />
                 </label>

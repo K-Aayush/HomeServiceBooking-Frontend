@@ -60,7 +60,7 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
               <Link
                 to={`/businessDetails/${item.id}`}
                 key={index}
-                className="transition-all ease-in-out rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:shadow-primary hover:scale-105"
+                className="h-full transition-all ease-in-out rounded-lg shadow-md cursor-pointer hover:shadow-lg hover:shadow-primary hover:scale-105 "
               >
                 {item.images && item.images.length > 0 ? (
                   <img
@@ -80,9 +80,17 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                   />
                 )}
 
-                <div className="flex items-start justify-between p-4 mb-2">
-                  <div className="flex flex-col">
-                    <h2 className="mb-1 text-lg font-bold">{item.name}</h2>
+                <div className="flex flex-col justify-between flex-1 p-4 mb-2">
+                  <div className="flex-1">
+                    <div className="flex justify-between gap-2">
+                      <h2 className="mb-1 text-sm font-bold">{item.name}</h2>
+                      <Badge
+                        variant="outline"
+                        className="text-green-800 bg-green-100 border-green-200"
+                      >
+                        ${item.amount.toFixed(2)}/hr
+                      </Badge>
+                    </div>
                     <Badge className="mb-2 bg-primary w-fit">
                       {item.category}
                     </Badge>
@@ -90,17 +98,8 @@ const BusinessList = ({ businessList, title, pagehref }: BusinessListProps) => {
                     <h2 className="text-sm text-gray-600 line-clamp-2">
                       {item.address}
                     </h2>
-                    <Button className="mt-3">Book now</Button>
                   </div>
-
-                  <div>
-                    <Badge
-                      variant="outline"
-                      className="text-green-800 bg-green-100 border-green-200"
-                    >
-                      ${item.amount.toFixed(2)}/hr
-                    </Badge>
-                  </div>
+                  <Button className="bottom-0 mt-3 ">Book now</Button>
                 </div>
               </Link>
             ))}
